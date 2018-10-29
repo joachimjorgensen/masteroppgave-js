@@ -6,3 +6,5 @@
 ./oppgaver/*
 
 node_modules
+
+release-builds
