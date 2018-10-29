@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/joachimjorgensen/masteroppgave-js#readme",
   "devDependencies": {
-    "electron": "^3.0.6"
+    "electron": "^3.0.6",
+    "electron-packager": "^12.2.0"
   },
   "dependencies": {
     "codemirror": "^5.41.0"
