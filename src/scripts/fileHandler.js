@@ -35,5 +35,9 @@ let fileExists = function(fileName) {
 
     let path = './';
 
+    if (fs.existsSync(path + fileName)) {
+        alert('ERROR: file name already exists')
+    }
+
     return (fs.existsSync(path + fileName));
 };

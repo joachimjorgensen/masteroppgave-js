@@ -15,17 +15,13 @@ let save = function(code) {
     let fileName = getFileName();
     let parsons2d = getParsons2d();
 
-    if(fileExists(fileName)) {
-        alert('FileName already exists!')
-    } else {
-        alert('FileName is available.')
+    if (!fileExists(fileName)) {
+        let dict = {payload: code, fileName: fileName, parsons2d: parsons2d};
+        let json = JSON.stringify(dict);
+
+        let requestDiv = document.getElementById('serverResponse');
+        requestDiv.innerHTML = json;
     }
-
-    let dict = {payload: code, fileName: fileName, parsons2d: parsons2d};
-    let json = JSON.stringify(dict);
-
-    let requestDiv = document.getElementById('serverResponse');
-    requestDiv.innerHTML = json;
 };
 
 
@@ -42,12 +38,13 @@ let download = function(code) {
     let fileName = getFileName();
     let parsons2d = getParsons2d();
 
-    let dict = {payload: code, fileName: fileName, parsons2d: parsons2d};
-    let json = JSON.stringify(dict);
+    if (!fileExists(fileName)) {
+        let dict = {payload: code, fileName: fileName, parsons2d: parsons2d};
+        let json = JSON.stringify(dict);
 
-
-    let requestDiv = document.getElementById('serverResponse');
-    requestDiv.innerHTML = json;
+        let requestDiv = document.getElementById('serverResponse');
+        requestDiv.innerHTML = json;
+    }
 };
 
 
