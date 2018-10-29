@@ -1,0 +1,8 @@
+/.idea/
+.idea/workspace.xml
+
+.DS_Store
+
+./oppgaver/*
+
+node_modules
