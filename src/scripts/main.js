@@ -15,6 +15,12 @@ let save = function(code) {
     let fileName = getFileName();
     let parsons2d = getParsons2d();
 
+    if(fileExists(fileName)) {
+        alert('FileName already exists!')
+    } else {
+        alert('FileName is available.')
+    }
+
     let dict = {payload: code, fileName: fileName, parsons2d: parsons2d};
     let json = JSON.stringify(dict);
 
@@ -42,45 +48,6 @@ let download = function(code) {
 
     let requestDiv = document.getElementById('serverResponse');
     requestDiv.innerHTML = json;
-};
-
-
-/**
- * Open a file and display content to code editor and
- * send the file content to another function (Good wording, I am good)
- *
- * @param event
- */
-let openFile = function(event) {
-
-    let code = '';
-    let input = event.target;
-
-    let reader = new FileReader();
-
-    reader.onload = function() {
-        code = reader.result;
-        editor.setOption('value', code);
-
-
-        /* --------------------------
-        let requestDiv = document.getElementById('serverResponse');
-        requestDiv.innerHTML = code;
-
-        let textArea = document.getElementById('textArea');
-        textArea.innerHTML = code;
-
-        // Convert param to a json object
-        let fileName = getFileName();
-        let parsons2d = getParsons2d();
-
-        let dict = {payload: code, fileName: fileName, parsons2d: parsons2d};
-        let json = JSON.stringify(dict);
-        // -------------------------- */
-
-    };
-
-    reader.readAsText(input.files[0]);
 };
 
 
