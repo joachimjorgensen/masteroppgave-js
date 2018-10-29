@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!-- JAVASCRIPT FILES -->
+    <script src="scripts/main.js"></script>
+    <script src="scripts/requestDisplay.js"></script>
+    <script src="scripts/requestDownload.js"></script>
+
+    <!-- Create a simple CodeMirror instance -->
+    <script src="node_modules/codemirror/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
+
+    <!-- CodeMirror Theme -->
+    <link rel="stylesheet" href="node_modules/codemirror/theme/dracula.css">
+
+    <!-- CodeMirror Language Syntax -->
+    <script src="node_modules/codemirror/mode/python/python.js"></script>
+
+    <!-- CodeMirror Addon: Hint (Shitty Autocomplete) -->
+    <script src="node_modules/codemirror/addon/hint/show-hint.js"></script>
+    <script src="node_modules/codemirror/addon/hint/css-hint.js"></script>
+    <link rel="stylesheet" href="node_modules/codemirror/addon/hint/show-hint.css">
+
+</head>
+<body>
+
+    <h1>Hola World, this is master thesis!</h1>
+
+    <input type='file' id='fileChooser' onchange='openFile(event)' name='fileChooser' />
+
+    <br>
+    <br>
+
+    <div style="display: flex;">
+
+        <div id="codeArea" style="flex: 40%; padding: 10px;"></div>
+
+        <div id="dragAndDropArea" style="flex: 40%; padding: 10px;">
+            <textarea id="textArea" rows="22" cols="50"></textarea>
+        </div>
+
+    </div>
+
+    <br>
+
+    Save as: <input id='fileName' type="text" name="fileName" value="">
+
+    <br>
+
+    Parsons2D <input id='parsons2d' type="checkbox" name="parsons2d" value="" checked>
+
+    <br>
+    <br>
+
+    <button onclick="save(editor.getValue()); return null">SAVE</button>
+
+    <button onclick="download(editor.getValue()); return null">DOWNLOAD</button>
+
+    <h2>Server Response:</h2>
+
+    <div id="serverResponse">No data</div>
+
+
+
+    <!-- ****************************  --
+                  SCRIPTS
+     --  **************************** -->
+
+    <script>
+
+        let editor = CodeMirror(document.getElementById('codeArea'), {
+            lineNumbers: true,
+            mode: 'python',
+            theme: "dracula",
+            extraKeys: {'Ctrl-Space': 'autocomplete'},
+        });
+
+    </script>
+
+    <script>
+        // You can also require other files to run in this process
+        require('./renderer.js')
+    </script>
+
+
+</body>
+</html>
