@@ -349,13 +349,14 @@ function addAttribute(element, attributeName, value){
 	return element
 }
 
-function run_dnd(jsonObject){
+function run_dnd(jsonObject,filepath){
 	//npm i rimraf
 	let rimraf = require('rimraf');
-	rimraf('zipThis', function () { continue_dnd(jsonObject);console.log('zipThis deleted'); });
+	rimraf('zipThis', function () { continue_dnd(jsonObject,filepath);console.log('zipThis deleted'); });
+
 
 }
-function continue_dnd(data){
+function continue_dnd(data,filepath){
 	//npm install mkdirp
 	let mkdirp = require('mkdirp');
 	mkdirp('./zipThis', function (err) {
@@ -380,7 +381,7 @@ function continue_dnd(data){
 
 	let zipFolder = require('zip-folder');
 
-	zipFolder('zipThis', zipFileName+'.zip', function (err) {
+	zipFolder('zipThis', filepath+'/'+zipFileName+'.zip', function (err) {
 		if (err) {
 			console.log('oh no!', err);
 		} else {
