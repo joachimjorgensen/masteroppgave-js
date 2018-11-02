@@ -1,6 +1,17 @@
 /**
  * Created by jwjorgen on 29/10/2018.
  */
+const path = require('path');
+const url = require('url');
+let filepath = "";
+
+let loadMain = function(){
+    const downloadFolder = document.getElementById('downloadFolder');
+    filepath = path.join(__dirname, '../../../../');
+    var nameArray = filepath.split('/');
+    downloadFolder.innerHTML = ".../" + nameArray[nameArray.length - 2] + "/" + nameArray[nameArray.length - 1];
+
+}
 
 /**
  * Save the code to QTI format?
@@ -17,7 +28,7 @@ let save = function(code) {
 
     if (!fileExists(fileName+'.zip')) {
         let data = {payload: code, fileName: fileName, parsons2d: parsons2d};
-        run_dnd(data)
+        run_dnd(data,filepath)
 
         let jsonString = JSON.stringify(data);
         let requestDiv = document.getElementById('serverResponse');
@@ -49,6 +60,21 @@ let download = function(code) {
     }
 };
 
+let chooseDownloadFolder = function(){
+    const {dialog} = require('electron').remote;
+    var nameArray;
+    filepath = dialog.showOpenDialog({
+        properties: ['openDirectory']
+    });
+    if(!filepath){
+        filepath = path.join(__dirname, '../../../../');
+        nameArray = filepath.split('/');
+    }else{
+        nameArray = filepath[0].split('/');
+    }
+    downloadFolder.innerHTML = ".../"+nameArray[nameArray.length-2]+"/"+nameArray[nameArray.length-1];
+
+}
 
 /**
  * Return the chosen fileName. If none selected, 'default' is returned
