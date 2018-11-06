@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="index.css">
+
     <!-- JAVASCRIPT FILES -->
     <script src="scripts/main.js"></script>
     <script src="scripts/fileHandler.js"></script>
@@ -27,48 +30,115 @@
 </head>
 <body>
 
-    <h1>Hola World, this is master thesis!</h1>
+    <div class="header">
+        <p class="titleText">Parsons Generator</p>
+    </div>
 
-    <input type='file' id='fileChooser' onchange='openFile(event)' name='fileChooser' />
-    <br>
 
-    <br>
-    <br>
 
-    <div style="display: flex;">
+    <div class="main">
 
-        <div id="codeArea" style="flex: 40%; padding: 10px;"></div>
+        <div class="taskBar">
 
-        <div id="dragAndDropArea" style="flex: 40%; padding: 10px;">
-            <textarea id="textArea" rows="22" cols="50"></textarea>
+            <div class="taskList">
+
+                <div class="newTaskContainer">
+                    <button class="taskButton">Add Task</button>
+                </div>
+
+                <div class="taskContainer">
+                    <p class="taskText">Task 1</p>
+                </div>
+
+                <div class="taskContainerSelected">
+                    <p class="taskText">Task 2</p>
+                </div>
+
+                <div class="taskContainer">
+                    <p class="taskText">Task 3</p>
+                </div>
+
+                <div class="taskContainer">
+                    <p class="taskText">Task 4</p>
+                </div>
+
+            </div>
+
+            <div class="downloadAllContainer">
+                <button class="DownloadAllButton">Download All</button>
+            </div>
+
+        </div>
+
+
+
+        <div class="container">
+
+            <div class="paper">
+
+                <p class="infoText">Please choose a file to upload, or type code in the editor window.</p>
+                <br>
+
+                <label for="fileChooser" class="fileChooserButton">
+                    <p>Choose File</p>
+                </label>
+                <input type='file' id='fileChooser' onchange='openFile(event)' name='fileChooser' />
+
+                <div class="editorContainer">
+
+                    <div class="editor" id="codeArea" onchange="save(editor.getValue()); return null"></div>
+
+                    <div class="dragAndDropArea" id="dragAndDropArea">
+                        <textarea id="textArea" rows="22" cols="69"></textarea>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="paper">
+
+                <div class="downloadPaper">
+
+                    <div class="downloadInputList">
+
+                        <div class="downloadSubContainer">
+                            <p class="instructionText">Save as: </p>
+                            <input id='fileName' type="text" name="fileName" value="" onchange="fileExists(value)">
+                        </div>
+
+                        <div class="downloadSubContainer">
+                            <p class="instructionText">Download path: </p>
+                            <button class="chooseFolderButton" onclick="chooseDownloadFolder(); return null">Choose Folder</button>
+                            <p>Current: </p><div id="downloadFolder"><p class="textPath">No target</p></div>
+                        </div>
+
+                        <div class="downloadSubContainer">
+                            <p class="instructionText">Parsons2D </p>
+                            <input class="checkBox" id='parsons2d' type="checkbox" name="parsons2d" value="" checked>
+
+                        </div>
+
+                    </div>
+
+                    <div class="downloadButtonContainer">
+                        <button class="downloadButton" onclick="download(editor.getValue()); return null">Download Task</button>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
     </div>
 
-    <br>
 
-    Save as: <input id='fileName' type="text" name="fileName" value="" onchange="fileExists(value)">
-
-    <br>
-
-    Download path: <button onclick="chooseDownloadFolder(); return null">Choose folder</button>
-    <div id="downloadFolder">No target</div>
-
-    <br>
-
-    Parsons2D <input id='parsons2d' type="checkbox" name="parsons2d" value="" checked>
-
-    <br>
-    <br>
-
-    <button onclick="save(editor.getValue()); return null">SAVE</button>
-
-    <button onclick="download(editor.getValue()); return null">DOWNLOAD</button>
-
+    <!--
     <h2>Server Response:</h2>
 
     <div id="serverResponse">No data</div>
-
+    -->
 
 
     <!-- ****************************  --
