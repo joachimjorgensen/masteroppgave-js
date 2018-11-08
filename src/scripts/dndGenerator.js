@@ -365,7 +365,7 @@ function continue_dnd(data,filepath){
 
 	zipFileName = data.fileName;
 	parsons2D = data.parsons2d;
-	lines = data.payload;
+	lines = data.code;
 	console.log(lines);
 	lines = lines.split("\n");
 	

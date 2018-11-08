@@ -103,6 +103,13 @@ input:focus {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    overflow: scroll;
+}
+
+.taskListContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .newTaskContainer {
@@ -120,7 +127,7 @@ input:focus {
     cursor: pointer;
 }
 
-.taskContainerSelected {
+.taskContainer.selected {
     border-left: thick solid #54b7ff;
     background-color: #333333;
     padding: 10px 10px;

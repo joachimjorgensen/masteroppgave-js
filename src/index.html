@@ -40,26 +40,14 @@
 
         <div class="taskBar">
 
-            <div class="taskList">
+            <div class="taskListContainer">
 
                 <div class="newTaskContainer">
-                    <button class="taskButton">Add Task</button>
+                    <button class="taskButton" onclick="addTask(); return null;">Add Task</button>
                 </div>
 
-                <div class="taskContainer">
-                    <p class="taskText">Task 1</p>
-                </div>
+                <div class="taskList" id="taskList">
 
-                <div class="taskContainerSelected">
-                    <p class="taskText">Task 2</p>
-                </div>
-
-                <div class="taskContainer">
-                    <p class="taskText">Task 3</p>
-                </div>
-
-                <div class="taskContainer">
-                    <p class="taskText">Task 4</p>
                 </div>
 
             </div>
@@ -86,7 +74,7 @@
 
                 <div class="editorContainer">
 
-                    <div class="editor" id="codeArea" onchange="save(editor.getValue()); return null"></div>
+                    <div class="editor" id="codeArea" onchange="saveToQti(); return null"></div>
 
                     <div class="dragAndDropArea" id="dragAndDropArea">
                         <textarea id="textArea" rows="22" cols="69"></textarea>
