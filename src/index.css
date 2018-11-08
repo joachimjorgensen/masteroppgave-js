@@ -1,0 +1,273 @@
+
+/* --------------- STRUCTURE ---------------- */
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin: 0;
+    height: 735px;
+
+    background-color: #cecece;
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 100%;
+}
+
+.taskBar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 0;
+    flex: 15%;
+
+    background-color: #1d1d1b;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex: 85%;
+
+    background-color: #cecece;
+}
+
+/* --------------- GENERAL ---------------- */
+
+.paper {
+    background-color: white;
+    padding: 20px;
+    margin: 10px 10px 0 10px;
+    border-radius: 3px;
+}
+
+button {
+    background-color: #4CAF50;
+    border-radius: 3px;
+    padding: 10px 25px;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+input {
+    outline: 0;
+    border-width: 0 0 1px;
+    border-color: #1d1d1b;
+    margin-left: 10px;
+}
+
+input:hover {
+    border-color: #54b7ff
+}
+
+input:focus {
+    border-color: #54b7ff
+}
+
+.checkBox {
+
+}
+
+/* --------------- HEADER ---------------- */
+
+.header {
+    background-color: #54b7ff;
+    padding: 10px 10px;
+}
+
+.titleText {
+    font-size: 3em;
+    padding: 0 10px;
+    margin: 0;
+    color: white;
+    font-family: "Helvetica Neue";
+    font-weight: 100;
+}
+
+/* ------------- TASK BAR ---------------- */
+
+.taskHeaderContainer {
+
+}
+
+.taskList {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: scroll;
+}
+
+.taskListContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.newTaskContainer {
+    text-align: center;
+}
+
+.taskContainer {
+    border-left: thick solid transparent;
+    padding: 10px 10px;
+}
+
+.taskContainer:hover {
+    border-left: thick solid #54b7ff;
+    background-color: #333333;
+    cursor: pointer;
+}
+
+.taskContainer.selected {
+    border-left: thick solid #54b7ff;
+    background-color: #333333;
+    padding: 10px 10px;
+}
+
+.taskButton {
+    margin: 10px;
+}
+
+.taskButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}
+
+.DownloadAllButton {
+    margin: 10px;
+}
+
+.DownloadAllButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}
+
+/* -------------- EDITOR ----------------- */
+
+.editorContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.editor {
+    flex: 1;
+    padding-right: 10px;
+}
+
+.dragAndDropArea {
+    flex: 1;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+/* This is not a button element */
+.fileChooserButton {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    border-radius: 3px;
+    padding: 10px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.fileChooserButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}
+
+/* ------------- DOWNLOAD ---------------- */
+
+.downloadPaper {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.downloadInputList {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.downloadSubContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.chooseFolderButton {
+    font-size: 14px;
+    margin: 0 10px;
+    padding: 5px 20px;
+}
+
+.chooseFolderButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}
+
+.downloadButtonContainer {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.downloadButton {
+    margin: 0 10px;
+}
+
+.downloadButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}
+
+
+/* --------------- TEXT ---------------- */
+
+p {
+    font-family: "Helvetica Neue";
+    margin: 0;
+}
+
+.taskHeader {
+    color: white;
+    text-align: center;
+}
+
+.taskText {
+    color: white;
+}
+
+.infoText {
+
+}
+
+.instructionText {
+    width: 130px;
+}
+
+#downloadFolder {
+    margin-left: 10px;
+}
