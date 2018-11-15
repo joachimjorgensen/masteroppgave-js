@@ -41,7 +41,6 @@ let saveTask = function(id) {
 
     let code = editor.getValue();
     let fileName = getFileName();
-    let downloadPath = getFilePath(id);
     let parsons2d = getParsons2d();
 
     let allTasks = database.tasks;
@@ -55,7 +54,6 @@ let saveTask = function(id) {
                 ...task,
                 code: code || '',
                 fileName: fileName,
-                downloadPath: downloadPath,
                 parsons2d: parsons2d
             };
 
@@ -130,7 +128,6 @@ let loadTask = function(id) {
             console.log(task);
 
             document.getElementById('taskTitleInput').value = task.fileName;
-            document.getElementById('downloadFolder').innerHTML = task.downloadPath;
             document.getElementById('parsons2d').checked = task.parsons2d;
             editor.refresh();
             editor.setValue(task.code);
@@ -182,13 +179,13 @@ let saveToQti = function() {
  */
 let downloadSingle = function() {
 
-    chooseDownloadFolder();
+    let filepath = chooseDownloadFolder();
 
     let task = getTaskObject(currentId);
     let fileName = task.fileName;
 
     if (!fileExists(fileName+'.zip')) {
-        run_dnd(task);
+        run_dnd(task, filepath, task.fileName);
 
         //let jsonString = JSON.stringify(data);
         //let requestDiv = document.getElementById('serverResponse');
@@ -203,11 +200,13 @@ let downloadSingle = function() {
  */
 let downloadAll = function() {
 
+    let filepath = chooseDownloadFolder();
+
     let allFileName = database.allFileName;
 
     if (!fileExists(allFileName+'.zip')) {
         let data = database.tasks;
-        run_dnd(data, allFileName);
+        run_dnd(data, filepath, allFileName);
     }
 };
 
@@ -217,14 +216,13 @@ let downloadAll = function() {
  */
 let chooseDownloadFolder = function(){
 
-    let currentTask = getTaskObject(currentId);
-
     const {dialog} = require('electron').remote;
     var nameArray;
     let filepath = dialog.showOpenDialog({
         properties: ['openDirectory']
     });
-    currentTask.downloadPath = filepath;
+
+    return filepath;
     /*
     console.log(currentTask.downloadPath);
     if(!filepath){
@@ -290,7 +288,6 @@ let addTask = function () {
         id: id,
         code: '',
         fileName: '',
-        downloadPath: '',
         parsons2d: true
     };
 

@@ -398,14 +398,14 @@ function addAttribute(element, attributeName, value){
 	return element
 }
 
-function run_dnd(jsonObject){
+function run_dnd(jsonObject, filepath, fileName){
 	//npm i rimraf
 	let rimraf = require('rimraf');
-	rimraf('zipThis', function () { continue_dnd(jsonObject);console.log('zipThis deleted'); });
+	rimraf('zipThis', function () { continue_dnd(jsonObject, filepath, fileName);console.log('zipThis deleted'); });
 
 
 }
-function continue_dnd(dataAll){
+function continue_dnd(dataAll, filepath, fileName){
 	//npm install mkdirp
 	let mkdirp = require('mkdirp');
 	mkdirp('./zipThis', function (err) {
@@ -416,8 +416,8 @@ function continue_dnd(dataAll){
 
 	if(Array.isArray(dataAll)){
 		console.log("IS LIST");
-		zipFileName="listzip"
-		taskIdentifiers = []
+		zipFileName=fileName;
+		taskIdentifiers = [];
 
 		for(let i = 0; i< dataAll.length; i++){
 			data = dataAll[i];
@@ -440,8 +440,7 @@ function continue_dnd(dataAll){
 	}else{
 		data = dataAll;
 		console.log(data);
-		filepath = data.downloadPath;
-		zipFileName = data.fileName;
+		zipFileName = fileName;
 		parsons2D = data.parsons2d;
 		lines = data.code;
 		console.log(lines);
@@ -463,7 +462,6 @@ function continue_dnd(dataAll){
 	let zipFolder = require('zip-folder');
 	console.log(dataAll);
 	console.log(filepath);
-	/*
 
 	zipFolder('zipThis', filepath + '/' + zipFileName + '.zip', function (err) {
 		if (err) {
@@ -472,6 +470,5 @@ function continue_dnd(dataAll){
 			console.log('EXCELLENT');
 		}
 	});
-	*/
 	
 }
