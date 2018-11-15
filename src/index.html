@@ -53,6 +53,11 @@
             </div>
 
             <div class="downloadAllContainer">
+                <input class="allTaskTitleInput"
+                       id="allTasksTitleInput"
+                       type="text" name="titleInput"
+                       value="" placeholder="Enter File Name"
+                       onchange="fileExists(value); updateAllTasksTitle(value)">
                 <button class="DownloadAllButton">Download All</button>
             </div>
 
@@ -64,13 +69,29 @@
 
             <div class="paper">
 
+                <div class="taskTitleContainer">
+                    <input class="taskTitleInput" id="taskTitleInput" type="text" name="titleInput" value="" placeholder="Title">
+                    <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Download Task</button>
+                </div>
+
                 <p class="infoText">Please choose a file to upload, or type code in the editor window.</p>
                 <br>
 
-                <label for="fileChooser" class="fileChooserButton">
-                    <p>Choose File</p>
-                </label>
-                <input type='file' id='fileChooser' onchange='openFile(event)' name='fileChooser' />
+                <div class="editorOptionsContainer">
+
+                    <div>
+                        <label for="fileChooser" class="fileChooserButton">
+                            <p>Choose File</p>
+                        </label>
+                        <input type='file' id='fileChooser' onchange='openFile(event)' name='fileChooser' />
+                    </div>
+
+                    <div class="parsonsContainer">
+                        <p class="parsonText">Parsons2D </p>
+                        <input class="checkBox" id='parsons2d' type="checkbox" name="parsons2d" value="" checked>
+                    </div>
+
+                </div>
 
                 <div class="editorContainer">
 
@@ -86,34 +107,7 @@
 
             <div class="paper">
 
-                <div class="downloadPaper">
-
-                    <div class="downloadInputList">
-
-                        <div class="downloadSubContainer">
-                            <p class="instructionText">Save as: </p>
-                            <input id='fileName' type="text" name="fileName" value="" onchange="fileExists(value)">
-                        </div>
-
-                        <div class="downloadSubContainer">
-                            <p class="instructionText">Download path: </p>
-                            <button class="chooseFolderButton" onclick="chooseDownloadFolder(); return null">Choose Folder</button>
-                            <p>Current: </p><div id="downloadFolder"><p class="textPath">No target</p></div>
-                        </div>
-
-                        <div class="downloadSubContainer">
-                            <p class="instructionText">Parsons2D </p>
-                            <input class="checkBox" id='parsons2d' type="checkbox" name="parsons2d" value="" checked>
-
-                        </div>
-
-                    </div>
-
-                    <div class="downloadButtonContainer">
-                        <button class="downloadButton" onclick="download(editor.getValue()); return null">Download Task</button>
-                    </div>
-
-                </div>
+                <h2>Distractors</h2>
 
             </div>
 
