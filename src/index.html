@@ -58,7 +58,7 @@
                        type="text" name="titleInput"
                        value="" placeholder="Enter File Name"
                        onchange="fileExists(value); updateAllTasksTitle(value)">
-                <button class="DownloadAllButton">Download All</button>
+                <button class="DownloadAllButton" onclick="downloadAll(editor.getValue()); return null">Download All</button>
             </div>
 
         </div>
@@ -107,7 +107,7 @@
 
             <div class="paper">
 
-                <h2>Distractors</h2>
+              <h2>Distractors</h2>
 
             </div>
 
