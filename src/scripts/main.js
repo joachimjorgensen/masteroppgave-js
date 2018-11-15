@@ -3,7 +3,6 @@
  */
 const path = require('path');
 const url = require('url');
-let filepath = "";
 
 let database = {
     tasks: []
@@ -13,10 +12,12 @@ let taskCount = 0;
 let currentId= 0;
 
 let loadMain = function(){
+    /*
     const downloadFolder = document.getElementById('downloadFolder');
     filepath = path.join(__dirname, '../../../../');
     var nameArray = filepath.split('/');
     downloadFolder.innerHTML = ".../" + nameArray[nameArray.length - 2] + "/" + nameArray[nameArray.length - 1];
+    */
 
     // Load all tasks in the database
     loadTaskList();
@@ -38,7 +39,7 @@ let saveTask = function(id) {
 
     let code = editor.getValue();
     let fileName = getFileName();
-    let downloadPath = getFilePath();
+    let downloadPath = getFilePath(id);
     let parsons2d = getParsons2d();
 
     let allTasks = database.tasks;
@@ -109,7 +110,6 @@ let loadTask = function(id) {
         papers[i].style.display = 'block';
     }
 
-    saveTask(currentId);
 
     currentId = id;
 
@@ -168,7 +168,7 @@ let getTaskObject = function(id) {
  * @param code
  */
 let saveToQti = function() {
-
+    saveTask(currentId);
     let textArea = document.getElementById('textArea');
     textArea.innerHTML = editor.getValue();
 };
@@ -184,8 +184,7 @@ let downloadSingle = function() {
     let fileName = task.fileName;
 
     if (!fileExists(fileName+'.zip')) {
-        let data = {code: task.code, fileName: task.fileName, parsons2d: task.parsons2d};
-        run_dnd(data);
+        run_dnd(task);
 
         //let jsonString = JSON.stringify(data);
         //let requestDiv = document.getElementById('serverResponse');
@@ -210,11 +209,17 @@ let downloadAll = function() {
  *
  */
 let chooseDownloadFolder = function(){
+
+    let currentTask = getTaskObject(currentId);
+
     const {dialog} = require('electron').remote;
     var nameArray;
-    filepath = dialog.showOpenDialog({
+    let filepath = dialog.showOpenDialog({
         properties: ['openDirectory']
     });
+    currentTask.downloadPath = filepath;
+    /*
+    console.log(currentTask.downloadPath);
     if(!filepath){
         filepath = path.join(__dirname, '../../../../');
         nameArray = filepath.split('/');
@@ -222,6 +227,7 @@ let chooseDownloadFolder = function(){
         nameArray = filepath[0].split('/');
     }
     downloadFolder.innerHTML = ".../"+nameArray[nameArray.length-2]+"/"+nameArray[nameArray.length-1];
+    */
 
 };
 
@@ -245,15 +251,12 @@ let getFileName = function() {
  * Return the chosen fileName. If none selected, 'default' is returned
  *
  * @returns {string}
- */
+*/
 let getFilePath = function() {
 
-    let filePath = document.getElementById('downloadFolder').value
-        ? document.getElementById('downloadFolder').value
-        : 'none';
-
-    return filePath;
+    return filepath;
 };
+
 
 
 /**

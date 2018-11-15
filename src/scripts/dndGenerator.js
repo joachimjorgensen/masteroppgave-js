@@ -37,19 +37,68 @@ function write_manifest(xmlDoc){
 	});
 }
 
-function add_metadata(myDoc, myManifest, identifier){
-	let fileName = 'content_question_qti2_graphicgapmatch_'+identifier+'.xml';
+function add_manifest_data(myManifest, identifiers, taskNames){
+	if(Array.isArray(identifiers)){
+		let identifier = identifiers[0];
+		let taskName = taskNames[0];
+		let fileName = 'content_question_qti2_graphicgapmatch_' + identifier + '.xml';
+		let manifestTag = myManifest.getElementsByTagName('manifest')[0];
+		let resourcesTag = manifestTag.getElementsByTagName('resources')[0];
+		let resourceTag = resourcesTag.getElementsByTagName('resource')[0];
 
-	//MANIFEST
-	let manifestTag = myManifest.getElementsByTagName('manifest')[0];
-	let resourcesTag = manifestTag.getElementsByTagName('resources')[0];
-	let resourceTag = resourcesTag.getElementsByTagName('resource')[0];
-	addAttribute(resourceTag, "identifier", "ID_"+identifier);
-	addAttribute(resourceTag, "href", fileName);
-	let fileTag = resourceTag.getElementsByTagName('file')[0];
-	addAttribute(fileTag, "href",fileName);
+		//Name
+		let metadata = resourceTag.getElementsByTagName('metadata')[0];
+		let lom = metadata.getElementsByTagName('imsmd:lom')[0];
+		let general= lom.getElementsByTagName('imsmd:general')[0];
+		let title = general.getElementsByTagName('imsmd:title')[0];
+		let langstring = title.getElementsByTagName('imsmd:langstring')[0];
+		langstring.firstChild.nodeValue = taskName;
 
+		addAttribute(resourceTag, "identifier", "ID_" + identifier);
+		addAttribute(resourceTag, "href", fileName);
+		let fileTag = resourceTag.getElementsByTagName('file')[0];
+		addAttribute(fileTag, "href", fileName);
 
+		if(identifiers.length>1){
+			for (let i = 1; i < identifiers.length; i++) {
+				let identifier = identifiers[i];
+				let taskName = taskNames[1];
+				let fileName = 'content_question_qti2_graphicgapmatch_' + identifier + '.xml';
+				let cloneResourceTag = resourceTag.cloneNode(true);
+
+				//Name
+				let metadata = cloneResourceTag.getElementsByTagName('metadata')[0];
+				let lom = metadata.getElementsByTagName('imsmd:lom')[0];
+				let general = lom.getElementsByTagName('imsmd:general')[0];
+				let title = general.getElementsByTagName('imsmd:title')[0];
+				let langstring = title.getElementsByTagName('imsmd:langstring')[0];
+				langstring.firstChild.nodeValue = taskName;
+
+				addAttribute(cloneResourceTag, "identifier", "ID_" + identifier);
+				addAttribute(cloneResourceTag, "href", fileName);
+				let fileTag = cloneResourceTag.getElementsByTagName('file')[0];
+				addAttribute(fileTag, "href", fileName);
+
+				resourcesTag.appendChild(cloneResourceTag);
+
+			}
+		}
+	}else{
+		let fileName = 'content_question_qti2_graphicgapmatch_' + identifiers + '.xml';
+
+		//MANIFEST
+		let manifestTag = myManifest.getElementsByTagName('manifest')[0];
+		let resourcesTag = manifestTag.getElementsByTagName('resources')[0];
+		let resourceTag = resourcesTag.getElementsByTagName('resource')[0];
+		addAttribute(resourceTag, "identifier", "ID_" + identifiers);
+		addAttribute(resourceTag, "href", fileName);
+		let fileTag = resourceTag.getElementsByTagName('file')[0];
+		addAttribute(fileTag, "href", fileName);
+	}
+
+}
+
+function add_metadata(myDoc, identifier){
 	//MAIN FILE
 	let ai = myDoc.getElementsByTagName('assessmentItem');
 	let assessmentItem = ai[0];
@@ -349,44 +398,80 @@ function addAttribute(element, attributeName, value){
 	return element
 }
 
-function run_dnd(jsonObject,filepath){
+function run_dnd(jsonObject){
 	//npm i rimraf
 	let rimraf = require('rimraf');
-	rimraf('zipThis', function () { continue_dnd(jsonObject,filepath);console.log('zipThis deleted'); });
+	rimraf('zipThis', function () { continue_dnd(jsonObject);console.log('zipThis deleted'); });
 
 
 }
-function continue_dnd(data,filepath){
+function continue_dnd(dataAll){
 	//npm install mkdirp
 	let mkdirp = require('mkdirp');
 	mkdirp('./zipThis', function (err) {
 		console.log("Create file errors:"+err);
 	});
-
-	zipFileName = data.fileName;
-	parsons2D = data.parsons2d;
-	lines = data.code;
-	console.log(lines);
-	lines = lines.split("\n");
-	
-	let taskIdentifier = generateID();
-	let myDoc = read_xml();
 	let myManifest = read_manifest();
 
-	add_metadata(myDoc,myManifest,taskIdentifier);
-	generate_python_lines(myDoc,lines,parsons2D);
 
-	write_xml(myDoc,taskIdentifier);
+	if(Array.isArray(dataAll)){
+		console.log("IS LIST");
+		zipFileName="listzip"
+		taskIdentifiers = []
+
+		for(let i = 0; i< dataAll.length; i++){
+			data = dataAll[i];
+
+			parsons2D = data.parsons2d;
+			lines = data.code;
+			console.log(data);
+			lines = lines.split("\n");
+
+			let taskIdentifier = generateID();
+			taskIdentifiers.push(taskIdentifier);
+
+			let myDoc = read_xml();
+			add_metadata(myDoc, taskIdentifier);
+			generate_python_lines(myDoc, lines, parsons2D);
+
+			write_xml(myDoc, taskIdentifier);
+		}
+		add_manifest_data(myManifest,taskIdentifiers, ["Hallaisen","hallusen"]);
+	}else{
+		data = dataAll;
+		console.log(data);
+		filepath = data.downloadPath;
+		zipFileName = data.fileName;
+		parsons2D = data.parsons2d;
+		lines = data.code;
+		console.log(lines);
+		lines = lines.split("\n");
+
+		let taskIdentifier = generateID();
+		let myDoc = read_xml();
+		let myManifest = read_manifest();
+
+		add_metadata(myDoc, taskIdentifier);
+		add_manifest_data(myManifest,taskIdentifier);
+		generate_python_lines(myDoc, lines, parsons2D);
+
+		write_xml(myDoc, taskIdentifier);
+
+	}
 	write_manifest(myManifest);
 
 	let zipFolder = require('zip-folder');
+	console.log(dataAll);
+	console.log(filepath);
+	/*
 
-	zipFolder('zipThis', filepath+'/'+zipFileName+'.zip', function (err) {
+	zipFolder('zipThis', filepath + '/' + zipFileName + '.zip', function (err) {
 		if (err) {
 			console.log('oh no!', err);
 		} else {
 			console.log('EXCELLENT');
 		}
 	});
+	*/
 	
 }
