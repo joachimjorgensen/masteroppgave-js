@@ -53,7 +53,7 @@
             </div>
 
             <div class="downloadAllContainer">
-                <button class="DownloadAllButton">Download All</button>
+                <button class="DownloadAllButton" onclick="downloadAll(editor.getValue()); return null">Download All</button>
             </div>
 
         </div>
@@ -110,7 +110,7 @@
                     </div>
 
                     <div class="downloadButtonContainer">
-                        <button class="downloadButton" onclick="download(editor.getValue()); return null">Download Task</button>
+                        <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Download Task</button>
                     </div>
 
                 </div>
