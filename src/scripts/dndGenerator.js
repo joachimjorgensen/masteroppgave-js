@@ -470,5 +470,8 @@ function continue_dnd(dataAll, filepath, fileName){
 			console.log('EXCELLENT');
 		}
 	});
+
+	let rimraf = require('rimraf');
+	rimraf('zipThis', function () { continue_dnd(jsonObject, filepath, fileName);console.log('zipThis deleted'); });
 	
 }
