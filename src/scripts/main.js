@@ -5,6 +5,7 @@ const path = require('path');
 const url = require('url');
 
 let database = {
+    allFileName: '',
     tasks: []
 };
 
@@ -16,9 +17,10 @@ let loadMain = function(){
     const downloadFolder = document.getElementById('downloadFolder');
     filepath = path.join(__dirname, '../../../../');
     var nameArray = filepath.split('/');
+
     downloadFolder.innerHTML = ".../" + nameArray[nameArray.length - 2] + "/" + nameArray[nameArray.length - 1];
     */
-
+  
     // Load all tasks in the database
     loadTaskList();
 
@@ -127,7 +129,7 @@ let loadTask = function(id) {
 
             console.log(task);
 
-            document.getElementById('fileName').value = task.fileName;
+            document.getElementById('taskTitleInput').value = task.fileName;
             document.getElementById('downloadFolder').innerHTML = task.downloadPath;
             document.getElementById('parsons2d').checked = task.parsons2d;
             editor.refresh();
@@ -180,6 +182,8 @@ let saveToQti = function() {
  */
 let downloadSingle = function() {
 
+    chooseDownloadFolder();
+
     let task = getTaskObject(currentId);
     let fileName = task.fileName;
 
@@ -199,9 +203,12 @@ let downloadSingle = function() {
  */
 let downloadAll = function() {
 
-    // No need to check if file name exists, when all files will be zipped in a folder anyway
-    let data = database.tasks;
-    run_dnd(data);
+    let allFileName = database.allFileName;
+
+    if (!fileExists(allFileName+'.zip')) {
+        let data = database.tasks;
+        run_dnd(data, allFileName);
+    }
 };
 
 
@@ -226,9 +233,9 @@ let chooseDownloadFolder = function(){
     }else{
         nameArray = filepath[0].split('/');
     }
+
     downloadFolder.innerHTML = ".../"+nameArray[nameArray.length-2]+"/"+nameArray[nameArray.length-1];
     */
-
 };
 
 
@@ -239,9 +246,9 @@ let chooseDownloadFolder = function(){
  */
 let getFileName = function() {
 
-    let fileName = document.getElementById('fileName').value
-        ? document.getElementById('fileName').value
-        : 'default';
+    let fileName = document.getElementById('taskTitleInput').value
+        ? document.getElementById('taskTitleInput').value
+        : '';
 
     return fileName;
 };
@@ -293,4 +300,13 @@ let addTask = function () {
 
     loadTaskList();
 
+};
+
+
+/**
+ * Update file name for all-tasks.zip
+ * @param allFileName
+ */
+let updateAllTasksTitle = function (allFileName) {
+    database.allFileName = allFileName;
 };
