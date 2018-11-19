@@ -217,12 +217,20 @@ let downloadAll = function() {
 let chooseDownloadFolder = function(){
 
     const {dialog} = require('electron').remote;
-    var nameArray;
-    let filepath = dialog.showOpenDialog({
+    //var nameArray;
+    /*let filepath = dialog.showOpenDialog({
         properties: ['openDirectory']
+    });*/
+
+    dialog.showSaveDialog((filepath) => {
+        if (filepath === undefined){
+            console.log("You didn't save the file");
+            return;
+        }
+
+        return filepath;
     });
 
-    return filepath;
     /*
     console.log(currentTask.downloadPath);
     if(!filepath){
