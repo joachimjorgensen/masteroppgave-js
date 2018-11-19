@@ -98,12 +98,13 @@ function add_manifest_data(myManifest, identifiers, taskNames){
 
 }
 
-function add_metadata(myDoc, identifier){
+function add_metadata(myDoc, identifier, taskTitle){
 	//MAIN FILE
 	let ai = myDoc.getElementsByTagName('assessmentItem');
 	let assessmentItem = ai[0];
 	//responseDeclarations = assessmentItem[0].getElementsByTagName('responseDeclaration')
 	addAttribute(assessmentItem, "identifier", identifier)
+	addAttribute(assessmentItem, "title", taskTitle)
 }
 function add_empty_hotspot(myDoc, hotspotX, hotspotY, hotspotWidth, hotspotHeight){
 	let newAssociableHotspotName = "associableHotspot"+generateID();
@@ -418,6 +419,7 @@ function continue_dnd(dataAll, filepath, fileName){
 		console.log("IS LIST");
 		zipFileName=fileName;
 		taskIdentifiers = [];
+		taskNames = [];
 
 		for(let i = 0; i< dataAll.length; i++){
 			data = dataAll[i];
@@ -430,13 +432,15 @@ function continue_dnd(dataAll, filepath, fileName){
 			let taskIdentifier = generateID();
 			taskIdentifiers.push(taskIdentifier);
 
+			taskNames.push(data.fileName)
+
 			let myDoc = read_xml();
-			add_metadata(myDoc, taskIdentifier);
+			add_metadata(myDoc, taskIdentifier, data.fileName);
 			generate_python_lines(myDoc, lines, parsons2D);
 
 			write_xml(myDoc, taskIdentifier);
 		}
-		add_manifest_data(myManifest,taskIdentifiers, ["Hallaisen","hallusen"]);
+		add_manifest_data(myManifest,taskIdentifiers, taskNames);
 	}else{
 		data = dataAll;
 		console.log(data);
@@ -450,7 +454,7 @@ function continue_dnd(dataAll, filepath, fileName){
 		let myDoc = read_xml();
 		let myManifest = read_manifest();
 
-		add_metadata(myDoc, taskIdentifier);
+		add_metadata(myDoc, taskIdentifier, data.fileName);
 		add_manifest_data(myManifest,taskIdentifier);
 		generate_python_lines(myDoc, lines, parsons2D);
 
@@ -472,6 +476,7 @@ function continue_dnd(dataAll, filepath, fileName){
 	});
 
 	let rimraf = require('rimraf');
-	rimraf('zipThis', function () { continue_dnd(jsonObject, filepath, fileName);console.log('zipThis deleted'); });
+	//Uncomment this if you want zipThis to be deleted
+	//rimraf('zipThis', function () { continue_dnd(jsonObject, filepath, fileName);console.log('zipThis deleted'); });
 	
 }
