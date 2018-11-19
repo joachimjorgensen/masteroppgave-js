@@ -42,6 +42,7 @@ let saveTask = function(id) {
     let code = editor.getValue();
     let fileName = getFileName();
     let parsons2d = getParsons2d();
+    let title = getTitle();
 
     let allTasks = database.tasks;
 
@@ -52,6 +53,7 @@ let saveTask = function(id) {
         if(task.id==id){
             task = {
                 ...task,
+                title: title,
                 code: code || '',
                 fileName: fileName,
                 parsons2d: parsons2d
@@ -61,6 +63,36 @@ let saveTask = function(id) {
         }
     }
 
+    updateTitleInTaskList(id);
+
+};
+
+
+/**
+ * Update the oppgave-title in the task list
+ * @param id
+ */
+let updateTitleInTaskList = function(id) {
+
+    let allTasks = database.tasks;
+    let taskList = document.getElementById('taskList');
+
+    for (let taskNum in allTasks) {
+
+        let task = allTasks[taskNum];
+
+        let taskTab = document.getElementById(task.id.toString());
+
+        if(task.id==id){
+
+            if (task.title) {
+
+                taskTab.firstElementChild.innerHTML = task.title;
+
+            }
+
+        }
+    }
 };
 
 
@@ -89,7 +121,7 @@ let loadTaskList = function() {
 
         let taskTitle = document.createElement('p');
         taskTitle.className = 'taskText';
-        taskTitle.innerHTML = 'Task ' + task.id;
+        taskTitle.innerHTML = task.title ? task.title : 'Task ' + (task.id + 1);
 
         taskListEntry.appendChild(taskTitle);
         taskList.appendChild(taskListEntry);
@@ -124,8 +156,6 @@ let loadTask = function(id) {
         if(task.id==id){
 
             taskTab.className = 'taskContainer selected';
-
-            console.log(task);
 
             document.getElementById('taskTitleInput').value = task.fileName;
             document.getElementById('parsons2d').checked = task.parsons2d;
@@ -271,6 +301,17 @@ let getFilePath = function() {
 };
 
 
+/**
+ * Return the chosen fileName. If none selected, 'default' is returned
+ *
+ * @returns {string}
+ */
+let getTitle = function() {
+
+    return document.getElementById('taskTitleInput').value;
+};
+
+
 
 /**
  * Checks if the parsons2d box is checked
@@ -294,6 +335,7 @@ let addTask = function () {
 
     let task = {
         id: id,
+        title: '',
         code: '',
         fileName: '',
         parsons2d: true
