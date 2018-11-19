@@ -33,6 +33,40 @@ let loadMain = function(){
 };
 
 
+let deleteTask = function() {
+    let id = currentId;
+    let newTaskList = [];
+    let allTasks = database.tasks;
+    let firstId = 1000000;
+
+    for (let taskNum in allTasks) {
+
+        let task = allTasks[taskNum];
+
+        if (task.id != id) {
+
+            // Keep track of the first element id in the list
+            firstId = task.id < firstId ? task.id : firstId;
+
+            newTaskList.push(task);
+        }
+    }
+
+    database.tasks = newTaskList;
+    loadTaskList();
+
+    if (firstId < 1000000) {
+        loadTask(firstId);
+    } else {
+        // Hide paper until the user chooses a task
+        let papers = document.getElementsByClassName('paper');
+        for (let i = 0; i < papers.length; i++) {
+            papers[i].style.display = 'none';
+        }
+    }
+};
+
+
 /**
  * Save current task to the database
  * @param id
@@ -346,6 +380,9 @@ let addTask = function () {
     taskCount++;
 
     loadTaskList();
+
+    // Load task
+    loadTask(id);
 
 };
 

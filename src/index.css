@@ -60,6 +60,16 @@ button {
     font-size: 16px;
 }
 
+.deleteButton {
+    background-color: darkred;
+    margin: 10px;
+}
+
+.deleteButton:hover {
+    background-color: red;
+    cursor: pointer;
+}
+
 input {
     outline: 0;
     border-width: 0 0 1px;
@@ -173,7 +183,7 @@ input:focus {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0 20px 0;
+    padding: 5px 0;
 }
 
 .taskTitleInput {
