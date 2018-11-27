@@ -177,20 +177,14 @@ let saveToQti = function() {
  * Download a single task to QTI format?
  * @param code
  */
-let downloadSingle = function() {
+async function downloadSingle() {
 
-    let filepath = chooseDownloadFolder();
+    let filepath = await chooseDownloadFolder();
 
     let task = getTaskObject(currentId);
-    let fileName = task.fileName;
 
-    if (!fileExists(fileName+'.zip')) {
-        run_dnd(task, filepath, task.fileName);
+    run_dnd(task, filepath);
 
-        //let jsonString = JSON.stringify(data);
-        //let requestDiv = document.getElementById('serverResponse');
-        //requestDiv.innerHTML = jsonString;
-    }
 };
 
 
@@ -198,16 +192,12 @@ let downloadSingle = function() {
  * Download all tasks to QTI format?
  * @param code
  */
-let downloadAll = function() {
+async function downloadAll() {
 
-    let filepath = chooseDownloadFolder();
+    let filepath = await chooseDownloadFolder();
 
-    let allFileName = database.allFileName;
-
-    if (!fileExists(allFileName+'.zip')) {
-        let data = database.tasks;
-        run_dnd(data, filepath, allFileName);
-    }
+    let data = database.tasks;
+    run_dnd(data, filepath);
 };
 
 
@@ -215,21 +205,26 @@ let downloadAll = function() {
  *
  */
 let chooseDownloadFolder = function(){
+    return new Promise((resolve, reject) =>{
+        const { dialog } = require('electron').remote;
+        //var nameArray;
+        /*let filepath = dialog.showOpenDialog({
+            properties: ['openDirectory']
+        });*/
 
-    const {dialog} = require('electron').remote;
-    //var nameArray;
-    /*let filepath = dialog.showOpenDialog({
-        properties: ['openDirectory']
-    });*/
+        dialog.showSaveDialog((filepath) => {
+            if (filepath === undefined) {
+                console.log("You didn't save the file");
+                reject();
+            }
+            else {
+                console.log("else");
+                resolve(filepath);
+            }
 
-    dialog.showSaveDialog((filepath) => {
-        if (filepath === undefined){
-            console.log("You didn't save the file");
-            return;
-        }
-
-        return filepath;
+        });
     });
+
 
     /*
     console.log(currentTask.downloadPath);

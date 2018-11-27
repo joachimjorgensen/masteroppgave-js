@@ -84,13 +84,22 @@ function add_manifest_data(myManifest, identifiers, taskNames){
 			}
 		}
 	}else{
-		let fileName = 'content_question_qti2_graphicgapmatch_' + identifiers + '.xml';
-
-		//MANIFEST
+		let identifier = identifiers;
+		let taskName = taskNames;
+		let fileName = 'content_question_qti2_graphicgapmatch_' + identifier + '.xml';
 		let manifestTag = myManifest.getElementsByTagName('manifest')[0];
 		let resourcesTag = manifestTag.getElementsByTagName('resources')[0];
 		let resourceTag = resourcesTag.getElementsByTagName('resource')[0];
-		addAttribute(resourceTag, "identifier", "ID_" + identifiers);
+
+		//Name
+		let metadata = resourceTag.getElementsByTagName('metadata')[0];
+		let lom = metadata.getElementsByTagName('imsmd:lom')[0];
+		let general= lom.getElementsByTagName('imsmd:general')[0];
+		let title = general.getElementsByTagName('imsmd:title')[0];
+		let langstring = title.getElementsByTagName('imsmd:langstring')[0];
+		langstring.firstChild.nodeValue = taskName;
+
+		addAttribute(resourceTag, "identifier", "ID_" + identifier);
 		addAttribute(resourceTag, "href", fileName);
 		let fileTag = resourceTag.getElementsByTagName('file')[0];
 		addAttribute(fileTag, "href", fileName);
@@ -98,14 +107,62 @@ function add_manifest_data(myManifest, identifiers, taskNames){
 
 }
 
-function add_metadata(myDoc, identifier, taskTitle){
+function add_metadata(myDoc, identifier, taskTitle, parsons2D){
 	//MAIN FILE
 	let ai = myDoc.getElementsByTagName('assessmentItem');
 	let assessmentItem = ai[0];
 	//responseDeclarations = assessmentItem[0].getElementsByTagName('responseDeclaration')
 	addAttribute(assessmentItem, "identifier", identifier)
 	addAttribute(assessmentItem, "title", taskTitle)
+
+
+	let newTitleTextNO = "Fullfor denne kule oppgaven!";
+	let newPromptTextNO = "NB! Husk holde i midten!";
+	/*
+	Lets do all in norwegian!
+	let newTitleTextNY = "Fullfori dykkja oppgavi!";
+	let newTitleTextEN = "Complete this awesome task!";
+
+	let newPromptTextNY = "NB! Huski holde i midkja!";
+	let newPromptTextEN = "NB! Remember to hold in middle!";
+	*/
+
+	let itemBody = assessmentItem.getElementsByTagName('itemBody')[0];
+	addAttribute(itemBody, "inspera:defaultLanguage","no_no");
+	addAttribute(itemBody, "inspera:supportedLanguages","no_no,en_us,no_no_ny");
+
+	//Set title text
+	let title = itemBody.getElementsByTagName('p');
+	title[0].firstChild.data = newTitleTextNO;
+
+	let englishTitle = addChildWithValue(myDoc, itemBody, "p", newTitleTextNO);
+	addAttribute(englishTitle,"lang","en_us");
+	addAttribute(englishTitle,"style","display: none;");
+	itemBody.insertBefore(englishTitle, title[0]); //Place the p in front of norwegian/original p
+
+	let nynorskTitle = addChildWithValue(myDoc, itemBody, "p", newTitleTextNO);
+	addAttribute(nynorskTitle,"lang","no_no_ny");
+	addAttribute(nynorskTitle,"style","display: none;");
+	itemBody.insertBefore(nynorskTitle, title[0]);
+
+	let graphicGapMatchInteraction = assessmentItem.getElementsByTagName('graphicGapMatchInteraction')[0];
+
+	//Set canvas height
+	//Should do here, but the canvasHeight is in generate_python_lines instead, so im doing it there
+	//addAttribute(graphicGapMatchInteraction, "inspera:canvasHeight",canvasHeight.toString());
+
+	//Set freeplacing
+	if(!parsons2D){
+		addAttribute(graphicGapMatchInteraction, "class", "freeplacing markHotspots")
+	}
+	//Set prompt text
+	let prompt = graphicGapMatchInteraction.getElementsByTagName("prompt")[0];
+	addAttribute(prompt, "inspera:label-lang-no_no",newPromptTextNO);
+	addAttribute(prompt, "inspera:label-lang-en_us",newPromptTextNO);
+	addAttribute(prompt, "inspera:label-lang-no_no_ny",newPromptTextNO);
+	prompt.firstChild.data = newPromptTextNO;
 }
+
 function add_empty_hotspot(myDoc, hotspotX, hotspotY, hotspotWidth, hotspotHeight){
 	let newAssociableHotspotName = "associableHotspot"+generateID();
 	let hotspotCoords = hotspotX.toString()+","+hotspotY.toString()+","+(hotspotX+hotspotWidth).toString()+","+(hotspotY+hotspotHeight).toString();
@@ -130,8 +187,8 @@ function add_draggable_pair(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight
 	let newGapImgName = "gapImg"+generateID();
 	let newAssociableHotspotName = "associableHotspot"+generateID();
 	let newGA = newGapImgName + " " + newAssociableHotspotName;
-	let newTitleText = "Fullfor denne kule oppgaven!";
-	let newPromptText = "Velg ett alternativ!";
+	//let newTitleText = "Fullfor denne kule oppgaven!";
+	//let newPromptText = "Velg ett alternativ!";
 	let hotspotCoords = hotspotX.toString()+","+hotspotY.toString()+","+(hotspotX+hotspotWidth).toString()+","+(hotspotY+hotspotHeight).toString();
 
 	let assessmentItem = myDoc.getElementsByTagName('assessmentItem');
@@ -153,14 +210,15 @@ function add_draggable_pair(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight
 	addAttribute(rd,"identifier",newGapImgName);
 
 	//Set title text
-	let title = assessmentItem[0].getElementsByTagName('p');
-	title[0].firstChild.data = newTitleText;
+	//let title = assessmentItem[0].getElementsByTagName('p');
+	//title[0].firstChild.data = newTitleText;
 
+	
 	let graphicGapMatchInteraction = assessmentItem[0].getElementsByTagName('graphicGapMatchInteraction')[0];
 
 	//Set canvas height
 	addAttribute(graphicGapMatchInteraction, "inspera:canvasHeight",canvasHeight.toString());
-
+	/*
 	//Set freeplacing
 	if(!parsons2D){
 		addAttribute(graphicGapMatchInteraction, "class", "freeplacing markHotspots")
@@ -168,6 +226,7 @@ function add_draggable_pair(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight
 	//Set prompt text
 	let prompt = graphicGapMatchInteraction.getElementsByTagName("prompt")[0];
 	prompt.firstChild.data = newPromptText;
+	*/
 
 	//Create gap image
 	/*
@@ -191,6 +250,8 @@ function add_draggable_pair(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight
 
 	let div = addChildWithAttribute(myDoc, obj, "div", "class", "text");
 	addChildWithValue(myDoc, div, "p", textInBox);
+	addAttribute(div, "inspera:label-lang-en_us",textInBox);
+	addAttribute(div, "inspera:label-lang-no_no_ny",textInBox);
 
 
 	//Create associableHotspot
@@ -226,6 +287,109 @@ function add_draggable_pair(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight
 	baseValue = addChildWithValue(myDoc, member, "baseValue", newGA);
 	addAttribute(baseValue, "baseType", "directedPair");
 	addChildWithAttribute(myDoc, member, "variable", "identifier","RESPONSE");
+}
+function add_distractor(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight1){
+	let boxX = boxX1.toString();
+	let boxY = boxY1.toString();
+	let boxWidth = get_length_of_word(textInBox).toString(); //str(len(textInBox)*10) #str(boxWidth)
+	let boxHeight = boxHeight1.toString();
+	let newGapImgName = "gapImg"+generateID();
+
+	let assessmentItem = myDoc.getElementsByTagName('assessmentItem');
+	let responseDeclarations = assessmentItem[0].getElementsByTagName('responseDeclaration');
+
+
+	//Add value to correctResponses
+	/*
+	let correctResponses = responseDeclarations[0].getElementsByTagName('correctResponse');
+	addChildWithValue(myDoc, correctResponses[0], "value", newGA);
+
+	//Add mapEntry to mapping
+	let mapping = responseDeclarations[0].getElementsByTagName('mapping');
+	let ele = addChildWithAttribute(myDoc, mapping[0], "mapEntry","mapKey", newGA);
+	addAttribute(ele, "mappedValue","1");
+	*/
+
+	//Add responseDecleration
+	let rd = addChildWithAttribute(myDoc, assessmentItem[0], "responseDeclaration", "baseType", "point");
+	addAttribute(rd,"cardinality","single");
+	addAttribute(rd,"identifier",newGapImgName);
+
+
+	let graphicGapMatchInteraction = assessmentItem[0].getElementsByTagName('graphicGapMatchInteraction')[0];
+
+	//Set canvas height
+	//addAttribute(graphicGapMatchInteraction, "inspera:canvasHeight",canvasHeight.toString());
+
+	//Set freeplacing
+	if(!parsons2D){
+		addAttribute(graphicGapMatchInteraction, "class", "freeplacing markHotspots")
+	}
+	//Set prompt text
+	//let prompt = graphicGapMatchInteraction.getElementsByTagName("prompt")[0];
+	//prompt.firstChild.data = newPromptText;
+
+	//Create gap image
+	/*
+	<gapImg identifier="gapImg__361670718761" matchMax="">
+            <object x="250" y="140" width="68" height="58">
+                
+                    <div class="text">
+                        <p> I</p>
+                    </div>
+                
+            </object>
+        </gapImg>
+	*/
+	let gi = addChildWithAttribute(myDoc, graphicGapMatchInteraction, "gapImg", "identifier", newGapImgName);
+	addAttribute(gi,"matchMax","");
+
+	let obj = addChildWithAttribute(myDoc, gi, "object","x",boxX);
+	addAttribute(obj,"y",boxY);
+	addAttribute(obj,"width",boxWidth);
+	addAttribute(obj,"height",boxHeight);
+
+	let div = addChildWithAttribute(myDoc, obj, "div", "class", "text");
+	addChildWithValue(myDoc, div, "p", textInBox);
+	addAttribute(div, "inspera:label-lang-en_us",textInBox);
+	addAttribute(div, "inspera:label-lang-no_no_ny",textInBox);
+
+
+	//Create associableHotspot
+	/*
+	let associableHotspot = addChildWithAttribute(myDoc, graphicGapMatchInteraction, "associableHotspot", "coords", hotspotCoords);
+	addAttribute(associableHotspot,"identifier",newAssociableHotspotName);
+	addAttribute(associableHotspot,"hotspotLabel","1");
+	addAttribute(associableHotspot,"shape","rect");
+	addAttribute(associableHotspot,"matchMax","0");
+	*/
+
+	//ResponseProcessing and isNull
+	let responseProcessing = assessmentItem[0].getElementsByTagName('responseProcessing')[0];
+	let responseConditions = responseProcessing.getElementsByTagName('responseCondition');
+	//ResponseCondition 1
+	let andResponse = responseConditions[0].getElementsByTagName('and')[0];
+	let isNull = addChildWithValue(myDoc, andResponse, "isNull", "");
+	addChildWithAttribute(myDoc, isNull, "variable", "identifier", newGapImgName);
+	//ResponseCondition 2
+	andResponse = responseConditions[1].getElementsByTagName('and')[0];
+	isNull = addChildWithValue(myDoc, andResponse, "isNull", "");
+	addChildWithAttribute(myDoc, isNull, "variable", "identifier", newGapImgName);
+	
+	let responseElseIfs = responseConditions[1].getElementsByTagName('responseElseIf');
+	//ResponseElseIf 1
+	andResponse = responseElseIfs[0].getElementsByTagName('and')[0];
+	//let member = addChildWithValue(myDoc, andResponse, "member", "");
+	//let baseValue = addChildWithValue(myDoc, member, "baseValue", newGA);
+	//addAttribute(baseValue, "baseType", "directedPair");
+	//addChildWithAttribute(myDoc, member, "variable", "identifier","RESPONSE");
+
+	//ResponseElseIf 1
+	//let orResponse = responseElseIfs[1].getElementsByTagName('or')[0];
+	//member = addChildWithValue(myDoc, orResponse, "member", "");
+	//baseValue = addChildWithValue(myDoc, member, "baseValue", newGA);
+	//addAttribute(baseValue, "baseType", "directedPair");
+	//addChildWithAttribute(myDoc, member, "variable", "identifier","RESPONSE");
 }
 
 function generateID(){
@@ -299,11 +463,18 @@ function stripMe(line){
 	return line.trim(); //Should remove \t \n and " "
 }
 
-function generateStartOptions(lines, height){
+function generateStartOptions(lines, height,distractors){
 	let longestLine = 0;
 	for (let i = 0; i < lines.length; i++) {
 		let line = lines[i];
 		let x = get_length_of_word(line);
+		if(x > longestLine){
+			longestLine = x;
+		}
+	}
+	for (let i = 0; i<distractors.length; i++){
+		let distractor = distractors[i];
+		let x = get_length_of_word(distractor);
 		if(x > longestLine){
 			longestLine = x;
 		}
@@ -313,14 +484,14 @@ function generateStartOptions(lines, height){
 	let maxOptionsEachLine = Math.floor((maxWidth/(longestLine+30)));
 	let xOptions = [];
 	for (x = 0; x < maxOptionsEachLine; x++) { 
-		xOptions.push((maxWidth-(maxWidth/(x+1)))+30);
+		//xOptions.push((maxWidth-(maxWidth/(x+1)))+30);
+		xOptions.push((maxWidth/maxOptionsEachLine)*x + 30);
 	}
 	let startOptions = [];
 	startY = (height*3)+(lines.length * height);
 	let counter = 0;
 	let yCounter = 0;
-	for (let i = 0; i < lines.length; i++) {
-		let line = lines[i];
+	for (let i = 0; i < lines.length+distractors.length; i++) {
 		startOptions.push([xOptions[counter],startY+((height*1.5)*yCounter)]);
 
 		counter ++;
@@ -332,14 +503,15 @@ function generateStartOptions(lines, height){
 	return startOptions;
 }
 function getRandomInt(max) {
-	return Math.floor(Math.random() * Math.floor(max));
+	let rand = Math.floor(Math.random() * Math.floor(max));
+	return rand;
   }
-function generate_python_lines(myDoc,lines,parsons2D){
+function generate_python_lines(myDoc,lines,parsons2D,distractors){
 	let startY = 50;
 	if(parsons2D){
 		let width = 40;
 		let height = 30;
-		let startOptions = generateStartOptions(lines,height);
+		let startOptions = generateStartOptions(lines,height,distractors);
 		let canvasHeight = startOptions[startOptions.length-1][1]+100;
 		let tabSize = findTabSize(lines);
 		let maxTabs = getMaxTabs(lines,tabSize);
@@ -348,7 +520,8 @@ function generate_python_lines(myDoc,lines,parsons2D){
 
 			let tabs = countTabs(line,tabSize);
 			let theString = stripMe(line);
-			let startOptionPair = startOptions.pop(getRandomInt(startOptions.length-1));
+			let startOptionPair = startOptions.splice(getRandomInt(startOptions.length-1),1)[0];
+			//let startOptionPair = startOptions.pop();
 			for (let i = 0; i < maxTabs+1; i++){
 				let startX = 220+(width*i)+i;
 				if(i==tabs){
@@ -359,10 +532,15 @@ function generate_python_lines(myDoc,lines,parsons2D){
 			}
 			startY += height +1;
 		}
+		for (let i = 0; i< distractors.length; i++){
+			let startOptionPair = startOptions.splice(getRandomInt(startOptions.length-1),1)[0];
+			//let startOptionPair = startOptions.pop();
+			add_distractor(myDoc,distractors[i],startOptionPair[0],startOptionPair[1],10,height);
+		}
 	}else{
 		let width = 500;
 		let height = 30;
-		let startOptions = generateStartOptions(lines,height);
+		let startOptions = generateStartOptions(lines,height,distractors);
 		let canvasHeight = startOptions[startOptions.length-1][1]+100;
 		for (let i = 0; i < lines.length; i++) {
 			let line = lines[i];
@@ -371,6 +549,11 @@ function generate_python_lines(myDoc,lines,parsons2D){
 			let startX = 50;
 			add_draggable_pair(myDoc,theString,startOptionPair[0],startOptionPair[1],width,height,startX,startY,width,height, canvasHeight, parsons2D);
 			startY += height+1;
+		}
+		for (let i = 0; i< distractors.length; i++){
+			//let startOptionPair = startOptions.pop(getRandomInt(startOptions.length-1));
+			let startOptionPair = startOptions.splice(getRandomInt(startOptions.length-1),1)[0];
+			add_distractor(myDoc,distractors[i],startOptionPair[0],startOptionPair[1],10,height);
 		}
 	}
 }
@@ -399,25 +582,26 @@ function addAttribute(element, attributeName, value){
 	return element
 }
 
-function run_dnd(jsonObject, filepath, fileName){
+function run_dnd(jsonObject, filepath){
 	//npm i rimraf
 	let rimraf = require('rimraf');
-	rimraf('zipThis', function () { continue_dnd(jsonObject, filepath, fileName);console.log('zipThis deleted'); });
+	rimraf('zipThis', function () { continue_dnd(jsonObject, filepath);console.log('zipThis deleted'); });
 
 
 }
-function continue_dnd(dataAll, filepath, fileName){
+function continue_dnd(dataAll, filepath){
 	//npm install mkdirp
 	let mkdirp = require('mkdirp');
 	mkdirp('./zipThis', function (err) {
 		console.log("Create file errors:"+err);
 	});
 	let myManifest = read_manifest();
+	let distractors = ["Hello ima distractor","Distractiiiing","LOOOK HERE MOFO"];
 
 
 	if(Array.isArray(dataAll)){
-		console.log("IS LIST");
-		zipFileName=fileName;
+		console.log("Download multiple tasks");
+		//zipFileName=fileName;
 		taskIdentifiers = [];
 		taskNames = [];
 
@@ -435,48 +619,52 @@ function continue_dnd(dataAll, filepath, fileName){
 			taskNames.push(data.fileName)
 
 			let myDoc = read_xml();
-			add_metadata(myDoc, taskIdentifier, data.fileName);
-			generate_python_lines(myDoc, lines, parsons2D);
+			add_metadata(myDoc, taskIdentifier, data.fileName, parsons2D);
+			generate_python_lines(myDoc, lines, parsons2D,distractors);
 
 			write_xml(myDoc, taskIdentifier);
 		}
 		add_manifest_data(myManifest,taskIdentifiers, taskNames);
 	}else{
-		data = dataAll;
+		console.log("Download one task");
 		console.log(data);
-		zipFileName = fileName;
+		data = dataAll;
+		//zipFileName = fileName;
 		parsons2D = data.parsons2d;
 		lines = data.code;
-		console.log(lines);
 		lines = lines.split("\n");
 
 		let taskIdentifier = generateID();
 		let myDoc = read_xml();
-		let myManifest = read_manifest();
 
-		add_metadata(myDoc, taskIdentifier, data.fileName);
-		add_manifest_data(myManifest,taskIdentifier);
-		generate_python_lines(myDoc, lines, parsons2D);
+		add_metadata(myDoc, taskIdentifier, data.fileName, parsons2D);
+		generate_python_lines(myDoc, lines, parsons2D, distractors);
 
 		write_xml(myDoc, taskIdentifier);
+		add_manifest_data(myManifest,taskIdentifier, data.fileName);
 
 	}
 	write_manifest(myManifest);
 
-	let zipFolder = require('zip-folder');
-	console.log(dataAll);
-	console.log(filepath);
 
-	zipFolder('zipThis', filepath + '/' + zipFileName + '.zip', function (err) {
+	setTimeout(function(){zipAndDelete(filepath)},1000);
+
+	
+}
+function zipAndDelete(filepath){
+	let zipFolder = require('zip-folder');
+	console.log(filepath);
+	//zipFolder('zipThis', filepath + '/' + zipFileName + '.zip', function (err) {
+	zipFolder('zipThis', filepath+'.zip', function (err) {
 		if (err) {
-			console.log('oh no!', err);
+			console.log('Error zip folder: ', err);
 		} else {
-			console.log('EXCELLENT');
+			console.log('Zip folder successful!');
 		}
 	});
 
 	let rimraf = require('rimraf');
 	//Uncomment this if you want zipThis to be deleted
 	//rimraf('zipThis', function () { continue_dnd(jsonObject, filepath, fileName);console.log('zipThis deleted'); });
-	
+
 }
