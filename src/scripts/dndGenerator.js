@@ -626,9 +626,9 @@ function continue_dnd(dataAll, filepath){
 		}
 		add_manifest_data(myManifest,taskIdentifiers, taskNames);
 	}else{
+        data = dataAll;
 		console.log("Download one task");
 		console.log(data);
-		data = dataAll;
 		//zipFileName = fileName;
 		parsons2D = data.parsons2d;
 		lines = data.code;

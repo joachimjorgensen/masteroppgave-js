@@ -1,0 +1,89 @@
+button {
+    background-color: #4CAF50;
+    border-radius: 3px;
+    padding: 10px 25px;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+/* ------------------------------- */
+
+.deleteButton {
+    background-color: darkred;
+    margin: 10px;
+}
+
+.deleteButton:hover {
+    background-color: red;
+    cursor: pointer;
+}
+
+/* ------------------------------- */
+
+.taskButton {
+    margin: 10px;
+}
+
+.taskButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}
+
+/* ------------------------------- */
+
+.fileChooserButton {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    border-radius: 3px;
+    padding: 8px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.8em;
+}
+
+.fileChooserButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}
+
+/* ------------------------------- */
+
+.chooseFolderButton {
+    font-size: 14px;
+    margin: 0 10px;
+    padding: 5px 20px;
+}
+
+.chooseFolderButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}
+
+/* ------------------------------- */
+
+.downloadButton {
+    margin: 0 10px;
+}
+
+.downloadButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}
+
+/* ------------------------------- */
+
+.DownloadAllButton {
+    width: 100%;
+    margin: 0;
+}
+
+.DownloadAllButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}

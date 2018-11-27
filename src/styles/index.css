@@ -1,0 +1,17 @@
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin: 0;
+    height: 735px;
+
+    background-color: #cecece;
+}
+
+.main {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 100%;
+}

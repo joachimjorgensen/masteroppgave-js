@@ -1,0 +1,47 @@
+.taskBar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 0;
+    flex: 15%;
+
+    background-color: #1d1d1b;
+}
+
+.taskList {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: scroll;
+}
+
+.taskListContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.newTaskContainer {
+    text-align: center;
+}
+
+.taskContainer {
+    border-left: thick solid transparent;
+    padding: 10px 10px;
+}
+
+.taskContainer:hover {
+    border-left: thick solid #54b7ff;
+    background-color: #333333;
+    cursor: pointer;
+}
+
+.taskContainer.selected {
+    border-left: thick solid #54b7ff;
+    background-color: #333333;
+    padding: 10px 10px;
+}
+
+.downloadAllContainer {
+    padding: 10px;
+}

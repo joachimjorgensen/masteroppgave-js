@@ -1,0 +1,42 @@
+.distractorContainer {
+    flex: 1;
+}
+
+.distractorContainer h2 {
+    margin: 0;
+}
+
+.distractorInputContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+.distractorForm {
+    width: 100%;
+    display: flex;
+}
+
+.addDistractorButton {
+    padding: 3px 15px;
+    font-size: 0.8em;
+}
+
+.addDistractorButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}
+
+.distractorInput {
+    flex: 1;
+    margin-left: 5px;
+}
+
+.distractorTextContainer {
+    margin: 2px;
+    padding: 5px;
+
+    background-color: lightgray;
+    border-radius: 5px;
+}

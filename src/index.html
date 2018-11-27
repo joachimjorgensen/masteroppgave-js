@@ -5,12 +5,23 @@
     <title>Title</title>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/applicationHeader.css">
+    <link rel="stylesheet" href="styles/taskBar.css">
+    <link rel="stylesheet" href="styles/task.css">
+    <link rel="stylesheet" href="styles/text.css">
+    <link rel="stylesheet" href="styles/distractors.css">
+    <link rel="stylesheet" href="styles/buttons.css">
+    <link rel="stylesheet" href="styles/input.css">
 
     <!-- JAVASCRIPT FILES -->
     <script src="scripts/main.js"></script>
     <script src="scripts/fileHandler.js"></script>
     <script src="scripts/dndGenerator.js"></script>
+    <script src="scripts/distractors.js"></script>
+    <script src="scripts/download.js"></script>
+    <script src="scripts/taskHandler.js"></script>
+    <script src="scripts/getters.js"></script>
 
     <!-- Create a simple CodeMirror instance -->
     <script src="node_modules/codemirror/lib/codemirror.js"></script>
@@ -60,12 +71,12 @@
 
 
 
-        <div class="container">
+        <div class="task">
 
             <div class="paper">
 
                 <div class="taskTitleContainer">
-                    <input class="taskTitleInput" id="taskTitleInput" type="text" name="titleInput" value="" placeholder="Title" onchange="saveToQti(); return null">
+                    <input class="taskTitleInput" id="taskTitleInput" type="text" name="titleInput" value="" placeholder="Title" onchange="saveTask(); return null">
                     <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Download Task</button>
                 </div>
 
@@ -90,11 +101,11 @@
 
                 </div>
 
-                <div class="editorContainer">
+                <div class="codeContainer">
 
-                    <div class="editor" id="codeArea" onchange="saveToQti(); return null"></div>
+                    <div class="editor" id="codeArea" onchange="saveTask(); return null"></div>
 
-                    <div class="dragAndDropArea" id="dragAndDropArea">
+                    <div class="distractorContainer" id="distractorContainer">
                         <h2>Distractors</h2>
 
                         <div class="distractorInputContainer">

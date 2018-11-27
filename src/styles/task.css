@@ -1,0 +1,51 @@
+.task {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex: 85%;
+
+    background-color: #cecece;
+
+    overflow: scroll;
+}
+
+.paper {
+    background-color: white;
+    padding: 20px;
+    margin: 10px 10px 0 10px;
+    border-radius: 3px;
+}
+
+.taskTitleContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.editorOptionsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.parsonsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.codeContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.editor {
+    flex: 1;
+    padding-right: 10px;
+}

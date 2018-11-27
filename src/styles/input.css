@@ -1,0 +1,30 @@
+input {
+    outline: 0;
+    border-width: 0 0 1px;
+    border-color: #1d1d1b;
+    margin-left: 0;
+    font-size: 1em;
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: 200;
+}
+
+input:hover {
+    border-color: #54b7ff
+}
+
+input:focus {
+    border-color: #54b7ff
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.taskTitleInput {
+    font-size: 2em;
+    margin-left: 0;
+}
+
+.checkBox {
+
+}

@@ -1,0 +1,39 @@
+p {
+    font-family: "Helvetica Neue", sans-serif;
+    margin: 0;
+}
+
+h2 {
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: 200;
+}
+
+.taskHeader {
+    color: white;
+    text-align: center;
+}
+
+.taskText {
+    color: white;
+}
+
+.infoText {
+
+}
+
+.parsonText {
+
+}
+
+.instructionText {
+    width: 130px;
+}
+
+.titleText {
+    font-size: 3em;
+    padding: 0 10px;
+    margin: 0;
+    color: white;
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: 100;
+}

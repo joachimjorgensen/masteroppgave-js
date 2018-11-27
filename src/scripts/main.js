@@ -4,14 +4,23 @@
 const path = require('path');
 const url = require('url');
 
+
+/**
+ * "Database" containing the tasks
+ */
 let database = {
     allFileName: '',
     tasks: []
 };
 
+// Counters
 let taskCount = 0;
 let currentId= 0;
 
+
+/**
+ * Function that runs on init
+ */
 let loadMain = function(){
     /*
     const downloadFolder = document.getElementById('downloadFolder');
@@ -33,178 +42,8 @@ let loadMain = function(){
 };
 
 
-let loadDistractors = function() {
-
-    let distractorListContainer = document.getElementById('distractorListContainer');
-
-    // Remove List elements
-    while (distractorListContainer.firstChild) {
-        distractorListContainer.removeChild(distractorListContainer.firstChild);
-    }
-
-    let id = currentId;
-    let allTasks = database.tasks;
-
-    for (let taskNum in allTasks) {
-
-        let task = allTasks[taskNum];
-
-        if (task.id == id) {
-
-            let allDistractors = task.distractors;
-
-            for(let distractorNum in allDistractors) {
-
-                let distractor = allDistractors[distractorNum];
-
-                let distractorTextContainer = document.createElement('div');
-                distractorTextContainer.className = 'distractorTextContainer';
-
-                let distractorText = document.createElement('p');
-                distractorText.innerHTML = distractor;
-
-                distractorTextContainer.appendChild(distractorText);
-
-                distractorListContainer.appendChild(distractorTextContainer);
-            }
-
-        }
-    }
-};
-
-
-
-let addDistractor = function() {
-
-    // Stop the page from refreshing on submit
-    event.preventDefault();
-
-    let id = currentId;
-
-    let distractor = document.forms["distractorForm"]["distractorInput"].value;
-
-    let allTasks = database.tasks;
-
-    for (let taskNum in allTasks) {
-
-        let task = allTasks[taskNum];
-
-        if (task.id == id) {
-
-            task.distractors.push(distractor);
-
-        }
-    }
-
-    // Empty the input field on submit
-    document.forms["distractorForm"]["distractorInput"].value = '';
-
-    loadDistractors();
-};
-
-
 /**
- * Delete task from list of tasks
- */
-let deleteTask = function() {
-    let id = currentId;
-    let newTaskList = [];
-    let allTasks = database.tasks;
-    let firstId = 1000000;
-
-    for (let taskNum in allTasks) {
-
-        let task = allTasks[taskNum];
-
-        if (task.id != id) {
-
-            // Keep track of the first element id in the list
-            firstId = task.id < firstId ? task.id : firstId;
-
-            newTaskList.push(task);
-        }
-    }
-
-    database.tasks = newTaskList;
-    loadTaskList();
-
-    if (firstId < 1000000) {
-        loadTask(firstId);
-    } else {
-        // Hide paper until the user chooses a task
-        let papers = document.getElementsByClassName('paper');
-        for (let i = 0; i < papers.length; i++) {
-            papers[i].style.display = 'none';
-        }
-    }
-};
-
-
-/**
- * Save current task to the database
- * @param id
- */
-let saveTask = function(id) {
-
-    let code = editor.getValue();
-    let fileName = getFileName();
-    let parsons2d = getParsons2d();
-    let title = getTitle();
-
-    let allTasks = database.tasks;
-
-    for (let taskNum in allTasks) {
-
-        let task = allTasks[taskNum];
-
-        if(task.id==id){
-            task = {
-                ...task,
-                title: title,
-                code: code || '',
-                fileName: fileName,
-                parsons2d: parsons2d
-            };
-
-            allTasks[taskNum] = task;
-        }
-    }
-
-    updateTitleInTaskList(id);
-
-};
-
-
-/**
- * Update the oppgave-title in the task list
- * @param id
- */
-let updateTitleInTaskList = function(id) {
-
-    let allTasks = database.tasks;
-    let taskList = document.getElementById('taskList');
-
-    for (let taskNum in allTasks) {
-
-        let task = allTasks[taskNum];
-
-        let taskTab = document.getElementById(task.id.toString());
-
-        if(task.id==id){
-
-            if (task.title) {
-
-                taskTab.firstElementChild.innerHTML = task.title;
-
-            }
-
-        }
-    }
-};
-
-
-/**
- * Update the list of tasks in the TaskList
+ * Update the list of tasks in the taskBar
  */
 let loadTaskList = function() {
 
@@ -239,7 +78,6 @@ let loadTaskList = function() {
 
 /**
  * Update the input fields to the values of current task
- * @param id
  */
 let loadTask = function(id) {
 
@@ -275,190 +113,13 @@ let loadTask = function(id) {
         }
     }
 
-    saveToQti();
+    saveTask();
     loadDistractors();
 };
 
 
 /**
- * Returns a task given an id
- * @param id
- * @returns {*}
- */
-let getTaskObject = function(id) {
-
-    let allTasks = database.tasks;
-
-    for (let taskNum in allTasks) {
-        let task = allTasks[taskNum];
-        if (task.id == id) {
-            return task;
-        }
-    }
-
-    return 'Error: no task do not exist';
-};
-
-
-/**
- * Save the code to QTI format?
- * @param code
- */
-let saveToQti = function() {
-    saveTask(currentId);
-    //let textArea = document.getElementById('textArea');
-    //textArea.innerHTML = editor.getValue();
-};
-
-
-/**
- * Download a single task to QTI format?
- * @param code
- */
-async function downloadSingle() {
-
-    let filepath = await chooseDownloadFolder();
-
-    let task = getTaskObject(currentId);
-
-    run_dnd(task, filepath);
-
-};
-
-
-/**
- * Download all tasks to QTI format?
- * @param code
- */
-async function downloadAll() {
-
-    let filepath = await chooseDownloadFolder();
-
-    let data = database.tasks;
-    run_dnd(data, filepath);
-};
-
-
-/**
- *
- */
-let chooseDownloadFolder = function(){
-    return new Promise((resolve, reject) =>{
-        const { dialog } = require('electron').remote;
-        //var nameArray;
-        /*let filepath = dialog.showOpenDialog({
-            properties: ['openDirectory']
-        });*/
-
-        dialog.showSaveDialog((filepath) => {
-            if (filepath === undefined) {
-                console.log("You didn't save the file");
-                reject();
-            }
-            else {
-                console.log("else");
-                resolve(filepath);
-            }
-
-        });
-    });
-
-
-    /*
-    console.log(currentTask.downloadPath);
-    if(!filepath){
-        filepath = path.join(__dirname, '../../../../');
-        nameArray = filepath.split('/');
-    }else{
-        nameArray = filepath[0].split('/');
-    }
-
-    downloadFolder.innerHTML = ".../"+nameArray[nameArray.length-2]+"/"+nameArray[nameArray.length-1];
-    */
-};
-
-
-/**
- * Return the chosen fileName. If none selected, 'default' is returned
- *
- * @returns {string}
- */
-let getFileName = function() {
-
-    let fileName = document.getElementById('taskTitleInput').value
-        ? document.getElementById('taskTitleInput').value
-        : '';
-
-    return fileName;
-};
-
-
-/**
- * Return the chosen fileName. If none selected, 'default' is returned
- *
- * @returns {string}
-*/
-let getFilePath = function() {
-
-    return filepath;
-};
-
-
-/**
- * Return the chosen fileName. If none selected, 'default' is returned
- *
- * @returns {string}
- */
-let getTitle = function() {
-
-    return document.getElementById('taskTitleInput').value;
-};
-
-
-
-/**
- * Checks if the parsons2d box is checked
- *
- * @returns {boolean|Array|string|ga.selectors.pseudos.checked|*}
- */
-let getParsons2d = function () {
-
-    let parsons2d = document.getElementById('parsons2d').checked;
-
-    return parsons2d;
-};
-
-
-/**
- * Add empty  task to list of tasks
- */
-let addTask = function () {
-
-    let id = taskCount;
-
-    let task = {
-        id: id,
-        title: '',
-        code: '',
-        fileName: '',
-        parsons2d: true,
-        distractors: []
-    };
-
-    database.tasks.push(task);
-
-    taskCount++;
-
-    loadTaskList();
-
-    // Load task
-    loadTask(id);
-
-};
-
-
-/**
- * Update file name for all-tasks.zip
+ * Update file name for all-tasks.zip (Read: The name of the zip folder containing all the tasks)
  * @param allFileName
  */
 let updateAllTasksTitle = function (allFileName) {
