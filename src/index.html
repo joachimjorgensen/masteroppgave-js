@@ -95,16 +95,23 @@
                     <div class="editor" id="codeArea" onchange="saveToQti(); return null"></div>
 
                     <div class="dragAndDropArea" id="dragAndDropArea">
-                        <textarea id="textArea" rows="22" cols="69"></textarea>
+                        <h2>Distractors</h2>
+
+                        <div class="distractorInputContainer">
+
+                            <form name="distractorForm" class="distractorForm" onSubmit="addDistractor(event)">
+                                <button type="submit" class="addDistractorButton">Add</button>
+                                <input type="text" class="distractorInput" id="distractorInput" name="distractorInput" placeholder="Distractor">
+                            </form>
+
+                        </div>
+
+                        <div class="distractorListContainer" id="distractorListContainer">
+
+                        </div>
                     </div>
 
                 </div>
-
-            </div>
-
-            <div class="paper">
-
-              <h2>Distractors</h2>
 
             </div>
 
@@ -133,6 +140,8 @@
             theme: "dracula",
             extraKeys: {'Ctrl-Space': 'autocomplete'},
         });
+
+        editor.setSize(550, 300);
 
     </script>
 

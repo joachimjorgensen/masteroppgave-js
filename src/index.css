@@ -1,6 +1,4 @@
 
-/* --------------- STRUCTURE ---------------- */
-
 body {
     display: flex;
     flex-direction: column;
@@ -39,8 +37,6 @@ body {
     overflow: scroll;
 }
 
-/* --------------- GENERAL ---------------- */
-
 .paper {
     background-color: white;
     padding: 20px;
@@ -74,7 +70,10 @@ input {
     outline: 0;
     border-width: 0 0 1px;
     border-color: #1d1d1b;
-    margin-left: 10px;
+    margin-left: 0;
+    font-size: 1em;
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: 200;
 }
 
 input:hover {
@@ -89,8 +88,6 @@ input:focus {
 
 }
 
-/* --------------- HEADER ---------------- */
-
 .header {
     background-color: #54b7ff;
     padding: 10px 10px;
@@ -104,8 +101,6 @@ input:focus {
     font-family: "Helvetica Neue";
     font-weight: 100;
 }
-
-/* ------------- TASK BAR ---------------- */
 
 .taskHeaderContainer {
 
@@ -176,8 +171,6 @@ input:focus {
     background-color: transparent;
 }
 
-/* -------------- EDITOR ----------------- */
-
 .taskTitleContainer {
     display: flex;
     flex-direction: row;
@@ -231,19 +224,17 @@ input[type="file"] {
     border: none;
     color: white;
     border-radius: 3px;
-    padding: 10px 25px;
+    padding: 8px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: 0.8em;
 }
 
 .fileChooserButton:hover {
     background-color: #3b843e;
     cursor: pointer;
 }
-
-/* ------------- DOWNLOAD ---------------- */
 
 .downloadPaper {
     display: flex;
@@ -295,12 +286,53 @@ input[type="file"] {
     cursor: pointer;
 }
 
+.dragAndDropArea h2 {
+    margin: 0;
+}
 
-/* --------------- TEXT ---------------- */
+.distractorInputContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+.distractorForm {
+    width: 100%;
+    display: flex;
+}
+
+.addDistractorButton {
+    padding: 3px 15px;
+    font-size: 0.8em;
+}
+
+.addDistractorButton:hover {
+    background-color: #3b843e;
+    cursor: pointer;
+}
+
+.distractorInput {
+    flex: 1;
+    margin-left: 5px;
+}
+
+.distractorTextContainer {
+    margin: 2px;
+    padding: 5px;
+
+    background-color: lightgray;
+    border-radius: 5px;
+}
 
 p {
-    font-family: "Helvetica Neue";
+    font-family: "Helvetica Neue", sans-serif;
     margin: 0;
+}
+
+h2 {
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: 200;
 }
 
 .taskHeader {
