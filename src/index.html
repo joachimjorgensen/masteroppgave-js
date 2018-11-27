@@ -53,11 +53,6 @@
             </div>
 
             <div class="downloadAllContainer">
-                <input class="allTaskTitleInput"
-                       id="allTasksTitleInput"
-                       type="text" name="titleInput"
-                       value="" placeholder="Enter File Name"
-                       onchange="fileExists(value); updateAllTasksTitle(value)">
                 <button class="DownloadAllButton" onclick="downloadAll(editor.getValue()); return null">Download All</button>
             </div>
 
@@ -74,8 +69,10 @@
                     <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Download Task</button>
                 </div>
 
-                <p class="infoText">Please choose a file to upload, or type code in the editor window.</p>
-                <br>
+                <div class="taskTitleContainer">
+                    <p class="infoText">Please choose a file to upload, or type code in the editor window.</p>
+                    <button class="deleteButton" onclick="deleteTask(); return null">Delete Task</button>
+                </div>
 
                 <div class="editorOptionsContainer">
 
@@ -98,16 +95,23 @@
                     <div class="editor" id="codeArea" onchange="saveToQti(); return null"></div>
 
                     <div class="dragAndDropArea" id="dragAndDropArea">
-                        <textarea id="textArea" rows="22" cols="69"></textarea>
+                        <h2>Distractors</h2>
+
+                        <div class="distractorInputContainer">
+
+                            <form name="distractorForm" class="distractorForm" onSubmit="addDistractor(event)">
+                                <button type="submit" class="addDistractorButton">Add</button>
+                                <input type="text" class="distractorInput" id="distractorInput" name="distractorInput" placeholder="Distractor">
+                            </form>
+
+                        </div>
+
+                        <div class="distractorListContainer" id="distractorListContainer">
+
+                        </div>
                     </div>
 
                 </div>
-
-            </div>
-
-            <div class="paper">
-
-              <h2>Distractors</h2>
 
             </div>
 
@@ -136,6 +140,8 @@
             theme: "dracula",
             extraKeys: {'Ctrl-Space': 'autocomplete'},
         });
+
+        editor.setSize(550, 300);
 
     </script>
 
