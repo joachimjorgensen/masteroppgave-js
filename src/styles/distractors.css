@@ -34,9 +34,32 @@
 }
 
 .distractorTextContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     margin: 2px;
     padding: 5px;
 
     background-color: lightgray;
     border-radius: 5px;
+}
+
+.distractorTextContainer:hover {
+    background-color: gray;
+}
+
+.distractorDeleteButton {
+    background-color: darkred;
+    padding: 4px 8px;
+    font-size: 8px;
+    display: none;
+}
+
+.distractorDeleteButton:hover {
+    background-color: red;
+    cursor: pointer;
+}
+
+.distractorTextContainer:hover .distractorDeleteButton {
+    display: inline-block;
 }

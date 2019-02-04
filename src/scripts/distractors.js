@@ -36,7 +36,13 @@ let loadDistractors = function() {
                 let distractorText = document.createElement('p');
                 distractorText.innerHTML = distractor;
 
+                let distractorDeleteButton = document.createElement('button');
+                distractorDeleteButton.innerHTML = 'X';
+                distractorDeleteButton.setAttribute('onclick', 'deleteDistractor(' + distractorNum + ')');
+                distractorDeleteButton.className = 'distractorDeleteButton';
+
                 distractorTextContainer.appendChild(distractorText);
+                distractorTextContainer.appendChild(distractorDeleteButton);
 
                 distractorListContainer.appendChild(distractorTextContainer);
             }
@@ -73,6 +79,31 @@ let addDistractor = function() {
 
     // Empty the input field on submit
     document.forms["distractorForm"]["distractorInput"].value = '';
+
+    loadDistractors();
+};
+
+
+/**
+ * Remove a distractor from current task
+ */
+let deleteDistractor = function(distractorId) {
+
+    // Stop the page from refreshing on submit
+    event.preventDefault();
+
+    let id = currentId;
+    let allTasks = database.tasks;
+
+    for (let taskNum in allTasks) {
+
+        let task = allTasks[taskNum];
+
+        if (task.id == id) {
+
+            task.distractors.splice(distractorId, 1);
+        }
+    }
 
     loadDistractors();
 };
