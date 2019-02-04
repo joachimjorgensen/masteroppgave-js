@@ -596,7 +596,7 @@ function continue_dnd(dataAll, filepath){
 		console.log("Create file errors:"+err);
 	});
 	let myManifest = read_manifest();
-	let distractors = ["Hello ima distractor","Distractiiiing","LOOOK HERE MOFO"];
+	let distractors = [];
 
 
 	if(Array.isArray(dataAll)){
@@ -607,6 +607,7 @@ function continue_dnd(dataAll, filepath){
 
 		for(let i = 0; i< dataAll.length; i++){
 			data = dataAll[i];
+			distractors = data.distractors;
 
 			parsons2D = data.parsons2d;
 			lines = data.code;
@@ -627,6 +628,7 @@ function continue_dnd(dataAll, filepath){
 		add_manifest_data(myManifest,taskIdentifiers, taskNames);
 	}else{
         data = dataAll;
+		distractors = data.distractors;
 		console.log("Download one task");
 		console.log(data);
 		//zipFileName = fileName;
