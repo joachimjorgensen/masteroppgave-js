@@ -13,6 +13,12 @@
     align-items: flex-end;
 }
 
+.distractorHeader {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+}
+
 .distractorForm {
     width: 100%;
     display: flex;

@@ -64,7 +64,7 @@
             </div>
 
             <div class="downloadAllContainer">
-                <button class="DownloadAllButton" onclick="downloadAll(editor.getValue()); return null">Download All</button>
+                <button class="DownloadAllButton" onclick="downloadAll(editor.getValue()); return null">Export All</button>
             </div>
 
         </div>
@@ -77,7 +77,7 @@
 
                 <div class="taskTitleContainer">
                     <input class="taskTitleInput" id="taskTitleInput" type="text" name="titleInput" value="" placeholder="Title" onchange="saveTask(); return null">
-                    <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Download Task</button>
+                    <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Export Task</button>
                 </div>
 
                 <div class="taskTitleContainer">
@@ -95,8 +95,21 @@
                     </div>
 
                     <div class="parsonsContainer">
-                        <p class="parsonText">Parsons2D </p>
-                        <input class="checkBox" id='parsons2d' type="checkbox" name="parsons2d" value="" checked>
+                        <p class="parsonText">With indenting</p>
+                        <div class="tooltip">
+                            <img src="./res/HelperCircle.png" class="helperIcon" alt="Helper circle" width="16" height="16" />
+                            <div class="tooltipImage">
+                                <div class="tooltipSubDiv">
+                                    <p>With indenting:</p>
+                                    <img src="./res/Parson2D.png" alt="Helper circle" width="150" />
+                                </div>
+                                <div class="tooltipSubDiv">
+                                    <p>Without indenting:</p>
+                                    <img src="./res/NotParson2D.png" alt="Helper circle" width="150" />
+                                </div>
+                            </div>
+                        </div>
+                        <input class="checkBox" id='parsons2d' onchange="saveTask()" type="checkbox" name="parsons2d" value="" checked>
                     </div>
 
                 </div>
@@ -106,7 +119,15 @@
                     <div class="editor" id="codeArea" onchange="saveTask(); return null"></div>
 
                     <div class="distractorContainer" id="distractorContainer">
-                        <h2>Distractors</h2>
+                        <div class="distractorHeader">
+                            <h2>Distractors</h2>
+                            <div class="tooltip">
+                                <img src="./res/HelperCircle.png" class="helperIcon" alt="Helper circle" width="16" height="16" />
+                                <div class="tooltipText">
+                                    <p>Distractors are incorrect inputs to the task</p>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="distractorInputContainer">
 
@@ -153,6 +174,10 @@
         });
 
         editor.setSize(550, 300);
+
+        editor.on("blur", function(){
+            saveTask();
+        });
 
     </script>
 

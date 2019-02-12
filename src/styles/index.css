@@ -15,3 +15,57 @@ body {
     justify-content: flex-start;
     height: 100%;
 }
+
+.tooltip {
+    margin-right: 25px;
+    margin-left: 5px;
+
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltipImage {
+    visibility: hidden;
+    width: 150px;
+    background-color: #1d1d1b;
+    color: #fff;
+    text-align: left;
+    padding: 5px 15px;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    right: -120%; /* This one is maybe too hardcoded? */
+    margin-left: -75px; /* Use half of the width (120/2 = 60), to center the tooltip */
+}
+
+.tooltip:hover .tooltipImage {
+    visibility: visible;
+}
+
+.tooltipSubDiv {
+    margin: 10px 0;
+}
+
+.tooltip .tooltipText {
+    visibility: hidden;
+    width: 150px;
+    background-color: #1d1d1b;
+    color: #fff;
+    text-align: left;
+    padding: 5px 10px;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -75px; /* Use half of the width (120/2 = 60), to center the tooltip */
+}
+
+.tooltip:hover .tooltipText {
+    visibility: visible;
+}
