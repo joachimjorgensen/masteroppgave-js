@@ -15,25 +15,26 @@ function read_manifest(){
 function write_xml(xmlDoc,taskIdentifier){
     let serializer = new XMLSerializer();
     let xmlString = serializer.serializeToString(xmlDoc);
-    let fs = require('fs');
-	fs.writeFile('zipThis/content_question_qti2_graphicgapmatch_'+taskIdentifier+'.xml', xmlString, function (err) {
-		if (err) {
-			return console.log(err);
-		}
+	let fs = require('fs');
 
-		console.log("The file was saved!");
-	});
+	if (fs.existsSync(__dirname + "/zipThis")) {
+		fs.writeFile(__dirname + '/zipThis/content_question_qti2_graphicgapmatch_' + taskIdentifier + '.xml', xmlString, function (err) {
+			if (err) {
+				return console.log("Creating file in write_xml error: "+err);
+			}
+		});
+	} else {
+		alert("ZipThis path NOT found in write_xml. Im looking for: "+__dirname+"/zipThis");
+	}
 }
 function write_manifest(xmlDoc){
     let serializer = new XMLSerializer();
     let xmlString = serializer.serializeToString(xmlDoc);
     let fs = require('fs');
-	fs.writeFile('zipThis/imsmanifest.xml', xmlString, function (err) {
+	fs.writeFile(__dirname+'/zipThis/imsmanifest.xml', xmlString, function (err) {
 		if (err) {
-			return console.log(err);
+			return console.log("Writing manifest error: "+err);
 		}
-
-		console.log("The manifest was saved!");
 	});
 }
 
@@ -582,26 +583,35 @@ function addAttribute(element, attributeName, value){
 	return element
 }
 
+
+
+
+
+
+
+//Gets called when pressing the export button
 function run_dnd(jsonObject, filepath){
-	//npm i rimraf
 	let rimraf = require('rimraf');
-	rimraf('zipThis', function () { continue_dnd(jsonObject, filepath);console.log('zipThis deleted'); });
-
-
+	//Deletes old zipThis file
+	rimraf(__dirname+'/zipThis', function () { continue_dnd(jsonObject, filepath); });
 }
+
 function continue_dnd(dataAll, filepath){
+	//const logger = require('electron').remote.require('./logger');
 	//npm install mkdirp
+	console.log("Data objects to create")
+	console.log(dataAll);
 	let mkdirp = require('mkdirp');
-	mkdirp('./zipThis', function (err) {
-		console.log("Create file errors:"+err);
+	mkdirp(__dirname+'/zipThis', function (err) {
+		if(err){
+			alert("Create file errors:"+err);
+		}
 	});
 	let myManifest = read_manifest();
 	let distractors = [];
 
 
 	if(Array.isArray(dataAll)){
-		console.log("Download multiple tasks");
-		//zipFileName=fileName;
 		taskIdentifiers = [];
 		taskNames = [];
 
@@ -611,7 +621,6 @@ function continue_dnd(dataAll, filepath){
 
 			parsons2D = data.parsons2d;
 			lines = data.code;
-			console.log(data);
 			lines = lines.split("\n");
 
 			let taskIdentifier = generateID();
@@ -629,9 +638,6 @@ function continue_dnd(dataAll, filepath){
 	}else{
         data = dataAll;
 		distractors = data.distractors;
-		console.log("Download one task");
-		console.log(data);
-		//zipFileName = fileName;
 		parsons2D = data.parsons2d;
 		lines = data.code;
 		lines = lines.split("\n");
@@ -655,18 +661,16 @@ function continue_dnd(dataAll, filepath){
 }
 function zipAndDelete(filepath){
 	let zipFolder = require('zip-folder');
-	console.log(filepath);
-	//zipFolder('zipThis', filepath + '/' + zipFileName + '.zip', function (err) {
-	zipFolder('zipThis', filepath+'.zip', function (err) {
+
+	//filepath is path the user chose
+	zipFolder(__dirname+'/zipThis', filepath+'.zip', function (err) {
 		if (err) {
 			console.log('Error zip folder: ', err);
-		} else {
-			console.log('Zip folder successful!');
-		}
+		} 
 	});
 
 	let rimraf = require('rimraf');
-	//Uncomment this if you want zipThis to be deleted
-	//rimraf('zipThis', function () { continue_dnd(jsonObject, filepath, fileName);console.log('zipThis deleted'); });
+	//Uncomment this if you want zipThis to be deleted. NB! This throws an error now! Dont know why
+	//rimraf(__dirname+'/zipThis', function () { console.log('zipThis deleted'); });
 
 }

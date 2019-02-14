@@ -9,10 +9,10 @@
 async function downloadSingle() {
 
     let filepath = await chooseDownloadFolder();
-
-    let task = getTaskObject(currentId);
-
-    run_dnd(task, filepath);
+    if(filepath){
+        let task = getTaskObject(currentId);
+        run_dnd(task, filepath);
+    }
 
 };
 
@@ -24,9 +24,11 @@ async function downloadSingle() {
 async function downloadAll() {
 
     let filepath = await chooseDownloadFolder();
+    if(filepath){
+        let data = database.tasks;
+        run_dnd(data, filepath);
+    }
 
-    let data = database.tasks;
-    run_dnd(data, filepath);
 };
 
 
@@ -44,10 +46,10 @@ let chooseDownloadFolder = function(){
         dialog.showSaveDialog((filepath) => {
             if (filepath === undefined) {
                 console.log("You didn't save the file");
-                reject();
+                resolve(null);
+                //reject();
             }
             else {
-                console.log("else");
                 resolve(filepath);
             }
 
