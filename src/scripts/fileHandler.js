@@ -19,6 +19,7 @@ let openFile = function(event) {
     reader.onload = function() {
         code = reader.result;
         editor.setOption('value', code);
+        saveTask();
     };
 
     reader.readAsText(input.files[0]);
