@@ -69,3 +69,24 @@ body {
 .tooltip:hover .tooltipText {
     visibility: visible;
 }
+
+.tooltipTextHeader {
+    visibility: hidden;
+    width: 350px;
+    background-color: #1d1d1b;
+    color: #fff;
+    text-align: left;
+    padding: 5px 10px;
+    border-radius: 6px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: -400%;
+    margin-left: -25px; /* Use half of the width (120/2 = 60), to center the tooltip */
+}
+
+.tooltip:hover .tooltipTextHeader {
+    visibility: visible;
+}

@@ -8,6 +8,17 @@ h2 {
     font-weight: 200;
 }
 
+.headerHelp p{
+    color: white;
+    font-size: 1.3em;
+    font-weight: 200;
+    margin-right: 5px;
+}
+
+.headerHelp .tooltipTextHeader p{
+    font-size: 1em;
+}
+
 .taskHeader {
     color: white;
     text-align: center;
