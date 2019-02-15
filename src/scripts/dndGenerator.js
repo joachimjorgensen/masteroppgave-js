@@ -117,8 +117,9 @@ function add_metadata(myDoc, identifier, taskTitle, parsons2D){
 	addAttribute(assessmentItem, "title", taskTitle)
 
 
-	let newTitleTextNO = "Fullfor denne kule oppgaven!";
-	let newPromptTextNO = "NB! Husk holde i midten!";
+	let newTitleTextNO = "Text";
+	let newPromptTextNO = "Prompt Text";
+
 	/*
 	Lets do all in norwegian!
 	let newTitleTextNY = "Fullfori dykkja oppgavi!";
@@ -655,7 +656,7 @@ function continue_dnd(dataAll, filepath){
 	write_manifest(myManifest);
 
 
-	setTimeout(function(){zipAndDelete(filepath)},1000);
+	setTimeout(function(){zipAndDelete(filepath)},500);
 
 	
 }
@@ -668,6 +669,7 @@ function zipAndDelete(filepath){
 			console.log('Error zip folder: ', err);
 		} 
 	});
+	alert("Download successful! \n\nYou can now upload the zip file to Inspera.");
 
 	let rimraf = require('rimraf');
 	//Uncomment this if you want zipThis to be deleted. NB! This throws an error now! Dont know why
