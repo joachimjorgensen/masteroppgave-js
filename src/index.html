@@ -94,7 +94,7 @@
             <div class="paper">
 
                 <div class="taskTitleContainer">
-                    <input class="taskTitleInput" id="taskTitleInput" type="text" name="titleInput" value="" placeholder="Title" onchange="saveTask(); return null">
+                    <input class="taskTitleInput" id="taskTitleInput" type="text" name="titleInput" value="" placeholder="Enter Title here..." onchange="saveTask(); return null">
                     <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Export Task</button>
                 </div>
 
@@ -153,8 +153,8 @@
                         <div class="distractorInputContainer">
 
                             <form name="distractorForm" class="distractorForm" onSubmit="addDistractor(event)">
+                                <input type="text" class="distractorInput" id="distractorInput" name="distractorInput" placeholder="Enter Distractor here...">
                                 <button type="submit" class="addDistractorButton">Add</button>
-                                <input type="text" class="distractorInput" id="distractorInput" name="distractorInput" placeholder="Distractor">
                             </form>
 
                         </div>
