@@ -2,7 +2,10 @@
  * Created by jwjorgen on 29/10/2018.
  */
 
-const { app, BrowserWindow } = require('electron');
+const electron = require('electron');
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const Menu = electron.Menu;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -23,7 +26,100 @@ function createWindow () {
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
         win = null;
-    })
+    });
+
+    // The menu template
+    let template = [
+        // { role: 'appMenu' }
+        ...(process.platform === 'darwin' ? [{
+                label: 'Parsons Generator',
+                submenu: [
+                    { role: 'about' },
+                    { type: 'separator' },
+                    { role: 'services' },
+                    { type: 'separator' },
+                    { role: 'hide' },
+                    { role: 'hideothers' },
+                    { role: 'unhide' },
+                    { type: 'separator' },
+                    { role: 'quit' }
+                ]
+            }] : []),
+        // { role: 'fileMenu' }
+        {
+            label: 'File',
+            submenu: [
+                process.platform === 'darwin' ? { role: 'close' } : { role: 'quit' }
+            ]
+        },
+        // { role: 'editMenu' }
+        {
+            label: 'Edit',
+            submenu: [
+                { role: 'undo' },
+                { role: 'redo' },
+                { type: 'separator' },
+                { role: 'cut' },
+                { role: 'copy' },
+                { role: 'paste' },
+                ...(process.platform === 'darwin' ? [
+                        { role: 'pasteAndMatchStyle' },
+                        { role: 'delete' },
+                        { role: 'selectAll' },
+                        { type: 'separator' },
+                        {
+                            label: 'Speech',
+                            submenu: [
+                                { role: 'startspeaking' },
+                                { role: 'stopspeaking' }
+                            ]
+                        }
+                    ] : [
+                        { role: 'delete' },
+                        { type: 'separator' },
+                        { role: 'selectAll' }
+                    ])
+            ]
+        },
+        // { role: 'viewMenu' }
+        {
+            label: 'View',
+            submenu: [
+                { role: 'reload' },
+                { role: 'forcereload' },
+                { role: 'toggledevtools' },
+                { type: 'separator' },
+                { role: 'resetzoom' },
+                { role: 'zoomin' },
+                { role: 'zoomout' },
+                { type: 'separator' },
+                { role: 'togglefullscreen' }
+            ]
+        },
+        // { role: 'windowMenu' }
+        {
+            label: 'Window',
+            submenu: [
+                { role: 'minimize' },
+                { role: 'zoom' },
+                ...(process.platform === 'darwin' ? [
+                        { type: 'separator' },
+                        { role: 'front' },
+                        { type: 'separator' },
+                        { role: 'window' }
+                    ] : [
+                        { role: 'close' }
+                    ])
+            ]
+        },
+        {
+            role: 'help',
+            submenu: [
+            ]
+        }
+    ];
+
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 // This method will be called when Electron has finished
