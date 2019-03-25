@@ -181,6 +181,9 @@ function add_empty_hotspot(myDoc, hotspotX, hotspotY, hotspotWidth, hotspotHeigh
 	addAttribute(associableHotspot,"matchMax","0");
 
 }
+
+//Box is a drag-area
+//Hotspot is drop-area
 function add_draggable_pair(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight1, hotspotX, hotspotY, hotspotWidth, hotspotHeight, canvasHeight,parsons2D){
 	let boxX = boxX1.toString();
 	let boxY = boxY1.toString();
@@ -509,12 +512,15 @@ function getRandomInt(max) {
 function generate_python_lines(myDoc,lines,parsons2D,distractors){
 	let startY = 50;
 	if(parsons2D){
-		let width = 40;
+		let width = 50;
 		let dragHeight = 20;
-		let dropHeight = 20;
+		let dropHeight = 24;
 		let height = 20;
-		let startOptions = generateStartOptions(lines,height,distractors);
+		//Find all positions where drag areas can be placed
+		let startOptions = generateStartOptions(lines,dropHeight,distractors); 
+		//Make canvas height the final drag area position + 100
 		let canvasHeight = startOptions[startOptions.length-1][1]+100;
+
 		let tabSize = findTabSize(lines);
 		let maxTabs = getMaxTabs(lines,tabSize);
 		for (let i = 0; i < lines.length; i++) {
@@ -527,37 +533,37 @@ function generate_python_lines(myDoc,lines,parsons2D,distractors){
 			for (let i = 0; i < maxTabs+1; i++){
 				let startX = 220+(width*i)+i;
 				if(i==tabs){
-					add_draggable_pair(myDoc,theString,startOptionPair[0],startOptionPair[1],width,height,startX,startY,width,height,canvasHeight,parsons2D);
+					add_draggable_pair(myDoc,theString,startOptionPair[0],startOptionPair[1],width,dragHeight,startX,startY,width,dropHeight,canvasHeight,parsons2D);
 				}else{
-					add_empty_hotspot(myDoc,startX,startY,width,height);
+					add_empty_hotspot(myDoc,startX,startY,width,dropHeight);
 				}
 			}
-			startY += height +1;
+			startY += dropHeight +1;
 		}
 		for (let i = 0; i< distractors.length; i++){
 			let startOptionPair = startOptions.splice(getRandomInt(startOptions.length-1),1)[0];
 			//let startOptionPair = startOptions.pop();
-			add_distractor(myDoc,distractors[i],startOptionPair[0],startOptionPair[1],10,height);
+			add_distractor(myDoc,distractors[i],startOptionPair[0],startOptionPair[1],10,dragHeight);
 		}
 	}else{
 		let width = 500;
 		let dragHeight = 20;
-		let dropHeight = 20;
+		let dropHeight = 24;
 		let height = 20;
-		let startOptions = generateStartOptions(lines,height,distractors);
+		let startOptions = generateStartOptions(lines,dropHeight,distractors);
 		let canvasHeight = startOptions[startOptions.length-1][1]+100;
 		for (let i = 0; i < lines.length; i++) {
 			let line = lines[i];
 			let theString = stripMe(line);
 			let startOptionPair = startOptions.pop(getRandomInt(startOptions.length-1));
 			let startX = 50;
-			add_draggable_pair(myDoc,theString,startOptionPair[0],startOptionPair[1],width,height,startX,startY,width,height, canvasHeight, parsons2D);
-			startY += height+1;
+			add_draggable_pair(myDoc,theString,startOptionPair[0],startOptionPair[1],width,dragHeight,startX,startY,width,dropHeight, canvasHeight, parsons2D);
+			startY += dropHeight+1;
 		}
 		for (let i = 0; i< distractors.length; i++){
 			//let startOptionPair = startOptions.pop(getRandomInt(startOptions.length-1));
 			let startOptionPair = startOptions.splice(getRandomInt(startOptions.length-1),1)[0];
-			add_distractor(myDoc,distractors[i],startOptionPair[0],startOptionPair[1],10,height);
+			add_distractor(myDoc,distractors[i],startOptionPair[0],startOptionPair[1],10,dragHeight);
 		}
 	}
 }
