@@ -402,25 +402,22 @@ function generateID(){
 	  }
 	  return '_'+s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
+function getTextWidth(text, font) {
+    // re-use canvas object for better performance
+    var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+    var context = canvas.getContext("2d");
+    context.font = font;
+    var metrics = context.measureText(text);
+    return metrics.width;
+}
+
 function get_length_of_word(word){
-	let tot = 0;
-	let short = ["(",")",".",",",":",";","'","|","/","\\"," ","!","\"","´","`","{","}","]","[","l","i","j","t","I","J"];
-	for (let i = 0; i < word.length; i++) {
-		let c = word.charAt(i);
-		if(short.indexOf(c)>=0){
-			tot += 4.5
-		}
-		else if(c == c.toUpperCase()){
-			tot += 10.5
-		}
-		else if(isLetter(c)){
-			tot += 9
-		}
-		else{
-			tot += 10
-		}
-	}
-	return tot
+	//Exact width based on the Inspera font used
+	let width = getTextWidth(word, "14px Arial, sans-serif")
+	//Extra width has to be added due to some margins and paddings Inspera adds
+	let extraWidth = 14;
+	width += extraWidth;
+	return width; 
 }
 function isLetter(str) {
 	return str.length === 1 && str.match(/[a-z]/i);
@@ -465,6 +462,7 @@ function stripMe(line){
 	return line.trim(); //Should remove \t \n and " "
 }
 
+//Generates the options where a drag line/area can be placed
 function generateStartOptions(lines, height,distractors){
 	let longestLine = 0;
 	for (let i = 0; i < lines.length; i++) {
@@ -512,7 +510,9 @@ function generate_python_lines(myDoc,lines,parsons2D,distractors){
 	let startY = 50;
 	if(parsons2D){
 		let width = 40;
-		let height = 30;
+		let dragHeight = 20;
+		let dropHeight = 20;
+		let height = 20;
 		let startOptions = generateStartOptions(lines,height,distractors);
 		let canvasHeight = startOptions[startOptions.length-1][1]+100;
 		let tabSize = findTabSize(lines);
@@ -541,7 +541,9 @@ function generate_python_lines(myDoc,lines,parsons2D,distractors){
 		}
 	}else{
 		let width = 500;
-		let height = 30;
+		let dragHeight = 20;
+		let dropHeight = 20;
+		let height = 20;
 		let startOptions = generateStartOptions(lines,height,distractors);
 		let canvasHeight = startOptions[startOptions.length-1][1]+100;
 		for (let i = 0; i < lines.length; i++) {
