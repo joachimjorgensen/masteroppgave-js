@@ -95,7 +95,6 @@
 
                 <div class="taskTitleContainer">
                     <input class="taskTitleInput" id="taskTitleInput" type="text" name="titleInput" value="" placeholder="Enter Title here..." onchange="saveTask(); return null">
-                    <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Export Task</button>
                 </div>
 
                 <div class="taskTitleContainer">
@@ -157,6 +156,10 @@
                         </div>
                     </div>
 
+                </div>
+
+                <div class="ExportContainerBottom">
+                    <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Export Task</button>
                 </div>
 
             </div>
