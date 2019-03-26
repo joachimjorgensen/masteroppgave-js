@@ -2,6 +2,8 @@
  * Created by jwjorgen on 27/11/2018.
  */
 
+//const { dialog } = require('electron').remote;
+
 /**
  * Download a single task to QTI format?
  * @param code
@@ -9,9 +11,28 @@
 async function downloadSingle() {
 
     let filepath = await chooseDownloadFolder();
+
     if(filepath){
-        let task = getTaskObject(currentId);
-        run_dnd(task, filepath);
+        if (fileExists(filepath + '.zip')) {
+            const response = dialog.showMessageBox(win, {
+                type: 'warning',
+                buttons: ['Yes', 'No'], //Response
+                title: 'Warning',
+                message: 'Filename already exists, do you want to overwrite?'
+            });
+
+            if (response === 1) {
+                // Do not want to overwrite - open new dialog
+                downloadSingle();
+            } else {
+                let task = getTaskObject(currentId);
+                run_dnd(task, filepath);
+            }
+
+        } else {
+            let task = getTaskObject(currentId);
+            run_dnd(task, filepath);
+        }
     }
 
 };
@@ -24,28 +45,42 @@ async function downloadSingle() {
 async function downloadAll() {
 
     let filepath = await chooseDownloadFolder();
+
     if(filepath){
-        let data = database.tasks;
-        run_dnd(data, filepath);
+        if (fileExists(filepath + '.zip')) {
+            const response = dialog.showMessageBox(win, {
+                type: 'warning',
+                buttons: ['Yes', 'No'], //Response
+                title: 'Warning',
+                message: 'Filename already exists, do you want to overwrite?'
+            });
+
+            if (response === 1) {
+                // Do not want to overwrite - open new dialog
+                downloadAll();
+            } else {
+                let data = database.tasks;
+                run_dnd(data, filepath);
+            }
+
+        } else {
+            let data = database.tasks;
+            run_dnd(data, filepath);
+        }
     }
 
 };
 
 
 /**
- *
+ *  Open file dialog for choosing a folder
+ *  win is defined in ./fileHandler.js
  */
 let chooseDownloadFolder = function(){
     return new Promise((resolve, reject) =>{
-        const { dialog } = require('electron').remote;
-        //var nameArray;
-        /*let filepath = dialog.showOpenDialog({
-         properties: ['openDirectory']
-         });*/
 
-        dialog.showSaveDialog((filepath) => {
+        dialog.showSaveDialog(win, (filepath) => {
             if (filepath === undefined) {
-                console.log("You didn't save the file");
                 resolve(null);
                 //reject();
             }

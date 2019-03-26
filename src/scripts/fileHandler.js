@@ -31,20 +31,20 @@ let openFile = function(event) {
 
 
 /**
- * Checks if a file with the same name exists
- * @param fileName
+ * Checks if a file with a given name exists
+ * @param filepath
  */
-let fileExists = function(fileName) {
+let fileExists = function(filepath) {
 
-    let fs = require('fs');
-
-    let path = './';
-
-    if (fs.existsSync(path + fileName)) {
-        alert('ERROR: file name already exists')
+    try {
+        if (fs.existsSync(filepath)) {
+            // file exists
+            return true;
+        }
+    } catch(err) {
+        // file does not exist
+        return false;
     }
-
-    return (fs.existsSync(path + fileName));
 };
 
 
