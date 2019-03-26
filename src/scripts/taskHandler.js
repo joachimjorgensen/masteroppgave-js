@@ -24,7 +24,7 @@ let saveTask = function() {
         if(task.id==id){
             task = {
                 ...task,
-                title: title,
+                title: /\S/.test(title) ? title : 'Task ' + (task.id + 1), // Checks if title is only whitespace
                 code: code || '',
                 fileName: fileName,
                 parsons2d: parsons2d
@@ -43,9 +43,21 @@ let saveTask = function() {
 /**
  * Delete task from list of tasks
  */
-let deleteTask = function(event, taskId) {
+let deleteTask = function(event, taskId, taskTitle) {
 
     event.stopPropagation(); // Have to prevent onClick triggering on div(with onClick) behind
+
+    const response = dialog.showMessageBox(win, {
+        type: 'warning',
+        buttons: ['Yes', 'No'], //Response
+        title: 'Warning',
+        message: 'Are you sure you want to delete ' + taskTitle + '?'
+    });
+
+    if (response === 1) {
+        // Do no ´ delete
+        return;
+    }
 
     let newTaskList = [];
     let allTasks = database.tasks;
@@ -125,13 +137,22 @@ let updateTitleInTaskList = function(id) {
 
         let task = allTasks[taskNum];
 
-        let taskTab = document.getElementById(task.id.toString());
+        let taskTab = document.getElementById('taskContainer' + task.id.toString());
 
         if(task.id==id){
 
             if (task.title) {
 
+                // Update task title
                 taskTab.firstElementChild.innerHTML = task.title;
+
+                // Have to manually update button attribute for the task (to get correct title on delete message)
+                let taskDeleteButton = document.createElement('button');
+                taskDeleteButton.innerHTML = 'X';
+                taskDeleteButton.setAttribute('onclick', 'deleteTask(event, ' + task.id + ', "'+ task.title +'")');
+                taskDeleteButton.className = 'taskDeleteButton';
+
+                taskTab.replaceChild(taskDeleteButton, taskTab.childNodes[1]);
 
             }
 

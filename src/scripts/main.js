@@ -62,16 +62,17 @@ let loadTaskList = function() {
 
         let taskListEntry = document.createElement('div');
         taskListEntry.className = 'taskContainer';
-        taskListEntry.id = task.id.toString();
+        taskListEntry.id = 'taskContainer' + task.id.toString();
         taskListEntry.setAttribute('onclick', 'loadTask(' + task.id + ')');
 
         let taskTitle = document.createElement('p');
         taskTitle.className = 'taskText';
-        taskTitle.innerHTML = task.title ? task.title : 'Task ' + (task.id + 1);
+        let taskTitleText = task.title ? task.title : 'Task ' + (task.id + 1);
+        taskTitle.innerHTML = taskTitleText;
 
         let taskDeleteButton = document.createElement('button');
         taskDeleteButton.innerHTML = 'X';
-        taskDeleteButton.setAttribute('onclick', 'deleteTask(event, ' + task.id + ')');
+        taskDeleteButton.setAttribute('onclick', 'deleteTask(event, ' + task.id + ', "'+ taskTitleText +'")');
         taskDeleteButton.className = 'taskDeleteButton';
 
         taskListEntry.appendChild(taskTitle);
@@ -102,7 +103,7 @@ let loadTask = function(loadMyId) {
 
         let task = allTasks[taskNum];
 
-        let taskTab = document.getElementById(task.id.toString());
+        let taskTab = document.getElementById('taskContainer' + task.id.toString());
 
         if(task.id==loadMyId){
 
