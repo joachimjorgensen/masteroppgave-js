@@ -43,8 +43,10 @@ let saveTask = function() {
 /**
  * Delete task from list of tasks
  */
-let deleteTask = function() {
-    let id = currentId;
+let deleteTask = function(event, taskId) {
+
+    event.stopPropagation(); // Have to prevent onClick triggering on div(with onClick) behind
+
     let newTaskList = [];
     let allTasks = database.tasks;
     let firstId = 1000000;
@@ -53,7 +55,7 @@ let deleteTask = function() {
 
         let task = allTasks[taskNum];
 
-        if (task.id != id) {
+        if (task.id != taskId) {
 
             // Keep track of the first element id in the list
             firstId = task.id < firstId ? task.id : firstId;
@@ -65,14 +67,19 @@ let deleteTask = function() {
     database.tasks = newTaskList;
     loadTaskList();
 
-    if (firstId < 1000000) {
+    if (currentId === taskId && firstId < 1000000) {
+        // Deleting current task and there exists other tasks in the list - load first task
         loadTask(firstId);
-    } else {
-        // Hide paper until the user chooses a task
+    } else if(currentId === taskId && newTaskList.length === 0) {
+        // Deleting current task and there is no other tasks in the list
+        // Hide paper until the user creates a new task
         let papers = document.getElementsByClassName('paper');
         for (let i = 0; i < papers.length; i++) {
             papers[i].style.display = 'none';
         }
+    } else {
+        // Load current task
+        loadTask(currentId)
     }
 };
 

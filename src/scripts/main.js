@@ -69,7 +69,13 @@ let loadTaskList = function() {
         taskTitle.className = 'taskText';
         taskTitle.innerHTML = task.title ? task.title : 'Task ' + (task.id + 1);
 
+        let taskDeleteButton = document.createElement('button');
+        taskDeleteButton.innerHTML = 'X';
+        taskDeleteButton.setAttribute('onclick', 'deleteTask(event, ' + task.id + ')');
+        taskDeleteButton.className = 'taskDeleteButton';
+
         taskListEntry.appendChild(taskTitle);
+        taskListEntry.appendChild(taskDeleteButton);
         taskList.appendChild(taskListEntry);
 
     }
@@ -79,7 +85,7 @@ let loadTaskList = function() {
 /**
  * Update the input fields to the values of current task
  */
-let loadTask = function(id) {
+let loadTask = function(loadMyId) {
 
     // Show paper
     let papers = document.getElementsByClassName('paper');
@@ -87,8 +93,8 @@ let loadTask = function(id) {
         papers[i].style.display = 'block';
     }
 
-
-    currentId = id;
+    // Update global currentID
+    currentId = loadMyId;
 
     let allTasks = database.tasks;
 
@@ -98,7 +104,7 @@ let loadTask = function(id) {
 
         let taskTab = document.getElementById(task.id.toString());
 
-        if(task.id==id){
+        if(task.id==loadMyId){
 
             taskTab.className = 'taskContainer selected';
 
