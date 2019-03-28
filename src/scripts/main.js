@@ -111,6 +111,15 @@ let loadTask = function(loadMyId) {
 
             document.getElementById('taskTitleInput').value = task.fileName;
             document.getElementById('parsons2d').checked = task.parsons2d;
+
+            // Because the rich text editors uses nicEditor, this is the way to update their value
+            let nicENo = new nicEditors.findEditor('richEditorNo');
+            nicENo.setContent(task.description.no);
+            let nicEEng = new nicEditors.findEditor('richEditorEng');
+            nicEEng.setContent(task.description.eng);
+            let nicENyno = new nicEditors.findEditor('richEditorNyno');
+            nicENyno.setContent(task.description.nyno);
+
             editor.refresh();
             editor.setValue(task.code);
 

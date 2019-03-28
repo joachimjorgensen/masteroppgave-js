@@ -14,6 +14,9 @@ let saveTask = function() {
     let fileName = getFileName();
     let parsons2d = getParsons2d();
     let title = getTitle();
+    let desc_no = getDescription('No');
+    let desc_eng = getDescription('Eng');
+    let desc_nyno = getDescription('Nyno');
 
     let allTasks = database.tasks;
 
@@ -27,9 +30,13 @@ let saveTask = function() {
                 title: /\S/.test(title) ? title : 'Task ' + (task.id + 1), // Checks if title is only whitespace
                 code: code || '',
                 fileName: fileName,
-                parsons2d: parsons2d
+                parsons2d: parsons2d,
+                description: {
+                    no: desc_no,
+                    eng: desc_eng,
+                    nyno: desc_nyno
+                }
             };
-
             allTasks[taskNum] = task;
         }
     }
@@ -109,7 +116,12 @@ let addTask = function () {
         code: '',
         fileName: '',
         parsons2d: true,
-        distractors: []
+        distractors: [],
+        description: {
+            no: '',
+            eng: '',
+            nyno: ''
+        }
     };
 
     database.tasks.push(task);
