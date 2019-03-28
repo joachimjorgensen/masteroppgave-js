@@ -5,7 +5,6 @@
  * @return {XMLDocument object}	A empty drag and drop xml document
  */
 function read_xml(){
-	console.log("ok")
 	let text = '<?xml version="1.0" encoding="UTF-8"?><assessmentItem xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1  http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd" identifier="28416605" title="Ny oppgave" adaptive="false" timeDependent="false" xmlns:java="http://xml.apache.org/xalan/java" xmlns:imsmd="http://www.imsglobal.org/xsd/imsmd_v1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><responseDeclaration identifier="RESPONSE" cardinality="multiple" baseType="directedPair"><correctResponse></correctResponse><mapping defaultValue="0"></mapping></responseDeclaration><outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float"><defaultValue><value>0</value></defaultValue></outcomeDeclaration><outcomeDeclaration identifier="FEEDBACK" cardinality="single" baseType="identifier"/><templateDeclaration identifier="SCORE_EACH_CORRECT" cardinality="single" baseType="float"><defaultValue><value>1</value></defaultValue></templateDeclaration><templateDeclaration identifier="SCORE_EACH_WRONG" cardinality="single" baseType="float"><defaultValue><value>0</value></defaultValue></templateDeclaration><templateDeclaration identifier="SCORE_ALL_CORRECT" cardinality="single" baseType="float"><defaultValue><value/></defaultValue></templateDeclaration><templateDeclaration identifier="SCORE_MINIMUM" cardinality="single" baseType="float"><defaultValue><value/></defaultValue></templateDeclaration><templateDeclaration identifier="SCORE_UNANSWERED" cardinality="single" baseType="float"><defaultValue><value>0</value></defaultValue></templateDeclaration><itemBody inspera:defaultLanguage="no_no" inspera:supportedLanguages="no_no" xmlns:inspera="http://www.inspera.no/qti"><div class="question-main-illustration"></div><p style="">Fullfør denne dra og slipp oppgaven!</p><graphicGapMatchInteraction class="markHotspots " responseIdentifier="RESPONSE" inspera:canvasHeight="400" inspera:mode="IA"><prompt>Velg ett alternativ</prompt></graphicGapMatchInteraction><p style=""> </p></itemBody><responseProcessing><responseCondition><responseIf><and><isNull><variable identifier="RESPONSE"/></isNull></and><setOutcomeValue identifier="SCORE"><variable identifier="SCORE_UNANSWERED"/></setOutcomeValue></responseIf><responseElse><setOutcomeValue identifier="SCORE"><sum><variable identifier="SCORE"/><mapResponse identifier="RESPONSE"/></sum></setOutcomeValue></responseElse></responseCondition><responseCondition><responseIf><and><isNull><variable identifier="RESPONSE"/></isNull></and><setOutcomeValue identifier="FEEDBACK"><baseValue baseType="identifier">feedback_unanswered</baseValue></setOutcomeValue></responseIf><responseElseIf><and></and><setOutcomeValue identifier="FEEDBACK"><baseValue baseType="identifier">feedback_correct</baseValue></setOutcomeValue></responseElseIf><responseElseIf><or></or><setOutcomeValue identifier="FEEDBACK"><baseValue baseType="identifier">feedback_partially_correct</baseValue></setOutcomeValue></responseElseIf><responseElse><setOutcomeValue identifier="FEEDBACK"><baseValue baseType="identifier">feedback_wrong</baseValue></setOutcomeValue></responseElse></responseCondition><responseCondition inspera:type="max_score_upper_bound" xmlns:inspera="http://www.inspera.no/qti"><responseIf><and><gte><variable identifier="SCORE"/><baseValue baseType="float">3.0</baseValue></gte></and><setOutcomeValue identifier="SCORE"><baseValue baseType="float">3.0</baseValue></setOutcomeValue></responseIf></responseCondition></responseProcessing><modalFeedback outcomeIdentifier="FEEDBACK" identifier="feedback_unanswered" showHide="show">Ubesvart</modalFeedback><modalFeedback outcomeIdentifier="FEEDBACK" identifier="feedback_wrong" showHide="show">Galt svar</modalFeedback><modalFeedback outcomeIdentifier="FEEDBACK" identifier="feedback_correct" showHide="show">Riktig svar</modalFeedback><modalFeedback outcomeIdentifier="FEEDBACK" identifier="feedback_partially_correct" showHide="show">Delvis riktig svar</modalFeedback></assessmentItem>';
     let parser = new DOMParser();
     let xmlDoc = parser.parseFromString(text,"text/xml");
@@ -25,7 +24,6 @@ function read_xml(){
  * @return {XMLDocument object}	A default manifest xml document
  */
 function read_manifest(){
-	console.log("ko")
     let text = '<?xml version="1.0" encoding="UTF-8"?><manifest identifier="MANIFEST" version="1.1" xmlns="http://www.imsglobal.org/xsd/imscp_v1p1" xmlns:java="http://xml.apache.org/xalan/java" xmlns:imsmd="http://www.imsglobal.org/xsd/imsmd_v1p2"><metadata><imsmd:lom><imsmd:lifecycle><imsmd:status><imsmd:source><imsmd:langstring xml:lang="x-none">LOMv1.0</imsmd:langstring></imsmd:source><imsmd:value><imsmd:langstring xml:lang="x-none">Draft</imsmd:langstring></imsmd:value></imsmd:status></imsmd:lifecycle></imsmd:lom></metadata><resources><resource identifier="ID_28416605" type="imsqti_item_xmlv2p1" href="content_question_qti2_graphicgapmatch_28416605.xml"><metadata><imsmd:lom><imsmd:general><imsmd:identifier/><imsmd:title><imsmd:langstring xml:lang="no">Ny oppgave</imsmd:langstring></imsmd:title></imsmd:general></imsmd:lom></metadata><file href="content_question_qti2_graphicgapmatch_28416605.xml"/></resource></resources></manifest>';
     let parser = new DOMParser();
     let xmlDoc = parser.parseFromString(text,"text/xml");
@@ -146,6 +144,15 @@ function add_manifest_data(myManifest, identifiers, taskNames){
 
 }
 
+function addLanguageToAllTags(temp, languageCode){
+	var all = temp.childNodes;//getElementsByTagName("*");
+	for (var i = 0, max = all.length; i < max; i++) {
+		var tagname = all[i];
+		addAttribute(tagname, "lang",languageCode);
+		addAttribute(tagname,"style","display: none;");
+	}
+}
+
 /**
  * Adds required 'metadata' to the task xml document object. 
  * Adds data such as 
@@ -161,7 +168,7 @@ function add_manifest_data(myManifest, identifiers, taskNames){
  * @param {Boolean} parsons2D Is task 2D parsons problem or not
  * @param {Number} canvasHeight Calculated height the task canvas has to be
  */
-function add_metadata(myDoc, identifier, taskTitle, parsons2D, canvasHeight){
+function add_metadata(myDoc, identifier, taskTitle, parsons2D, canvasHeight, title_no, title_ny, title_en){ //, prompt_no, prompt_ny, prompt_en){ //You can add prompt text, but why use this?
 	//MAIN FILE
 	let ai = myDoc.getElementsByTagName('assessmentItem');
 	let assessmentItem = ai[0];
@@ -169,36 +176,41 @@ function add_metadata(myDoc, identifier, taskTitle, parsons2D, canvasHeight){
 	addAttribute(assessmentItem, "identifier", identifier)
 	addAttribute(assessmentItem, "title", taskTitle)
 
-
-	let newTitleTextNO = "Text";
-	let newPromptTextNO = "Prompt Text";
-
-	/*
-	Lets do all in norwegian!
-	let newTitleTextNY = "Fullfori dykkja oppgavi!";
-	let newTitleTextEN = "Complete this awesome task!";
-
-	let newPromptTextNY = "NB! Huski holde i midkja!";
-	let newPromptTextEN = "NB! Remember to hold in middle!";
-	*/
+	//Currently, we dont see the need for the prompt text, so we just leave it empty
+	let newPromptTextNO = "";
 
 	let itemBody = assessmentItem.getElementsByTagName('itemBody')[0];
 	addAttribute(itemBody, "inspera:defaultLanguage","no_no");
 	addAttribute(itemBody, "inspera:supportedLanguages","no_no,en_us,no_no_ny");
 
+
 	//Set title text
 	let title = itemBody.getElementsByTagName('p');
-	title[0].firstChild.data = newTitleTextNO;
+	title[0].innerHTML = title_no;
 
-	let englishTitle = addChildWithValue(myDoc, itemBody, "p", newTitleTextNO);
+	/*
+	let englishTitle = addChildWithValue(myDoc, itemBody, "div", "");
 	addAttribute(englishTitle,"lang","en_us");
 	addAttribute(englishTitle,"style","display: none;");
-	itemBody.insertBefore(englishTitle, title[0]); //Place the p in front of norwegian/original p
 
-	let nynorskTitle = addChildWithValue(myDoc, itemBody, "p", newTitleTextNO);
+	let nynorskTitle = addChildWithValue(myDoc, itemBody, "div", "");
 	addAttribute(nynorskTitle,"lang","no_no_ny");
 	addAttribute(nynorskTitle,"style","display: none;");
-	itemBody.insertBefore(nynorskTitle, title[0]);
+	*/
+	var tempEn = document.createElement("div");
+
+	tempEn.innerHTML = title_en;
+	addLanguageToAllTags(tempEn, "en_us")
+	itemBody.innerHTML += tempEn.innerHTML;
+
+	var tempNy = document.createElement("div");
+
+	tempNy.innerHTML = title_ny;
+	addLanguageToAllTags(tempNy, "no_no_ny")
+	itemBody.innerHTML += tempNy.innerHTML;
+
+	itemBody.innerHTML += '<p style=""> </p>'
+
 
 	let graphicGapMatchInteraction = assessmentItem.getElementsByTagName('graphicGapMatchInteraction')[0];
 
@@ -216,6 +228,12 @@ function add_metadata(myDoc, identifier, taskTitle, parsons2D, canvasHeight){
 	addAttribute(prompt, "inspera:label-lang-en_us",newPromptTextNO);
 	addAttribute(prompt, "inspera:label-lang-no_no_ny",newPromptTextNO);
 	prompt.firstChild.data = newPromptTextNO;
+
+	let lastNode = itemBody.lastChild; //Last child is an empty <p/>
+	itemBody.insertBefore(graphicGapMatchInteraction, lastNode); //Makes sure the graphicGapMatchInteraction comes as the bottom
+
+	//itemBody.insertBefore(englishTitle, graphicGapMatchInteraction); //Place the p in front of norwegian/original p
+	//itemBody.insertBefore(nynorskTitle, graphicGapMatchInteraction);
 }
 
 /**
@@ -607,6 +625,8 @@ function generateStartOptions(lines, height,distractors){
 	let startOptions = {};
 
 	let all = lines.concat(distractors);
+	all = all.sort(()=> 0.5-Math.random());
+
 	let row = 1;
 	let startXPos = 20;
 	let currentPointInRow = startXPos;
@@ -766,6 +786,21 @@ function addAttribute(element, attributeName, value){
 }
 
 
+function getRandomSubsetOfDistractors(arr, n){
+	var result = new Array(n),
+        len = arr.length,
+        taken = new Array(len);
+	if (n > len)
+		return arr;
+    while (n--) {
+        var x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
+}
+
+
 
 
 
@@ -803,17 +838,26 @@ function continue_dnd(dataAll, filepath){
 		}
 	});
 	let myManifest = read_manifest();
+
+	if(!Array.isArray(dataAll)){
+		dataAll = [dataAll]
+	}
+
 	let distractors = [];
+	let taskIdentifiers = [];
+	let taskNames = [];
 
-	//If isArray, there are more than one task that is to be created
-	if(Array.isArray(dataAll)){
-		taskIdentifiers = [];
-		taskNames = [];
+	for (let i = 0; i < dataAll.length; i++) {
+		data = dataAll[i];
+		let numberOfTasksToGenerate = 1;//data.generateNumber;
+		let distractorSubsetSize = 2;
 
-		for(let i = 0; i< dataAll.length; i++){
-			data = dataAll[i];
-			distractors = data.distractors;
+		let title_no = "<p><strong>Norsk</strong></p>"
+		let title_ny = "<p><strong>Nynorsk</strong></p>"
+		let title_en = "<p><strong>English</strong></p>"
 
+		for (let i = 0; i < numberOfTasksToGenerate; i++) {
+			distractors = getRandomSubsetOfDistractors(data.distractors, distractorSubsetSize)
 			parsons2D = data.parsons2d;
 			lines = data.code;
 			lines = lines.split("\n");
@@ -824,34 +868,18 @@ function continue_dnd(dataAll, filepath){
 			taskNames.push(data.fileName)
 
 			let myDoc = read_xml();
-			let canvasHeight = generate_python_lines(myDoc, lines, parsons2D,distractors);
-			add_metadata(myDoc, taskIdentifier, data.fileName, parsons2D, canvasHeight);
+			let canvasHeight = generate_python_lines(myDoc, lines, parsons2D, distractors);
+			add_metadata(myDoc, taskIdentifier, data.fileName, parsons2D, canvasHeight, title_no, title_ny, title_en);
 
 			write_xml(myDoc, taskIdentifier);
 		}
-		add_manifest_data(myManifest,taskIdentifiers, taskNames);
-	}else{
-        data = dataAll;
-		distractors = data.distractors;
-		parsons2D = data.parsons2d;
-		lines = data.code;
-		lines = lines.split("\n");
-
-		let taskIdentifier = generateID();
-		let myDoc = read_xml();
-
-		let canvasHeight = generate_python_lines(myDoc, lines, parsons2D, distractors);
-		add_metadata(myDoc, taskIdentifier, data.fileName, parsons2D, canvasHeight);
-
-		write_xml(myDoc, taskIdentifier);
-		add_manifest_data(myManifest,taskIdentifier, data.fileName);
-
 	}
+	add_manifest_data(myManifest, taskIdentifiers, taskNames);
+
 	write_manifest(myManifest);
 
 
 	setTimeout(function(){zipAndDelete(filepath)},500);
-
 	
 }
 
