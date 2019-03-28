@@ -28,6 +28,9 @@
 .taskContainer {
     border-left: thick solid transparent;
     padding: 10px 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .taskContainer:hover {
@@ -44,4 +47,20 @@
 
 .downloadAllContainer {
     padding: 10px;
+}
+
+.taskDeleteButton {
+    background-color: darkred;
+    padding: 4px 8px;
+    font-size: 8px;
+    display: none;
+}
+
+.taskDeleteButton:hover {
+    background-color: red;
+    cursor: pointer;
+}
+
+.taskContainer:hover .taskDeleteButton {
+    display: inline-block;
 }

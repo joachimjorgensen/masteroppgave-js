@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="styles/distractors.css">
     <link rel="stylesheet" href="styles/buttons.css">
     <link rel="stylesheet" href="styles/input.css">
+    <link rel="stylesheet" href="styles/description.css">
 
     <!-- JAVASCRIPT FILES -->
     <script src="scripts/main.js"></script>
@@ -22,6 +23,7 @@
     <script src="scripts/download.js"></script>
     <script src="scripts/taskHandler.js"></script>
     <script src="scripts/getters.js"></script>
+    <script src="scripts/description.js"></script>
 
     <!-- Create a simple CodeMirror instance -->
     <script src="node_modules/codemirror/lib/codemirror.js"></script>
@@ -37,6 +39,11 @@
     <script src="node_modules/codemirror/addon/hint/show-hint.js"></script>
     <script src="node_modules/codemirror/addon/hint/css-hint.js"></script>
     <link rel="stylesheet" href="node_modules/codemirror/addon/hint/show-hint.css">
+
+    <!-- EXAMPLE FOR RICH TEXT EDITOR          http://nicedit.com/ -->
+    <!--<script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>-->
+    <script src="./scripts/nicEdit.js" type="text/javascript"></script>
+    <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
 
 </head>
 <body>
@@ -94,26 +101,60 @@
             <div class="paper">
 
                 <div class="taskTitleContainer">
-                    <input class="taskTitleInput" id="taskTitleInput" type="text" name="titleInput" value="" placeholder="Title" onchange="saveTask(); return null">
-                    <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Export Task</button>
+                    <input class="taskTitleInput"
+                           id="taskTitleInput"
+                           type="text"
+                           name="titleInput"
+                           value=""
+                           placeholder="Enter Title here..."
+                           onchange="saveTask(); return null"
+                    >
+                </div>
+
+
+                <div class="tab">
+                    <button class="tablinks active" onclick="openTab(event, 'Bokmål')">Bokmål</button>
+                    <button class="tablinks" onclick="openTab(event, 'English')">English</button>
+                    <button class="tablinks" onclick="openTab(event, 'Nynorsk')">Nynorsk</button>
+                </div>
+
+                <div id="Bokmål" class="tabcontent" style="display: block">
+                    <textarea placeholder="Enter description here (optional)..."
+                              class="textAreaTag"
+                              id="richEditorNo"
+                              onchange="saveTask(); return null"
+                    ></textarea>
+                </div>
+
+                <div id="English" class="tabcontent">
+                    <textarea placeholder="Enter description here (optional)..."
+                              class="textAreaTag"
+                              id="richEditorEng"
+                              onchange="saveTask(); return null"
+                    ></textarea>
+                </div>
+
+                <div id="Nynorsk" class="tabcontent">
+                    <textarea placeholder="Enter description here (optional)..."
+                              class="textAreaTag"
+                              id="richEditorNyno"
+                              onchange="saveTask(); return null"
+                    ></textarea>
                 </div>
 
                 <div class="taskTitleContainer">
                     <p class="infoText">Please choose a file to upload, or type code in the editor window.</p>
-                    <button class="deleteButton" onclick="deleteTask(); return null">Delete Task</button>
                 </div>
+
 
                 <div class="editorOptionsContainer">
 
                     <div>
-                        <label for="fileChooser" class="fileChooserButton">
-                            <p>Choose File</p>
-                        </label>
-                        <input type='file' id='fileChooser' onchange='openFile(event)' name='fileChooser' />
+                        <button class="downloadButton" onclick="openFileDialog(); return null">Choose File</button>
                     </div>
 
                     <div class="parsonsContainer">
-                        <p class="parsonText">With indenting</p>
+                        <p class="parsonText">With indentation</p>
                         <div class="tooltip">
                             <img src="./res/HelperCircle.png" class="helperIcon" alt="Helper circle" width="16" height="16" />
                             <div class="tooltipImage">
@@ -127,7 +168,14 @@
                                 </div>
                             </div>
                         </div>
-                        <input class="checkBox" id='parsons2d' onchange="saveTask()" type="checkbox" name="parsons2d" value="" checked>
+                        <input class="checkBox"
+                               id='parsons2d'
+                               onchange="saveTask()"
+                               type="checkbox"
+                               name="parsons2d"
+                               value=""
+                               checked
+                        >
                     </div>
 
                 </div>
@@ -150,8 +198,13 @@
                         <div class="distractorInputContainer">
 
                             <form name="distractorForm" class="distractorForm" onSubmit="addDistractor(event)">
+                                <input type="text"
+                                       class="distractorInput"
+                                       id="distractorInput"
+                                       name="distractorInput"
+                                       placeholder="Enter Distractor here..."
+                                >
                                 <button type="submit" class="addDistractorButton">Add</button>
-                                <input type="text" class="distractorInput" id="distractorInput" name="distractorInput" placeholder="Distractor">
                             </form>
 
                         </div>
@@ -163,18 +216,15 @@
 
                 </div>
 
+                <div class="ExportContainerBottom">
+                    <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Export Task</button>
+                </div>
+
             </div>
 
         </div>
 
     </div>
-
-
-    <!--
-    <h2>Server Response:</h2>
-
-    <div id="serverResponse">No data</div>
-    -->
 
 
     <!-- ****************************  --
@@ -202,6 +252,24 @@
     <script>
         // You can also require other files to run in this process
         require('./renderer.js')
+    </script>
+
+    <script>
+        let config = {
+            fullPanel: false,
+            buttonList: ['bold', 'italic', 'underline', 'subscript', 'superscript', 'indent', 'outdent', 'ol', 'ul', 'left', 'center', 'right', 'fontSize']
+        };
+        let niceditorNo = new nicEditor(config);
+        niceditorNo.panelInstance('richEditorNo');
+        niceditorNo.addEvent('blur', () => saveTask());
+
+        let niceditorEng = new nicEditor(config);
+        niceditorEng.panelInstance('richEditorEng');
+        niceditorEng.addEvent('blur', () => saveTask());
+
+        let niceditorNyno = new nicEditor(config);
+        niceditorNyno.panelInstance('richEditorNyno');
+        niceditorNyno.addEvent('blur', () => saveTask());
     </script>
 
 

@@ -67,7 +67,18 @@ let getTitle = function() {
  */
 let getParsons2d = function () {
 
-    let parsons2d = document.getElementById('parsons2d').checked;
+    return document.getElementById('parsons2d').checked;
+};
 
-    return parsons2d;
+
+/**
+ * Return the description for a given language
+ *
+ * @param lang (must be one of 'No', 'Eng', or 'Nyno')
+ */
+let getDescription = function (lang) {
+
+    let nicE = new nicEditors.findEditor('richEditor' + lang);
+
+    return nicE.getContent();
 };

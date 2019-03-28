@@ -62,14 +62,21 @@ let loadTaskList = function() {
 
         let taskListEntry = document.createElement('div');
         taskListEntry.className = 'taskContainer';
-        taskListEntry.id = task.id.toString();
+        taskListEntry.id = 'taskContainer' + task.id.toString();
         taskListEntry.setAttribute('onclick', 'loadTask(' + task.id + ')');
 
         let taskTitle = document.createElement('p');
         taskTitle.className = 'taskText';
-        taskTitle.innerHTML = task.title ? task.title : 'Task ' + (task.id + 1);
+        let taskTitleText = task.title ? task.title : 'Task ' + (task.id + 1);
+        taskTitle.innerHTML = taskTitleText;
+
+        let taskDeleteButton = document.createElement('button');
+        taskDeleteButton.innerHTML = 'X';
+        taskDeleteButton.setAttribute('onclick', 'deleteTask(event, ' + task.id + ', "'+ taskTitleText +'")');
+        taskDeleteButton.className = 'taskDeleteButton';
 
         taskListEntry.appendChild(taskTitle);
+        taskListEntry.appendChild(taskDeleteButton);
         taskList.appendChild(taskListEntry);
 
     }
@@ -79,7 +86,7 @@ let loadTaskList = function() {
 /**
  * Update the input fields to the values of current task
  */
-let loadTask = function(id) {
+let loadTask = function(loadMyId) {
 
     // Show paper
     let papers = document.getElementsByClassName('paper');
@@ -87,8 +94,8 @@ let loadTask = function(id) {
         papers[i].style.display = 'block';
     }
 
-
-    currentId = id;
+    // Update global currentID
+    currentId = loadMyId;
 
     let allTasks = database.tasks;
 
@@ -96,14 +103,23 @@ let loadTask = function(id) {
 
         let task = allTasks[taskNum];
 
-        let taskTab = document.getElementById(task.id.toString());
+        let taskTab = document.getElementById('taskContainer' + task.id.toString());
 
-        if(task.id==id){
+        if(task.id==loadMyId){
 
             taskTab.className = 'taskContainer selected';
 
             document.getElementById('taskTitleInput').value = task.fileName;
             document.getElementById('parsons2d').checked = task.parsons2d;
+
+            // Because the rich text editors uses nicEditor, this is the way to update their value
+            let nicENo = new nicEditors.findEditor('richEditorNo');
+            nicENo.setContent(task.description.no);
+            let nicEEng = new nicEditors.findEditor('richEditorEng');
+            nicEEng.setContent(task.description.eng);
+            let nicENyno = new nicEditors.findEditor('richEditorNyno');
+            nicENyno.setContent(task.description.nyno);
+
             editor.refresh();
             editor.setValue(task.code);
 
