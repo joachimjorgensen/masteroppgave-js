@@ -38,7 +38,7 @@
 
 .textAreaTag {
     /*width: 100%; This would be optimal*/
-    width: 600px;
+    width: 550px;
     height: 100px;
     display: flex;
     flex: 1;
