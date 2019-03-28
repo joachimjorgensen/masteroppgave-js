@@ -144,6 +144,11 @@ function add_manifest_data(myManifest, identifiers, taskNames){
 
 }
 
+/**
+ * Adds the tag lang="languageCode" to all children of the temp node.
+ * @param {Node} temp Parent node 
+ * @param {String} languageCode Language code (no_no, no_no_ny or en_us)
+ */
 function addLanguageToAllTags(temp, languageCode){
 	var all = temp.childNodes;//getElementsByTagName("*");
 	for (var i = 0, max = all.length; i < max; i++) {
@@ -183,33 +188,40 @@ function add_metadata(myDoc, identifier, taskTitle, parsons2D, canvasHeight, tit
 	addAttribute(itemBody, "inspera:defaultLanguage","no_no");
 	addAttribute(itemBody, "inspera:supportedLanguages","no_no,en_us,no_no_ny");
 
+	try{
+		//Set title text
+		let title = itemBody.getElementsByTagName('p');
+		title[0].innerHTML = title_no;
 
-	//Set title text
-	let title = itemBody.getElementsByTagName('p');
-	title[0].innerHTML = title_no;
+		/*
+		let englishTitle = addChildWithValue(myDoc, itemBody, "div", "");
+		addAttribute(englishTitle,"lang","en_us");
+		addAttribute(englishTitle,"style","display: none;");
+	
+		let nynorskTitle = addChildWithValue(myDoc, itemBody, "div", "");
+		addAttribute(nynorskTitle,"lang","no_no_ny");
+		addAttribute(nynorskTitle,"style","display: none;");
+		*/
+		var tempEn = document.createElement("div");
 
-	/*
-	let englishTitle = addChildWithValue(myDoc, itemBody, "div", "");
-	addAttribute(englishTitle,"lang","en_us");
-	addAttribute(englishTitle,"style","display: none;");
+		tempEn.innerHTML = title_en;
+		addLanguageToAllTags(tempEn, "en_us")
+		itemBody.innerHTML += tempEn.innerHTML;
 
-	let nynorskTitle = addChildWithValue(myDoc, itemBody, "div", "");
-	addAttribute(nynorskTitle,"lang","no_no_ny");
-	addAttribute(nynorskTitle,"style","display: none;");
-	*/
-	var tempEn = document.createElement("div");
+		var tempNy = document.createElement("div");
 
-	tempEn.innerHTML = title_en;
-	addLanguageToAllTags(tempEn, "en_us")
-	itemBody.innerHTML += tempEn.innerHTML;
+		tempNy.innerHTML = title_ny;
+		addLanguageToAllTags(tempNy, "no_no_ny")
+		itemBody.innerHTML += tempNy.innerHTML;
 
-	var tempNy = document.createElement("div");
+		//We add this as a last element, so the graphicGapMatchInteraction can use insertBefore on lastChild(this one). 
+		//graphicGapMatchInteraction has to be after all text
+		itemBody.innerHTML += '<p style=""> </p>' 
 
-	tempNy.innerHTML = title_ny;
-	addLanguageToAllTags(tempNy, "no_no_ny")
-	itemBody.innerHTML += tempNy.innerHTML;
-
-	itemBody.innerHTML += '<p style=""> </p>'
+	}catch(err){
+		alert("Task text cant be made into XHTML, try with less styling. See console log for more information.")
+		console.error(err);
+	}
 
 
 	let graphicGapMatchInteraction = assessmentItem.getElementsByTagName('graphicGapMatchInteraction')[0];
@@ -852,9 +864,10 @@ function continue_dnd(dataAll, filepath){
 		let numberOfTasksToGenerate = 1;//data.generateNumber;
 		let distractorSubsetSize = 2;
 
-		let title_no = "<p><strong>Norsk</strong></p>"
-		let title_ny = "<p><strong>Nynorsk</strong></p>"
-		let title_en = "<p><strong>English</strong></p>"
+
+		let title_no = '<div>'+data.description.no+'</div>';//"<p><strong>Norsk</strong></p>"
+		let title_ny = '<div>'+data.description.nyno+'</div>';//"<p><strong>Nynorsk</strong></p>"
+		let title_en = '<div>'+data.description.eng+'</div>';//"<p><strong>English</strong></p>"
 
 		for (let i = 0; i < numberOfTasksToGenerate; i++) {
 			distractors = getRandomSubsetOfDistractors(data.distractors, distractorSubsetSize)

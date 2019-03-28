@@ -43,6 +43,7 @@
     <!-- EXAMPLE FOR RICH TEXT EDITOR          http://nicedit.com/ -->
     <!--<script src="http://js.nicedit.com/nicEdit-latest.js" type="text/javascript"></script>-->
     <script src="./scripts/nicEdit.js" type="text/javascript"></script>
+    <script src="./scripts/nicXHTML.js" type="text/javascript"></script>
     <script type="text/javascript">bkLib.onDomLoaded(nicEditors.allTextAreas);</script>
 
 </head>
@@ -257,6 +258,7 @@
     <script>
         let config = {
             fullPanel: false,
+            xhtml: true,
             buttonList: ['bold', 'italic', 'underline', 'subscript', 'superscript', 'indent', 'outdent', 'ol', 'ul', 'left', 'center', 'right', 'fontSize']
         };
         let niceditorNo = new nicEditor(config);
