@@ -18,7 +18,7 @@ let getTaskObject = function(id) {
         }
     }
 
-    return 'Error: no task do not exist';
+    return 'Error: no tasks exist';
 };
 
 
@@ -81,4 +81,94 @@ let getDescription = function (lang) {
     let nicE = new nicEditors.findEditor('richEditor' + lang);
 
     return nicE.getContent();
+};
+
+
+/**
+ * Returns the number of lines in the code editor
+ *
+ * @returns {int}
+ */
+let getNumCodeLines = function(id) {
+
+    let task = getTaskObject(id);
+    let lines = task.code;
+
+    if (lines) {
+        lines = lines.split('\n');
+        lines = lines.filter(Boolean); // Removes empty string from array
+        return lines.length;
+
+    } else {
+        return 0;
+    }
+
+    //return editor.lineCount();
+};
+
+
+/**
+ * Returns the number of distractors of a task
+ *
+ * @param id
+ * @returns {int}
+ */
+let getNumDistractors = function(id) {
+
+    let task = getTaskObject(id);
+
+    return task.distractors ? task.distractors.length : 0;
+};
+
+
+/**
+ *
+ * Returns an array of code lines
+ * @param id
+ * @returns {*}
+ */
+let getCodeLines = function(id) {
+
+    let task = getTaskObject(id);
+    let lines = task.code;
+
+    if (lines) {
+        lines = lines.split('\n');
+        lines = lines.filter(Boolean); // Removes empty string from array
+        return lines;
+
+    } else {
+        return [];
+    }
+};
+
+/**
+ * Returns the number of indents in the code
+ *
+ * @param id
+ * @returns {int}
+ */
+let getNumColumnsCode = function(id) {
+
+    let codeLines = getCodeLines(id);
+
+    if (codeLines) {
+        let tabSize = findTabSize(codeLines);
+        return getMaxTabs(codeLines, tabSize) + 1;
+
+    } else {
+        return 1;
+    }
+};
+
+
+/**
+ * Returns the list of distractors for a given task
+ *
+ * @param id
+ * @returns {Array}
+ */
+let getDistractorLines = function(id) {
+    let task = getTaskObject(id);
+    return task.distractors;
 };
