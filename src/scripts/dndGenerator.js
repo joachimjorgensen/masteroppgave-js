@@ -271,6 +271,7 @@ function add_empty_hotspot(myDoc, hotspotX, hotspotY, hotspotWidth, hotspotHeigh
 	addAttribute(associableHotspot,"shape","rect");
 	addAttribute(associableHotspot,"matchMax","0");
 
+	return newAssociableHotspotName;
 }
 
 /**
@@ -295,13 +296,10 @@ function add_draggable_pair(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight
 	let newGapImgName = "gapImg"+generateID();
 	let newAssociableHotspotName = "associableHotspot"+generateID();
 	let newGA = newGapImgName + " " + newAssociableHotspotName;
-	//let newTitleText = "Fullfor denne kule oppgaven!";
-	//let newPromptText = "Velg ett alternativ!";
 	let hotspotCoords = hotspotX.toString()+","+hotspotY.toString()+","+(hotspotX+hotspotWidth).toString()+","+(hotspotY+hotspotHeight).toString();
 
 	let assessmentItem = myDoc.getElementsByTagName('assessmentItem');
 	let responseDeclarations = assessmentItem[0].getElementsByTagName('responseDeclaration');
-
 
 	//Add value to correctResponses
 	let correctResponses = responseDeclarations[0].getElementsByTagName('correctResponse');
@@ -317,37 +315,8 @@ function add_draggable_pair(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight
 	addAttribute(rd,"cardinality","single");
 	addAttribute(rd,"identifier",newGapImgName);
 
-	//Set title text
-	//let title = assessmentItem[0].getElementsByTagName('p');
-	//title[0].firstChild.data = newTitleText;
-
-	
 	let graphicGapMatchInteraction = assessmentItem[0].getElementsByTagName('graphicGapMatchInteraction')[0];
 
-	//Setting canvas height in metadata instead
-	//addAttribute(graphicGapMatchInteraction, "inspera:canvasHeight",canvasHeight.toString());
-	/*
-	//Set freeplacing
-	if(!parsons2D){
-		addAttribute(graphicGapMatchInteraction, "class", "freeplacing markHotspots")
-	}
-	//Set prompt text
-	let prompt = graphicGapMatchInteraction.getElementsByTagName("prompt")[0];
-	prompt.firstChild.data = newPromptText;
-	*/
-
-	//Create gap image
-	/*
-	<gapImg identifier="gapImg__361670718761" matchMax="">
-            <object x="250" y="140" width="68" height="58">
-                
-                    <div class="text">
-                        <p> I</p>
-                    </div>
-                
-            </object>
-        </gapImg>
-	*/
 	let gi = addChildWithAttribute(myDoc, graphicGapMatchInteraction, "gapImg", "identifier", newGapImgName);
 	addAttribute(gi,"matchMax","");
 
@@ -360,7 +329,6 @@ function add_draggable_pair(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight
 	addChildWithValue(myDoc, div, "p", textInBox);
 	addAttribute(div, "inspera:label-lang-en_us",textInBox);
 	addAttribute(div, "inspera:label-lang-no_no_ny",textInBox);
-
 
 	//Create associableHotspot
 	let associableHotspot = addChildWithAttribute(myDoc, graphicGapMatchInteraction, "associableHotspot", "coords", hotspotCoords);
@@ -395,6 +363,42 @@ function add_draggable_pair(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight
 	baseValue = addChildWithValue(myDoc, member, "baseValue", newGA);
 	addAttribute(baseValue, "baseType", "directedPair");
 	addChildWithAttribute(myDoc, member, "variable", "identifier","RESPONSE");
+
+	return [newGapImgName, newAssociableHotspotName]
+}
+
+function connectDragAreaToDropArea(myDoc, newGapImgName, newAssociableHotspotName){
+	let newGA = newGapImgName + " " + newAssociableHotspotName;
+	let assessmentItem = myDoc.getElementsByTagName('assessmentItem');
+	let responseDeclarations = assessmentItem[0].getElementsByTagName('responseDeclaration');
+
+	//Add value to correctResponses
+	let correctResponses = responseDeclarations[0].getElementsByTagName('correctResponse');
+	addChildWithValue(myDoc, correctResponses[0], "value", newGA);
+
+	//Add mapEntry to mapping
+	let mapping = responseDeclarations[0].getElementsByTagName('mapping');
+	let ele = addChildWithAttribute(myDoc, mapping[0], "mapEntry","mapKey", newGA);
+	addAttribute(ele, "mappedValue","1");
+	//ResponseProcessing and isNull
+	let responseProcessing = assessmentItem[0].getElementsByTagName('responseProcessing')[0];
+	let responseConditions = responseProcessing.getElementsByTagName('responseCondition');
+
+	let responseElseIfs = responseConditions[1].getElementsByTagName('responseElseIf');
+	//ResponseElseIf 1
+	andResponse = responseElseIfs[0].getElementsByTagName('and')[0];
+	let member = addChildWithValue(myDoc, andResponse, "member", "");
+	let baseValue = addChildWithValue(myDoc, member, "baseValue", newGA);
+	addAttribute(baseValue, "baseType", "directedPair");
+	addChildWithAttribute(myDoc, member, "variable", "identifier","RESPONSE");
+
+	//ResponseElseIf 1
+	let orResponse = responseElseIfs[1].getElementsByTagName('or')[0];
+	member = addChildWithValue(myDoc, orResponse, "member", "");
+	baseValue = addChildWithValue(myDoc, member, "baseValue", newGA);
+	addAttribute(baseValue, "baseType", "directedPair");
+	addChildWithAttribute(myDoc, member, "variable", "identifier","RESPONSE");
+
 }
 
 function add_distractor(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight1){
@@ -407,48 +411,18 @@ function add_distractor(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight1){
 	let assessmentItem = myDoc.getElementsByTagName('assessmentItem');
 	let responseDeclarations = assessmentItem[0].getElementsByTagName('responseDeclaration');
 
-
-	//Add value to correctResponses
-	/*
-	let correctResponses = responseDeclarations[0].getElementsByTagName('correctResponse');
-	addChildWithValue(myDoc, correctResponses[0], "value", newGA);
-
-	//Add mapEntry to mapping
-	let mapping = responseDeclarations[0].getElementsByTagName('mapping');
-	let ele = addChildWithAttribute(myDoc, mapping[0], "mapEntry","mapKey", newGA);
-	addAttribute(ele, "mappedValue","1");
-	*/
-
 	//Add responseDecleration
 	let rd = addChildWithAttribute(myDoc, assessmentItem[0], "responseDeclaration", "baseType", "point");
 	addAttribute(rd,"cardinality","single");
 	addAttribute(rd,"identifier",newGapImgName);
 
-
 	let graphicGapMatchInteraction = assessmentItem[0].getElementsByTagName('graphicGapMatchInteraction')[0];
 
-	//Set canvas height
-	//addAttribute(graphicGapMatchInteraction, "inspera:canvasHeight",canvasHeight.toString());
-
 	//Set freeplacing
+	/*
 	if(!parsons2D){
 		addAttribute(graphicGapMatchInteraction, "class", "freeplacing markHotspots")
 	}
-	//Set prompt text
-	//let prompt = graphicGapMatchInteraction.getElementsByTagName("prompt")[0];
-	//prompt.firstChild.data = newPromptText;
-
-	//Create gap image
-	/*
-	<gapImg identifier="gapImg__361670718761" matchMax="">
-            <object x="250" y="140" width="68" height="58">
-                
-                    <div class="text">
-                        <p> I</p>
-                    </div>
-                
-            </object>
-        </gapImg>
 	*/
 	let gi = addChildWithAttribute(myDoc, graphicGapMatchInteraction, "gapImg", "identifier", newGapImgName);
 	addAttribute(gi,"matchMax","");
@@ -462,16 +436,6 @@ function add_distractor(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight1){
 	addChildWithValue(myDoc, div, "p", textInBox);
 	addAttribute(div, "inspera:label-lang-en_us",textInBox);
 	addAttribute(div, "inspera:label-lang-no_no_ny",textInBox);
-
-
-	//Create associableHotspot
-	/*
-	let associableHotspot = addChildWithAttribute(myDoc, graphicGapMatchInteraction, "associableHotspot", "coords", hotspotCoords);
-	addAttribute(associableHotspot,"identifier",newAssociableHotspotName);
-	addAttribute(associableHotspot,"hotspotLabel","1");
-	addAttribute(associableHotspot,"shape","rect");
-	addAttribute(associableHotspot,"matchMax","0");
-	*/
 
 	//ResponseProcessing and isNull
 	let responseProcessing = assessmentItem[0].getElementsByTagName('responseProcessing')[0];
@@ -488,17 +452,6 @@ function add_distractor(myDoc, textInBox, boxX1, boxY1, boxWidth1, boxHeight1){
 	let responseElseIfs = responseConditions[1].getElementsByTagName('responseElseIf');
 	//ResponseElseIf 1
 	andResponse = responseElseIfs[0].getElementsByTagName('and')[0];
-	//let member = addChildWithValue(myDoc, andResponse, "member", "");
-	//let baseValue = addChildWithValue(myDoc, member, "baseValue", newGA);
-	//addAttribute(baseValue, "baseType", "directedPair");
-	//addChildWithAttribute(myDoc, member, "variable", "identifier","RESPONSE");
-
-	//ResponseElseIf 1
-	//let orResponse = responseElseIfs[1].getElementsByTagName('or')[0];
-	//member = addChildWithValue(myDoc, orResponse, "member", "");
-	//baseValue = addChildWithValue(myDoc, member, "baseValue", newGA);
-	//addAttribute(baseValue, "baseType", "directedPair");
-	//addChildWithAttribute(myDoc, member, "variable", "identifier","RESPONSE");
 }
 
 /**
@@ -710,7 +663,20 @@ function generate_python_lines(myDoc,lines,parsons2D,distractors){
 		let width = 50;
 		let tabSize = findTabSize(lines);
 		let maxTabs = getMaxTabs(lines,tabSize);
+		/*
+		2D array of associableHotspots representing the drop area grid
+		[
+			[1,2,3],
+			[1,2,3],
+			[1,2,3]
+		]
+		*/
+		let associableHotspots = [] 
+		//Array of gapImages where position is the same as in lines.
+		let gapImages = [];
+
 		for (let i = 0; i < lines.length; i++) {
+			associableHotspots.push([])
 			let line = lines[i];
 
 			let tabs = countTabs(line,tabSize);
@@ -720,25 +686,47 @@ function generate_python_lines(myDoc,lines,parsons2D,distractors){
 			for (let i = 0; i < maxTabs+1; i++){
 				let startX = gridStartX+(width*i)+i;
 				if(i==tabs){
-					add_draggable_pair(myDoc,theString,startOptionPair[0],startOptionPair[1],width,dragHeight,startX,startY,width,dropHeight);
+					//Returns [newGapImgName, newAssociableHotspotName]
+					let gapAndHotspot = add_draggable_pair(myDoc,theString,startOptionPair[0],startOptionPair[1],width,dragHeight,startX,startY,width,dropHeight);
+					associableHotspots[associableHotspots.length-1].push(gapAndHotspot[1]);
+					gapImages.push(gapAndHotspot[0]);
 				}else{
-					add_empty_hotspot(myDoc,startX,startY,width,dropHeight);
+					let hotspot = add_empty_hotspot(myDoc,startX,startY,width,dropHeight);
+					associableHotspots[associableHotspots.length-1].push(hotspot)
 				}
 			}
 			startY += dropHeight +1;
 		}
+		console.log(associableHotspots)
 		for (let i = 0; i< distractors.length; i++){
 			let startOptionPair = startOptions[distractors[i]];
 			add_distractor(myDoc,distractors[i],startOptionPair[0],startOptionPair[1],10,dragHeight);
 		}
+
+		connectDragAreaToDropArea(myDoc,gapImages[0],associableHotspots[0][1])
 	}else{
 		let width = 500;
+		/*
+		Array of associableHotspots representing the drop area rows
+		[
+			1,
+			2,
+			3
+		]
+		*/
+		let associableHotspots = [] 
+		//Array of gapImages where position is the same as in lines.
+		let gapImages = [];
 		for (let i = 0; i < lines.length; i++) {
 			let line = lines[i];
 			let theString = stripMe(line);
 			let startOptionPair = startOptions[line];
 			let startX = 50;
-			add_draggable_pair(myDoc,theString,startOptionPair[0],startOptionPair[1],width,dragHeight,startX,startY,width,dropHeight);
+			let gapAndHotspot = add_draggable_pair(myDoc,theString,startOptionPair[0],startOptionPair[1],width,dragHeight,startX,startY,width,dropHeight);
+
+			associableHotspots[associableHotspots.length - 1].push(gapAndHotspot[1]);
+			gapImages.push(gapAndHotspot[0]);
+
 			startY += dropHeight+1;
 		}
 		for (let i = 0; i< distractors.length; i++){
