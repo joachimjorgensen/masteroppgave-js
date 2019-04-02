@@ -43,6 +43,8 @@ let saveTask = function() {
 
     updateTitleInTaskList(id);
 
+    addPreviewDropAndDropAreas(id);
+
 };
 
 

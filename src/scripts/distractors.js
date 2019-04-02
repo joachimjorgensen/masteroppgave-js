@@ -81,6 +81,7 @@ let addDistractor = function() {
     document.forms["distractorForm"]["distractorInput"].value = '';
 
     loadDistractors();
+    saveTask();
 };
 
 
@@ -106,4 +107,5 @@ let deleteDistractor = function(distractorId) {
     }
 
     loadDistractors();
+    saveTask();
 };
