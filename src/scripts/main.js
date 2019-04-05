@@ -1,9 +1,9 @@
 /**
  * Created by jwjorgen on 29/10/2018.
  */
+
 const path = require('path');
 const url = require('url');
-
 
 /**
  * "Database" containing the tasks
@@ -30,7 +30,7 @@ let loadMain = function(){
     downloadFolder.innerHTML = ".../" + nameArray[nameArray.length - 2] + "/" + nameArray[nameArray.length - 1];
     */
   
-    // Load all tasks in the database
+    // Load all tasks in the database to the task bar
     loadTaskList();
 
     // Hide paper until the user chooses a task
@@ -43,7 +43,7 @@ let loadMain = function(){
 
 
 /**
- * Update the list of tasks in the taskBar
+ * Updates the list of tasks in the taskBar
  */
 let loadTaskList = function() {
 
@@ -57,7 +57,6 @@ let loadTaskList = function() {
 
     // Add tasks to tabList
     for (let taskNum in allTasks) {
-
         let task = allTasks[taskNum];
 
         let taskListEntry = document.createElement('div');
@@ -78,13 +77,14 @@ let loadTaskList = function() {
         taskListEntry.appendChild(taskTitle);
         taskListEntry.appendChild(taskDeleteButton);
         taskList.appendChild(taskListEntry);
-
     }
 };
 
 
 /**
  * Update the input fields to the values of current task
+ *
+ * @param {Number} loadMyId The ID of the task to be loaded
  */
 let loadTask = function(loadMyId) {
 
@@ -100,18 +100,17 @@ let loadTask = function(loadMyId) {
     let allTasks = database.tasks;
 
     for (let taskNum in allTasks) {
-
         let task = allTasks[taskNum];
 
         let taskTab = document.getElementById('taskContainer' + task.id.toString());
 
         if(task.id==loadMyId){
-
             taskTab.className = 'taskContainer selected';
 
             document.getElementById('taskTitleInput').value = task.fileName;
             document.getElementById('parsons2d').checked = task.parsons2d;
 
+            // Set task description
             // Because the rich text editors uses nicEditor, this is the way to update their value
             let nicENo = new nicEditors.findEditor('richEditorNo');
             nicENo.setContent(task.description.no);
@@ -120,12 +119,11 @@ let loadTask = function(loadMyId) {
             let nicENyno = new nicEditors.findEditor('richEditorNyno');
             nicENyno.setContent(task.description.nyno);
 
+            // Set source code editor content
             editor.refresh();
             editor.setValue(task.code);
-
         }else{
             taskTab.className = 'taskContainer';
-
         }
     }
 
@@ -136,7 +134,8 @@ let loadTask = function(loadMyId) {
 
 /**
  * Update file name for all-tasks.zip (Read: The name of the zip folder containing all the tasks)
- * @param allFileName
+ *
+ * @param {String} allFileName The new name for the zip file
  */
 let updateAllTasksTitle = function (allFileName) {
     database.allFileName = allFileName;

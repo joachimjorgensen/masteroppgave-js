@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="styles/input.css">
     <link rel="stylesheet" href="styles/description.css">
     <link rel="stylesheet" href="styles/preview.css">
+    <link rel="stylesheet" href="styles/permutations.css">
 
     <!-- JAVASCRIPT FILES -->
     <script src="scripts/main.js"></script>
@@ -26,6 +27,8 @@
     <script src="scripts/getters.js"></script>
     <script src="scripts/description.js"></script>
     <script src="scripts/preview.js"></script>
+    <script src="scripts/permutations.js"></script>
+    <script src="scripts/nicEditMain.js"></script>
 
     <!-- Create a simple CodeMirror instance -->
     <script src="node_modules/codemirror/lib/codemirror.js"></script>
@@ -218,6 +221,11 @@
 
                 </div>
 
+                <h2>Permutations</h2>
+
+                <div class="permutationsContainer" id="permutationsContainer">
+                </div>
+
                 <h2>Preview</h2>
                 <div class="previewContainer">
                     <div class="previewDropAreasContainer" id="previewDropArea">
@@ -246,6 +254,7 @@
     <script>
         window.onload=loadMain();
 
+        // Load the source code editor
         let editor = CodeMirror(document.getElementById('codeArea'), {
             lineNumbers: true,
             mode: 'python',
@@ -253,7 +262,7 @@
             extraKeys: {'Ctrl-Space': 'autocomplete'},
         });
 
-        editor.setSize(550, 300);
+        editor.setSize(550, 200);
 
         editor.on("blur", function(){
             saveTask();
@@ -263,27 +272,11 @@
 
     <script>
         // You can also require other files to run in this process
-        require('./renderer.js')
+        require('./renderer.js');
+
+        // Loade the nicEditors required for description input
+        window.onload=loadNicEdit();
     </script>
-
-    <script>
-        let config = {
-            fullPanel: false,
-            buttonList: ['bold', 'italic', 'underline', 'subscript', 'superscript', 'indent', 'outdent', 'ol', 'ul', 'left', 'center', 'right', 'fontSize']
-        };
-        let niceditorNo = new nicEditor(config);
-        niceditorNo.panelInstance('richEditorNo');
-        niceditorNo.addEvent('blur', () => saveTask());
-
-        let niceditorEng = new nicEditor(config);
-        niceditorEng.panelInstance('richEditorEng');
-        niceditorEng.addEvent('blur', () => saveTask());
-
-        let niceditorNyno = new nicEditor(config);
-        niceditorNyno.panelInstance('richEditorNyno');
-        niceditorNyno.addEvent('blur', () => saveTask());
-    </script>
-
 
 </body>
 </html>

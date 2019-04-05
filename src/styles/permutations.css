@@ -1,0 +1,8 @@
+.permutationsCheckboxContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.checkedLabel {
+    color: lightgray;
+}

@@ -4,8 +4,9 @@
 
 /**
  * Returns a task given an id
- * @param id
- * @returns {*}
+ *
+ * @param {Number} id The ID of the task to be returned
+ * @returns {Object} A task object
  */
 let getTaskObject = function(id) {
 
@@ -23,9 +24,9 @@ let getTaskObject = function(id) {
 
 
 /**
- * Return the chosen fileName. If none selected, 'default' is returned
+ * Returns the value of the filename input element. If none selected, 'default' is returned
  *
- * @returns {string}
+ * @returns {string} The filename String
  */
 let getFileName = function() {
 
@@ -49,9 +50,9 @@ let getFilePath = function() {
 
 
 /**
- * Return the chosen fileName. If none selected, 'default' is returned
+ * Return the value of the title input element. If none selected, 'default' is returned
  *
- * @returns {string}
+ * @returns {string} The title String
  */
 let getTitle = function() {
 
@@ -61,9 +62,9 @@ let getTitle = function() {
 
 
 /**
- * Checks if the parsons2d box is checked
+ * Returns the value of the parsons2d checkbox element
  *
- * @returns {boolean|Array|string|ga.selectors.pseudos.checked|*}
+ * @returns {boolean} The boolean value of the parsons2d checkbox
  */
 let getParsons2d = function () {
 
@@ -72,9 +73,10 @@ let getParsons2d = function () {
 
 
 /**
- * Return the description for a given language
+ * Returns the description for a given language
  *
- * @param lang (must be one of 'No', 'Eng', or 'Nyno')
+ * @param {String} lang The language of the description (must be one of 'No', 'Eng', or 'Nyno')
+ * @returns {*|xhtml}
  */
 let getDescription = function (lang) {
 
@@ -85,9 +87,10 @@ let getDescription = function (lang) {
 
 
 /**
- * Returns the number of lines in the code editor
+ * Returns the number of lines in the source code editor
  *
- * @returns {int}
+ * @param {Number} id The ID of desired task
+ * @returns {int} The number of lines of code in the source code editor
  */
 let getNumCodeLines = function(id) {
 
@@ -98,20 +101,17 @@ let getNumCodeLines = function(id) {
         lines = lines.split('\n');
         lines = lines.filter(Boolean); // Removes empty string from array
         return lines.length;
-
     } else {
         return 0;
     }
-
-    //return editor.lineCount();
 };
 
 
 /**
  * Returns the number of distractors of a task
  *
- * @param id
- * @returns {int}
+ * @param {Number} id The ID of desired task
+ * @returns {int} The number of distractors for the task
  */
 let getNumDistractors = function(id) {
 
@@ -122,10 +122,10 @@ let getNumDistractors = function(id) {
 
 
 /**
+ * Returns an array of code lines´from the source code editor
  *
- * Returns an array of code lines
- * @param id
- * @returns {*}
+ * @param {Number} id The ID of desired task
+ * @returns {Array|*} Array of code lines from the source code editor
  */
 let getCodeLines = function(id) {
 
@@ -134,19 +134,18 @@ let getCodeLines = function(id) {
 
     if (lines) {
         lines = lines.split('\n');
-        lines = lines.filter(Boolean); // Removes empty string from array
+        lines = lines.filter(Boolean); // Removes empty strings from array
         return lines;
-
     } else {
         return [];
     }
 };
 
 /**
- * Returns the number of indents in the code
+ * Returns the maximum number of indents/tabs in the source code editor
  *
- * @param id
- * @returns {int}
+ * @param {Number} id The ID of desired task
+ * @returns {int} The maximum number of tabs from the source code editor
  */
 let getNumColumnsCode = function(id) {
 
@@ -155,7 +154,6 @@ let getNumColumnsCode = function(id) {
     if (codeLines) {
         let tabSize = findTabSize(codeLines);
         return getMaxTabs(codeLines, tabSize) + 1;
-
     } else {
         return 1;
     }
@@ -165,8 +163,8 @@ let getNumColumnsCode = function(id) {
 /**
  * Returns the list of distractors for a given task
  *
- * @param id
- * @returns {Array}
+ * @param {Number} id The ID of desired task
+ * @returns {Array} Array of distractors
  */
 let getDistractorLines = function(id) {
     let task = getTaskObject(id);

@@ -2,6 +2,12 @@
  * Created by jwjorgen on 26/03/2019.
  */
 
+/**
+ * Shows the description tab for a given language
+ *
+ * @param {Event} evt
+ * @param {String} language The language to open a tab for
+ */
 function openTab(evt, language) {
     let i, tabcontent, tablinks;
 

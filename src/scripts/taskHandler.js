@@ -3,8 +3,7 @@
  */
 
 /**
- * Save current task to the database
- * @param id
+ * Save/update current task to the database
  */
 let saveTask = function() {
 
@@ -21,10 +20,9 @@ let saveTask = function() {
     let allTasks = database.tasks;
 
     for (let taskNum in allTasks) {
-
         let task = allTasks[taskNum];
 
-        if(task.id==id){
+        if(task.id == id){
             task = {
                 ...task,
                 title: /\S/.test(title) ? title : 'Task ' + (task.id + 1), // Checks if title is only whitespace
@@ -37,6 +35,7 @@ let saveTask = function() {
                     nyno: desc_nyno
                 }
             };
+
             allTasks[taskNum] = task;
         }
     }
@@ -45,17 +44,23 @@ let saveTask = function() {
 
     addPreviewDropAndDropAreas(id);
 
+    updatePermutationsSelect(id);
 };
 
 
-
 /**
- * Delete task from list of tasks
+ * Delete task from the database
+ *
+ * @param {Event} event
+ * @param {Number} taskId The ID for the task to be deleted
+ * @param {String} taskTitle Title of the task to be deleted
  */
 let deleteTask = function(event, taskId, taskTitle) {
 
-    event.stopPropagation(); // Have to prevent onClick triggering on div(with onClick) behind
+    // Have to prevent onClick triggering on div(with onClick) behind
+    event.stopPropagation();
 
+    // Open a dialog for delete confirmation
     const response = dialog.showMessageBox(win, {
         type: 'warning',
         buttons: ['Yes', 'No'], //Response
@@ -64,7 +69,7 @@ let deleteTask = function(event, taskId, taskTitle) {
     });
 
     if (response === 1) {
-        // Do no ´ delete
+        // Do not delete
         return;
     }
 
@@ -73,11 +78,9 @@ let deleteTask = function(event, taskId, taskTitle) {
     let firstId = 1000000;
 
     for (let taskNum in allTasks) {
-
         let task = allTasks[taskNum];
 
         if (task.id != taskId) {
-
             // Keep track of the first element id in the list
             firstId = task.id < firstId ? task.id : firstId;
 
@@ -88,6 +91,7 @@ let deleteTask = function(event, taskId, taskTitle) {
     database.tasks = newTaskList;
     loadTaskList();
 
+    // Update which task to be displayed
     if (currentId === taskId && firstId < 1000000) {
         // Deleting current task and there exists other tasks in the list - load first task
         loadTask(firstId);
@@ -99,14 +103,14 @@ let deleteTask = function(event, taskId, taskTitle) {
             papers[i].style.display = 'none';
         }
     } else {
-        // Load current task
+        // User deletes a task that is not the current task - reload current task
         loadTask(currentId)
     }
 };
 
 
 /**
- * Add empty  task to list of tasks
+ * Add an empty task to the database
  */
 let addTask = function () {
 
@@ -123,7 +127,9 @@ let addTask = function () {
             no: '',
             eng: '',
             nyno: ''
-        }
+        },
+        permutations: [],
+        oldCodeLines: [],
     };
 
     database.tasks.push(task);
@@ -132,15 +138,15 @@ let addTask = function () {
     // Update the list of tasks in the taskBar
     loadTaskList();
 
-    // Load task this task
+    // Load the newly created task
     loadTask(id);
-
 };
 
 
 /**
- * Update the oppgave-title in the task list
- * @param id
+ * Update the task title in the task bar
+ *
+ * @param {Number} id The ID of current task
  */
 let updateTitleInTaskList = function(id) {
 
@@ -148,28 +154,24 @@ let updateTitleInTaskList = function(id) {
     let taskList = document.getElementById('taskList');
 
     for (let taskNum in allTasks) {
-
         let task = allTasks[taskNum];
 
         let taskTab = document.getElementById('taskContainer' + task.id.toString());
 
         if(task.id==id){
-
             if (task.title) {
-
                 // Update task title
                 taskTab.firstElementChild.innerHTML = task.title;
 
-                // Have to manually update button attribute for the task (to get correct title on delete message)
+                // Have to manually update button attribute for the task in the task bar (to get correct title on
+                // delete confirmation message)
                 let taskDeleteButton = document.createElement('button');
                 taskDeleteButton.innerHTML = 'X';
                 taskDeleteButton.setAttribute('onclick', 'deleteTask(event, ' + task.id + ', "'+ task.title +'")');
                 taskDeleteButton.className = 'taskDeleteButton';
 
                 taskTab.replaceChild(taskDeleteButton, taskTab.childNodes[1]);
-
             }
-
         }
     }
 };

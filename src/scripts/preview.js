@@ -2,6 +2,12 @@
  * Created by jwjorgen on 28/03/2019.
  */
 
+
+/**
+ * Init the sequence of creating a preview
+ *
+ * @param {Number} id The ID of the current task
+ */
 let addPreviewDropAndDropAreas = function(id) {
     addPreviewDropAreas(id);
     addPreviewDragAreas(id);
@@ -9,11 +15,11 @@ let addPreviewDropAndDropAreas = function(id) {
 
 
 /**
- * Creates a grid of drop areas in the preview
+ * Creates a grid of drop areas in the preview.
  * The grid is calculated based on the number of code lines and
  * the number of indents in the code
  *
- * @param id
+ * @param {Number} id The ID of the current task
  */
 let addPreviewDropAreas = function(id) {
 
@@ -59,7 +65,7 @@ let addPreviewDropAreas = function(id) {
  * All code lines are added as drop areas, and distractors are
  * added with a mask
  *
- * @param id
+ * @param {Number} id The ID of the current task
  */
 let addPreviewDragAreas = function(id) {
 
@@ -84,7 +90,6 @@ let addPreviewDragAreas = function(id) {
     // Create the grid of drag areas
     let index = 0;
     while (dragAreaLines[index]) {
-
         let dragAreaText = dragAreaLines[index];
         let dragArea = createDragArea('dragArea' + index);
         dragArea.innerHTML = dragAreaText;
@@ -99,8 +104,8 @@ let addPreviewDragAreas = function(id) {
 /**
  * Creates a drop area element
  *
- * @param id
- * @returns {Element|Electron.WebviewTag}
+ * @param {String} id The ID to be given to the created element
+ * @returns {Element} A rectangle div element
  */
 let createDropArea = function(id) {
     let rectangle = document.createElement('div');
@@ -114,8 +119,8 @@ let createDropArea = function(id) {
 /**
  * Creates a drag area element
  *
- * @param id
- * @returns {Element|Electron.WebviewTag}
+ * @param {String} id The ID to be given to the created element
+ * @returns {Element} A rectangle div element
  */
 let createDragArea = function(id) {
     let rectangle = document.createElement('div');
@@ -129,15 +134,14 @@ let createDragArea = function(id) {
 /**
  * Shuffles a given array
  *
- * @param array
- * @returns {*}
+ * @param {Array} array The array to shuffle
+ * @returns {Array} The array shuffled
  */
 let shuffleArray = function(array) {
     let currentIndex = array.length, temporaryValue, randomIndex;
 
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
-
         // Pick a remaining element...
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
