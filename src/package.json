@@ -20,7 +20,8 @@
   "devDependencies": {
     "electron": "^3.0.6",
     "electron-packager": "^12.2.0",
-    "mocha": "^6.0.2"
+    "mocha": "^6.0.2",
+    "spectron": "^5.0.0"
   },
   "dependencies": {
     "codemirror": "^5.41.0",

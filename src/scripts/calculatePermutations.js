@@ -43,6 +43,17 @@ class CalculatePermutations {
 	getAllTopologicalSorts(){
 		return this.allTopologicalSorts;
 	}
+	getAllFalsePositives(){
+		let falsePositives = [];
+		for(let i = 0; i<this.allTransitiveClosures.length;i++){
+			let transitiveClosure = this.allTransitiveClosures[i];
+			if(!this.allTopologicalSorts.includes(transitiveClosure)){
+				falsePositives.push(transitiveClosure)
+			}
+		}
+		return falsePositives;
+
+	}
 	getAllTransitiveClosuresLength(){
 		return this.allTransitiveClosures.length;
 	}

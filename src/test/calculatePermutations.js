@@ -341,7 +341,7 @@ function test_topologicalSort1() {
 	});
 }
 function test_topologicalSort2() {
-	it('Test TopologicalSort class when reaching cutoff (Error)', () => {
+	it('Test TopologicalSort class', () => {
 		let graph = new app._test.TopologicalSort(smallMatrix1.length);
 		let allTopologicalSorts = graph.allTopologicalSorts(smallMatrix1);
 
