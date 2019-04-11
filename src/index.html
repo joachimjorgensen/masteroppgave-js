@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="styles/description.css">
     <link rel="stylesheet" href="styles/preview.css">
     <link rel="stylesheet" href="styles/permutations.css">
+    <link rel="stylesheet" href="styles/settings.css">
 
     <!-- JAVASCRIPT FILES -->
     <script src="scripts/main.js"></script>
@@ -64,13 +65,15 @@
                 <br>
                 <p>1. Upload or write the code you want to create as a drag and drop task</p>
                 <br>
-                <p>2. Decide if you want to take indenting into consideration in the final drag and drop task</p>
+                <p>2. Add distractors</p>
                 <br>
-                <p>3. Add distractors</p>
+                <p>3. Create a directed acyclic graph to help generate possible permutations of the code</p>
                 <br>
-                <p>4. Export one or more tasks by pressing "Export Task" or "Export All"</p>
+                <p>4. Enter settings</p>
                 <br>
-                <p>5. Go to Inspera and upload the exported zip-file (In Inspera: Author > Questions >  ˇ  > Import Questions)</p>
+                <p>5. Export one or more tasks by pressing "Export Task" or "Export All"</p>
+                <br>
+                <p>6. Go to Inspera and upload the exported zip-file (In Inspera: Author > Questions >  ˇ  > Import Questions)</p>
             </div>
         </div>
     </div>
@@ -116,7 +119,9 @@
                     >
                 </div>
 
-
+                <h2>Description (Optional)</h2>
+                <p>Please write a description to accompany the task. </p>
+                <p>To write a description for several languages, please write in the different tabs provided.</p>
                 <div class="tab">
                     <button class="tablinks active" onclick="openTab(event, 'Bokmål')">Bokmål</button>
                     <button class="tablinks" onclick="openTab(event, 'English')">English</button>
@@ -147,94 +152,185 @@
                     ></textarea>
                 </div>
 
-                <div class="taskTitleContainer">
-                    <p class="infoText">Please choose a file to upload, or type code in the editor window.</p>
-                </div>
-
-
-                <div class="editorOptionsContainer">
+                <div class="spaceBetweenContainer">
 
                     <div>
-                        <button class="downloadButton" onclick="openFileDialog(); return null">Choose File</button>
+                        <h2>Source Code
+                            <button class="downloadButton" onclick="openFileDialog(); return null">Choose File</button>
+                        </h2>
+                        <div class="editor" id="codeArea" onchange="saveTask(); return null"></div>
                     </div>
 
-                    <div class="parsonsContainer">
-                        <p class="parsonText">With indentation</p>
-                        <div class="tooltip">
-                            <img src="./res/HelperCircle.png" class="helperIcon" alt="Helper circle" width="16" height="16" />
-                            <div class="tooltipImage">
-                                <div class="tooltipSubDiv">
-                                    <p>With indenting:</p>
-                                    <img src="./res/Parson2D.png" alt="Helper circle" width="150" />
-                                </div>
-                                <div class="tooltipSubDiv">
-                                    <p>Without indenting:</p>
-                                    <img src="./res/NotParson2D.png" alt="Helper circle" width="150" />
-                                </div>
-                            </div>
-                        </div>
-                        <input class="checkBox"
-                               id='parsons2d'
-                               onchange="saveTask()"
-                               type="checkbox"
-                               name="parsons2d"
-                               value=""
-                               checked
-                        >
-                    </div>
-
-                </div>
-
-                <div class="codeContainer">
-
-                    <div class="editor" id="codeArea" onchange="saveTask(); return null"></div>
-
-                    <div class="distractorContainer" id="distractorContainer">
-                        <div class="distractorHeader">
+                    <div class="flex1ColumnContainer">
+                        <div class="flexRowContainer">
                             <h2>Distractors</h2>
-                            <div class="tooltip">
-                                <img src="./res/HelperCircle.png" class="helperIcon" alt="Helper circle" width="16" height="16" />
-                                <div class="tooltipText">
-                                    <p>Distractors are incorrect inputs to the task</p>
+                            <div class="distractorHeader">
+                                <div class="tooltip">
+                                    <img src="./res/HelperCircle.png" class="helperIcon" alt="Helper circle" width="16" height="16" />
+                                    <div class="tooltipText">
+                                        <p>Distractors are incorrect inputs to the task</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="distractorInputContainer">
+                        <div class="distractorContainer" id="distractorContainer">
 
-                            <form name="distractorForm" class="distractorForm" onSubmit="addDistractor(event)">
-                                <input type="text"
-                                       class="distractorInput"
-                                       id="distractorInput"
-                                       name="distractorInput"
-                                       placeholder="Enter Distractor here..."
+                            <div class="distractorInputContainer">
+
+                                <form name="distractorForm" class="distractorForm" onSubmit="addDistractor(event)">
+                                    <input type="text"
+                                           class="distractorInput"
+                                           id="distractorInput"
+                                           name="distractorInput"
+                                           placeholder="Enter Distractor here..."
+                                           required
+                                    >
+                                    <button type="submit" class="addDistractorButton">Add</button>
+                                </form>
+
+                            </div>
+
+                            <div class="distractorListContainer" id="distractorListContainer">
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="spaceBetweenContainer">
+                    <div class="permutationsOuterContainer">
+                        <h2>Directed Acyclic Graph (DAG)</h2>
+
+                        <p>
+                            Creating a DAG lets the program find all permutations of the code lines provided. Please
+                            iterate through the code lines, and assign lines that must be declared beforehand.
+                        </p>
+                        <br>
+
+                        <div class="permutationsContainer" id="permutationsContainer">
+                        </div>
+
+                        <br>
+                        <p id="parsons2DWarning">
+                            Warning: Permutations will not be implemented in a Parsons 2D task!
+                            Given a DAG, we will only show the number of existing code permutations!
+                        </p>
+                    </div>
+
+                    <div class="flex1ColumnContainer">
+                        <h2>Permutations Preview</h2>
+                        <p>
+                            This section displays all of the possible legal permutations, based on the DAG provided. False
+                            positives are incorrect solutions Inspera will deem correct.
+                        </p>
+                        <br>
+                        <p>Number of permutations: <span id="numPermCount"></span></p>
+                        <p>Number of false positives: <span id="numFalsePosCount"></span></p>
+                        <br>
+                        <div class="possiblePermutationsContainer" id="possiblePermutationsContainer">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="spaceBetweenContainer">
+                    <div>
+                        <h2>Inspera Preview</h2>
+                        <div class="previewContainer">
+                            <div class="previewDropAreasContainer" id="previewDropArea">
+
+                            </div>
+                            <div class="previewDragAreasContainer" id="previewDragArea">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex1ColumnContainer">
+                        <h2>Settings</h2>
+                        <div class="settingsContainer">
+
+                            <div class="parsonsContainer">
+                                <div class="parsonsContainerTextGroup">
+                                    <div class="tooltip">
+                                        <img src="./res/HelperCircle.png" class="helperIcon" alt="Helper circle" width="16" height="16" />
+                                        <div class="tooltipImage">
+                                            <div class="tooltipSubDiv">
+                                                <p>With indenting:</p>
+                                                <img src="./res/Parson2D.png" alt="Helper circle" width="150" />
+                                            </div>
+                                            <div class="tooltipSubDiv">
+                                                <p>Without indenting:</p>
+                                                <img src="./res/NotParson2D.png" alt="Helper circle" width="150" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="parsonText">With indentation (Parsons 2D):</p>
+                                </div>
+                                <input class="checkBox"
+                                       id='parsons2d'
+                                       onchange="saveTask()"
+                                       type="checkbox"
+                                       name="parsons2d"
+                                       value=""
                                 >
-                                <button type="submit" class="addDistractorButton">Add</button>
-                            </form>
+                            </div>
+
+                            <div class="numberOfDistractorsContainer">
+                                <!--<p id="SettingsNumDistractorsLabel">Size of subset of distractors to include in each generated task</p>-->
+
+                                <div class="parsonsContainerTextGroup">
+                                    <div class="tooltip">
+                                        <img src="./res/HelperCircle.png" class="helperIcon" alt="Helper circle" width="16" height="16" />
+                                        <div class="tooltipImage">
+                                            <div class="tooltipSubDiv">
+                                                <p>Each generated task will contain a subset of distractors, chosen from the pool of distractors created above.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p id="SettingsNumDistractorsLabel">Number of distractors in each task:</p>
+                                </div>
+                                <input class="settingsInput"
+                                       id="settingsInputNumDistractors"
+                                       onchange="saveTask()"
+                                       onkeyup="if(this.value > getNumDistractors(currentId) || this.value < 0) this.value = null;"
+                                       type="number"
+                                       name="numDistractorsInput"
+                                       value="0"
+                                       min="0"
+                                >
+                            </div>
+
+                            <div class="numberOfTasksContainer">
+                                <div class="parsonsContainerTextGroup">
+                                    <div class="tooltip">
+                                        <img src="./res/HelperCircle.png" class="helperIcon" alt="Helper circle" width="16" height="16" />
+                                        <div class="tooltipImage">
+                                            <div class="tooltipSubDiv">
+                                                <p>The program will generate a given number of unique tasks. The maximum
+                                                    number of unique tasks possible to create is given by nCr (choose x distractors from the pool of distractors).</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p id="SettingsNumTasksLabel">Number of tasks to create (max: <span id="maxNumTasksSpan"></span>):</p>
+                                </div>
+                                <input class="settingsInput"
+                                       id="settingsInputNumTasks"
+                                       onfocus="this.max = getMaxNumTasks()"
+                                       onchange="saveTask()"
+                                       onkeyup="if(this.value < 1 || this.value > getMaxNumTasks()) this.value = null;"
+                                       type="number"
+                                       name="numTasksInput"
+                                       value="1"
+                                       min="1"
+                                >
+                            </div>
 
                         </div>
-
-                        <div class="distractorListContainer" id="distractorListContainer">
-
-                        </div>
-                    </div>
-
-                </div>
-
-                <h2>Permutations</h2>
-
-                <div class="permutationsContainer" id="permutationsContainer">
-                </div>
-
-                <h2>Preview</h2>
-                <div class="previewContainer">
-                    <div class="previewDropAreasContainer" id="previewDropArea">
-
-                    </div>
-                    <div class="previewDragAreasContainer" id="previewDragArea">
-
                     </div>
                 </div>
+
 
                 <div class="ExportContainerBottom">
                     <button class="downloadButton" onclick="downloadSingle(editor.getValue()); return null">Export Task</button>

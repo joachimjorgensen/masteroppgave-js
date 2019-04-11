@@ -4,7 +4,8 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     margin: 0;
-    height: 735px;
+    min-height: 735px;
+    min-width: 500px;
 
     background-color: #cecece;
 }
@@ -13,11 +14,29 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    height: 100%;
+    height: calc(100vh - 75px);
+    min-width: 600px;
+}
+
+.spaceBetweenContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.flexRowContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex1ColumnContainer {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
 }
 
 .tooltip {
-    margin-right: 25px;
+    margin-right: 5px;
     margin-left: 5px;
 
     position: relative;

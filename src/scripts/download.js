@@ -7,6 +7,24 @@
  */
 async function downloadSingle() {
 
+    // If number of tasks not selected, abort download
+    if (!document.getElementById('settingsInputNumDistractors').value) {
+        alert("Please specify number of distractors to include");
+        document.getElementById('SettingsNumDistractorsLabel').style.color = 'red';
+        return new Promise((resolve, reject) => {resolve()});
+    } else {
+        document.getElementById('SettingsNumDistractorsLabel').style.color = 'black';
+    }
+
+    // If number of tasks not selected, abort download
+    if (!document.getElementById('settingsInputNumTasks').value) {
+        alert("Please specify number of tasks to create");
+        document.getElementById('SettingsNumTasksLabel').style.color = 'red';
+        return new Promise((resolve, reject) => {resolve()});
+    } else {
+        document.getElementById('SettingsNumDistractorsLabel').style.color = 'black';
+    }
+
     let filepath = await chooseDownloadFolder();
 
     if(filepath){
@@ -51,6 +69,18 @@ async function downloadSingle() {
  * Download all tasks in the database to QTI format
  */
 async function downloadAll() {
+
+    // If number of tasks not selected, abort download
+    if (!document.getElementById('settingsInputNumDistractors').value) {
+        alert("Please specify number of distractors to include");
+        return new Promise((resolve, reject) => {resolve()});
+    }
+
+    // If number of tasks not selected, abort download
+    if (!document.getElementById('settingsInputNumTasks').value) {
+        alert("Please specify number of tasks to create");
+        return new Promise((resolve, reject) => {resolve()});
+    }
 
     let filepath = await chooseDownloadFolder();
 

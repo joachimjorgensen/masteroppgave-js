@@ -33,12 +33,6 @@
     width: 550px;
 }
 
-.parsonsContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-}
-
 .codeContainer {
     display: flex;
     flex-direction: row;

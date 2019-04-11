@@ -5,6 +5,7 @@
 // Keep a reference to the selected dropdown menu, because the select element is destroyed
 // and rebuild upon task update
 let selectedDropDownOptionId = 0;
+let currentPreviewPermutation = 0;
 
 /**
  * Update the permutation section
@@ -28,11 +29,16 @@ let updatePermutationsSelect = function(id) {
     selectElement.id = 'permutations-select';
     selectElement.setAttribute('onchange', 'updatePermutationCheckboxes(' + id + ')');
 
+    let pElement = document.createElement('p');
+    pElement.innerHTML = 'Must come before:';
+    pElement.id = 'comeBeforeText';
+
     let checkboxContainer = document.createElement('div');
     checkboxContainer.className = 'permutationsCheckboxContainer';
     checkboxContainer.id = 'permutationsCheckboxContainer';
 
     permutationsContainerElement.appendChild(selectElement);
+    permutationsContainerElement.appendChild(pElement);
     permutationsContainerElement.appendChild(checkboxContainer);
 
     let permutationsSelectElement = document.getElementById('permutations-select');
@@ -294,4 +300,99 @@ let getPermutations2dArray = function(permutations) {
 
             return [];
         }
+};
+
+
+/**
+ * Creates (and updates) the element that displays the previews of the permutations.
+ *
+ * @param {Number} id Id of the current task
+ */
+let updatePermutationsPreview = function(id) {
+
+    let permutationsPreviewElement = document.getElementById('possiblePermutationsContainer');
+
+    // Remove preview elements (to get a clean slate)
+    while (permutationsPreviewElement.firstChild) {
+        permutationsPreviewElement.removeChild(permutationsPreviewElement.firstChild);
+    }
+
+    let codeLines = getCodeLines(id);
+    //let dag = getTaskObject(id).dagMatrix;
+    //let calculatePermutations = new CalculatePermutations(dag);
+
+    //let allPermutations = calculatePermutations.getAllTopologicalSorts();
+    let allPermutations = [];
+    for (let i = 0; i < getNumCodeLines(id); i++){
+        let perm = [];
+        for (let i = 0; i < getNumCodeLines(id); i++){
+            perm.push(i);
+        }
+        shuffleArray(perm);
+        allPermutations.push(perm);
+    }
+    //let falsePositives = calculatePermutations.getAllFalsePositives();
+
+    // Create the navigation bar of the preview element
+    let divElement = document.createElement('div');
+    divElement.className = 'spaceBetweenContainer';
+    let buttonPrev = document.createElement('button');
+    buttonPrev.onclick = () => goToPrevPermutation(event, allPermutations.length);
+    buttonPrev.innerHTML = 'Prev';
+    buttonPrev.className = 'permPreviewButton';
+    let buttonNext = document.createElement('button');
+    buttonNext.onclick = () => goToNextPermutation(event, allPermutations.length);
+    buttonNext.innerHTML = 'Next';
+    buttonNext.className = 'permPreviewButton';
+    let taskTracker = document.createElement('p');
+    taskTracker.innerHTML = (allPermutations.length === 0 ? 0 : currentPreviewPermutation + 1) + '/' + allPermutations.length;
+    divElement.appendChild(buttonPrev);
+    divElement.appendChild(taskTracker);
+    divElement.appendChild(buttonNext);
+    permutationsPreviewElement.appendChild(divElement);
+
+    // Add code lines to the preview
+    let permPreviewElement = document.createElement('div');
+    for (let index = 0; index < getNumCodeLines(id); index++) {
+        let pElement = document.createElement('p');
+        let lineNumber = allPermutations[currentPreviewPermutation][index];
+        pElement.innerHTML = codeLines[lineNumber];
+        permPreviewElement.appendChild(pElement);
+    }
+
+    permutationsPreviewElement.appendChild(permPreviewElement);
+};
+
+
+/**
+ * Update the counter for the current preview
+ *
+ * @param {Event} e
+ * @param {Number} numPermutations Number of permutations for the code lines
+ */
+let goToPrevPermutation = function(e, numPermutations) {
+    e.preventDefault();
+    if (currentPreviewPermutation === 0) {
+        currentPreviewPermutation = numPermutations - 1;
+    } else {
+        currentPreviewPermutation -= 1;
+    }
+    saveTask();
+};
+
+
+/**
+ * Update the counter for the current preview
+ *
+ * @param e
+ * @param {Number} numPermutations Number of permutations for the code lines
+ */
+let goToNextPermutation = function(e, numPermutations) {
+    e.preventDefault();
+    if (currentPreviewPermutation === numPermutations - 1) {
+        currentPreviewPermutation = 0;
+    } else {
+        currentPreviewPermutation += 1;
+    }
+    saveTask();
 };

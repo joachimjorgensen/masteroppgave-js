@@ -170,3 +170,39 @@ let getDistractorLines = function(id) {
     let task = getTaskObject(id);
     return task.distractors;
 };
+
+
+/**
+ * Returns the value of the settings field 'number of tasks to create'
+ *
+ * @returns {Number} The number of tasks to create
+ */
+let getSettingsNumTasks = function () {
+
+    return document.getElementById('settingsInputNumTasks').value ? document.getElementById('settingsInputNumTasks').value : 1;
+};
+
+
+/**
+ * Returns the value of the settings field 'number of distractors to create'
+ *
+ * @returns {Number} The number of distractors to create
+ */
+let getSettingsNumDistractors = function () {
+
+    return document.getElementById('settingsInputNumDistractors').value ? document.getElementById('settingsInputNumDistractors').value : 0;
+};
+
+
+/**
+ * Get the maximum number of unique tasks to create based on the number of subsets possible to create from the pool of
+ * distractors
+ *
+ * @returns {number}
+ */
+let getMaxNumTasks = function() {
+    let numDistractors = getNumDistractors(currentId);
+    let numDistractorsToChoose = getSettingsNumDistractors();
+
+    return combinations(numDistractors, numDistractorsToChoose);
+};

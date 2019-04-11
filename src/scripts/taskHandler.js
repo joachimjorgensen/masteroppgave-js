@@ -16,6 +16,8 @@ let saveTask = function() {
     let desc_no = getDescription('No');
     let desc_eng = getDescription('Eng');
     let desc_nyno = getDescription('Nyno');
+    let num_tasks = getSettingsNumTasks();
+    let num_dist = getSettingsNumDistractors();
 
     let allTasks = database.tasks;
 
@@ -33,7 +35,9 @@ let saveTask = function() {
                     no: desc_no,
                     eng: desc_eng,
                     nyno: desc_nyno
-                }
+                },
+                numTasks: num_tasks,
+                numDistractors: num_dist
             };
 
             allTasks[taskNum] = task;
@@ -45,6 +49,31 @@ let saveTask = function() {
     addPreviewDropAndDropAreas(id);
 
     updatePermutationsSelect(id);
+
+    updatePermutationsPreview(id);
+
+    // Set max num distractors in task preview
+    document.getElementById('settingsInputNumDistractors').max = getNumDistractors(id);
+
+    // If the number of distractors has decreased, the maximum number of tasks possible to create also have decreased
+    if (document.getElementById('settingsInputNumTasks').value > getMaxNumTasks()) {
+        document.getElementById('settingsInputNumTasks').value = null;
+    }
+
+    // Update number of maximum number of tasks possible to create
+    document.getElementById('maxNumTasksSpan').innerHTML = getMaxNumTasks().toString();
+
+    //let calculatePermutations = new CalculatePermutations(dag);
+    //let allPermutations = calculatePermutations.getAllTopologicalSorts();
+    //let falsePositives = calculatePermutations.getAllFalsePositives();
+    document.getElementById('numPermCount').innerHTML = '2';
+    document.getElementById('numFalsePosCount').innerHTML = '2';
+
+    if (parsons2d) {
+        document.getElementById('parsons2DWarning').style.display = "block";
+    } else {
+        document.getElementById('parsons2DWarning').style.display = "none";
+    }
 };
 
 
@@ -121,7 +150,7 @@ let addTask = function () {
         title: '',
         code: '',
         fileName: '',
-        parsons2d: true,
+        parsons2d: false,
         distractors: [],
         description: {
             no: '',
@@ -130,6 +159,8 @@ let addTask = function () {
         },
         permutations: [],
         oldCodeLines: [],
+        numTasks: 1,
+        numDistractors: 0
     };
 
     database.tasks.push(task);

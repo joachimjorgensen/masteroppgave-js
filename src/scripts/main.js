@@ -140,3 +140,30 @@ let loadTask = function(loadMyId) {
 let updateAllTasksTitle = function (allFileName) {
     database.allFileName = allFileName;
 };
+
+
+/**
+ * Calclulate the factorial of a number
+ *
+ * @param {Number} num The number to calculate the factorial of
+ * @returns {number} The factorial of the given number
+ */
+let factorial = function(num) {
+    let rval=1;
+    for (let i = 2; i <= num; i++)
+        rval = rval * i;
+    return rval;
+};
+
+
+/**
+ * Calculate the number of combinations possible for 'n choose r' (or nCr)
+ *
+ * @param {Number} n Number of options
+ * @param {Number} r Size of subset
+ * @returns {number} nCr
+ */
+let combinations = function(n, r) {
+
+    return (factorial(n) / (factorial(r) * factorial(n - r)))
+};

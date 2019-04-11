@@ -73,7 +73,7 @@ let addPreviewDragAreas = function(id) {
     let dragAreaLines = [...codeLines];
 
     // Mask distractors and add them to drag area
-    for (let x = 0; x < getNumDistractors(id); x++) {
+    for (let x = 0; x < getSettingsNumDistractors(); x++) {
         dragAreaLines.push('Random Distractor');
     }
 
