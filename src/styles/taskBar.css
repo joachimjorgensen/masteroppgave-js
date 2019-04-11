@@ -2,8 +2,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 10px 0;
-    flex: 15%;
+    min-width: 150px;
+    height: 100%;
 
     background-color: #1d1d1b;
 }
@@ -28,6 +28,7 @@
 .taskContainer {
     border-left: thick solid transparent;
     padding: 10px 10px;
+    min-height: 18px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

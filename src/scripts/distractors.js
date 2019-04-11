@@ -19,15 +19,13 @@ let loadDistractors = function() {
     let allTasks = database.tasks;
 
     for (let taskNum in allTasks) {
-
         let task = allTasks[taskNum];
 
         if (task.id == id) {
-
             let allDistractors = task.distractors;
 
+            // Populate distractor list with distractors
             for(let distractorNum in allDistractors) {
-
                 let distractor = allDistractors[distractorNum];
 
                 let distractorTextContainer = document.createElement('div');
@@ -46,7 +44,6 @@ let loadDistractors = function() {
 
                 distractorListContainer.appendChild(distractorTextContainer);
             }
-
         }
     }
 };
@@ -61,25 +58,21 @@ let addDistractor = function() {
     event.preventDefault();
 
     let id = currentId;
-
     let distractor = document.forms["distractorForm"]["distractorInput"].value;
-
     let allTasks = database.tasks;
 
     for (let taskNum in allTasks) {
-
         let task = allTasks[taskNum];
 
         if (task.id == id) {
-
             task.distractors.push(distractor);
-
         }
     }
 
     // Empty the input field on submit
     document.forms["distractorForm"]["distractorInput"].value = '';
 
+    // Update task
     loadDistractors();
     saveTask();
 };
@@ -87,6 +80,8 @@ let addDistractor = function() {
 
 /**
  * Remove a distractor from current task
+ *
+ * @param {Number} distractorId The ID of the distractor to be deleted
  */
 let deleteDistractor = function(distractorId) {
 
@@ -97,15 +92,14 @@ let deleteDistractor = function(distractorId) {
     let allTasks = database.tasks;
 
     for (let taskNum in allTasks) {
-
         let task = allTasks[taskNum];
 
         if (task.id == id) {
-
             task.distractors.splice(distractorId, 1);
         }
     }
 
+    // Update task
     loadDistractors();
     saveTask();
 };

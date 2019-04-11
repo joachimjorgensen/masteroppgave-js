@@ -12,6 +12,9 @@ const Menu = electron.Menu;
 let win;
 
 
+/**
+ * Creates a browser window to run in the Electron application
+ */
 function createWindow () {
     // Create the browser window.
     win = new BrowserWindow({ width: 1100, height: 800 });

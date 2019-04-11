@@ -31,8 +31,10 @@ let openFile = function(event) {
 
 
 /**
- * Checks if a file with a given name exists
- * @param filepath
+ * Checks if a file with a given name already exists
+ *
+ * @param {String} filepath The path to be checked
+ * @returns {boolean} Boolean whether file exists or not
  */
 let fileExists = function(filepath) {
 
@@ -49,7 +51,7 @@ let fileExists = function(filepath) {
 
 
 /**
- * Open a file and display content to code editor
+ * Open a file dialog and display selected file content to code editor
  */
 let openFileDialog = function() {
 
@@ -59,11 +61,8 @@ let openFileDialog = function() {
         {properties: ['openFile']},
         (filePaths) => {
             //Callback (filePaths is an array of file paths)
-
             if (filePaths) {
-
                 fs.readFile(filePaths[0], 'utf-8', function (err, data) {
-
                     if (err) {
                         console.error(err);
                         return
@@ -74,9 +73,7 @@ let openFileDialog = function() {
                     editor.setOption('value', '');
                     editor.setOption('value', data);
                     saveTask();
-
                 });
-
             }
         }
     );

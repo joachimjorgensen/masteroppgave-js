@@ -1,11 +1,14 @@
 p {
     font-family: "Helvetica Neue", sans-serif;
+    font-weight: 200;
     margin: 0;
 }
 
 h2 {
     font-family: "Helvetica Neue", sans-serif;
     font-weight: 200;
+
+    margin-top: 40px;
 }
 
 .headerHelp p{

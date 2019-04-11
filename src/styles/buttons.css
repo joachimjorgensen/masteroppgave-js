@@ -69,6 +69,8 @@ button {
 /* ------------------------------- */
 
 .downloadButton {
+    margin-left: 20px;
+    padding: 5px 15px;
 }
 
 .downloadButton:hover {

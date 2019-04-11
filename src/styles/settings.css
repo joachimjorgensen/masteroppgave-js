@@ -1,0 +1,38 @@
+.settingsContainer {
+}
+
+.parsonsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    margin-bottom: 10px;
+}
+
+.parsonsContainerTextGroup {
+    display: flex;
+    flex-direction: row;
+}
+
+.numberOfTasksContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    margin-bottom: 10px;
+}
+
+.numberOfDistractorsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    margin-bottom: 10px;
+}
+
+.settingsInput {
+    width: 40px;
+    min-width: 40px;
+}

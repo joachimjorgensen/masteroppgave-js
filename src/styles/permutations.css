@@ -1,0 +1,38 @@
+.permutationsOuterContainer {
+    width: 550px;
+}
+
+.permutationsCheckboxContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.checkedLabel {
+    color: lightgray;
+}
+
+#comeBeforeText {
+    margin: 10px 0;
+}
+
+#parsons2DWarning {
+    color: red;
+    display: none;
+}
+
+.possiblePermutationsContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: lightgray;
+
+    padding: 5px;
+}
+
+.permPreviewButton {
+    padding: 5px 12px;
+}
+
+.permPreviewButton:hover {
+    cursor: pointer;
+    background-color: #3b843e;
+}
