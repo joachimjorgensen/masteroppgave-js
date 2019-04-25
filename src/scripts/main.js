@@ -112,6 +112,7 @@ let loadTask = function(loadMyId) {
 
             document.getElementById('taskTitleInput').value = task.fileName;
             document.getElementById('parsons2d').checked = task.parsons2d;
+            document.getElementById('IncludePermutationsCheckbox').checked = task.includePermutations;
 
             // Set task description
             // Because the rich text editors uses nicEditor, this is the way to update their value

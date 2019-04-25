@@ -18,6 +18,7 @@ let saveTask = function () {
     let desc_nyno = getDescription('Nyno');
     let num_tasks = getSettingsNumTasks();
     let num_dist = getSettingsNumDistractors();
+    let includePermutations = getIncludePermutationsToggleValue();
 
     let allTasks = database.tasks;
 
@@ -37,7 +38,8 @@ let saveTask = function () {
                     nyno: desc_nyno
                 },
                 numTasks: num_tasks,
-                numDistractors: num_dist
+                numDistractors: num_dist,
+                includePermutations: includePermutations
             };
 
             allTasks[taskNum] = task;
@@ -49,6 +51,8 @@ let saveTask = function () {
     addPreviewDropAndDropAreas(id);
 
     updatePermutationsSelect(id);
+
+    updateDagToggle();
 
 
     // Set max num distractors in task preview
@@ -164,7 +168,8 @@ let addTask = function () {
         permutations: [],
         oldCodeLines: [],
         numTasks: 1,
-        numDistractors: 0
+        numDistractors: 0,
+        includePermutations: false
     };
 
     database.tasks.push(task);

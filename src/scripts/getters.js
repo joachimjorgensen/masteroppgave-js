@@ -206,3 +206,13 @@ let getMaxNumTasks = function() {
 
     return combinations(numDistractors, numDistractorsToChoose);
 };
+
+
+/**
+ * Get the value of the checkbox 'Autogenerate Permutations'
+ *
+ * @returns {boolean}
+ */
+let getIncludePermutationsToggleValue = function() {
+    return document.getElementById('IncludePermutationsCheckbox').checked;
+};
