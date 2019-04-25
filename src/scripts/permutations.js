@@ -318,16 +318,46 @@ let updatePermutationsData = function (id) {
         allPermutations = calculatePermutations.getAllTopologicalSorts();
         falsePositives = calculatePermutations.getAllFalsePositives();
 
+        if (!Array.isArray(allPermutations) || !Array.isArray(calculatePermutations.getAllTransitiveClosures())) {
+            document.getElementById('permutationsWarning').style.display = "block";
+            setPermutationsToZero(id);
+            return;
+        } else {
+            document.getElementById('permutationsWarning').style.display = "none";
+        }
+
         document.getElementById('numPermCount').innerHTML = allPermutations.length;
         document.getElementById('numFalsePosCount').innerHTML = falsePositives.length;
+        document.getElementById('randomlyCorrectChance').innerHTML = parseFloat(calculatePermutations.getErrorRates()*100).toFixed(2);
 
         allPermutations = allPermutations.concat(falsePositives);
 
         currentPreviewPermutation = 0;
 
         updatePermutationsPreview(id);
+    } else {
+        setPermutationsToZero(id);
     }
 };
+
+
+/**
+ * Simply resets all permutation information 
+ * 
+ * @param {Number} id Id of the current task
+ */
+let setPermutationsToZero = function (id) {
+    allPermutations = [];
+    falsePositives = [];
+
+    document.getElementById('numPermCount').innerHTML = 0;
+    document.getElementById('numFalsePosCount').innerHTML = 0;
+    document.getElementById('randomlyCorrectChance').innerHTML = 0;
+
+    currentPreviewPermutation = 0;
+
+    updatePermutationsPreview(id);
+}
 
 
 /**
@@ -361,6 +391,8 @@ let updatePermutationsPreview = function (id) {
     divElement.appendChild(buttonNext);
     permutationsPreviewElement.appendChild(divElement);
 
+    if (allPermutations.length > 0) {
+        
     // Add code lines to the preview
     let permPreviewElement = document.createElement('div');
 
@@ -381,7 +413,9 @@ let updatePermutationsPreview = function (id) {
         permPreviewElement.appendChild(pElement);
     }
 
-    permutationsPreviewElement.appendChild(permPreviewElement);
+        permutationsPreviewElement.appendChild(permPreviewElement);
+    }
+    }
 };
 
 let isItemInArray = function(array, item) {

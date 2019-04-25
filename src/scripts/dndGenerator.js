@@ -90,7 +90,7 @@ function write_manifest(xmlDoc) {
  */
 function add_manifest_data(myManifest, identifiers1, taskNames1) {
 	let identifiers = identifiers1;
-	let taskNames= taskNames1;
+	let taskNames = taskNames1;
 
 	if (!Array.isArray(identifiers)) {
 		identifiers = [identifiers];
@@ -667,12 +667,15 @@ function addAllPermutations(myDoc, gapImages, associableHotspots, dag) {
 	let calculatePermutations = new CalculatePermutations(dag);
 	console.log(calculatePermutations.getErrorRates());
 	let topologicalSorts = calculatePermutations.getAllTopologicalSorts();
-
-	for (let i = 0; i < topologicalSorts.length; i++) {
-		let topologicalSort = topologicalSorts[i];
-		for (let j = 0; j < topologicalSort.length; j++) {
-			connectDragAreaToDropArea(myDoc, gapImages[topologicalSort[j]], associableHotspots[j])
+	if (Array.isArray(topologicalSorts)) {
+		for (let i = 0; i < topologicalSorts.length; i++) {
+			let topologicalSort = topologicalSorts[i];
+			for (let j = 0; j < topologicalSort.length; j++) {
+				connectDragAreaToDropArea(myDoc, gapImages[topologicalSort[j]], associableHotspots[j])
+			}
 		}
+	} else {
+		alert(topologicalSorts);
 	}
 
 }
@@ -927,6 +930,7 @@ function continue_dnd(dataAll, filepath) {
 			taskNames.push(data.fileName)
 
 			let myDoc = read_xml();
+			/*
 			dag = [
 				[1, 0, 0, 0, 0, 0],
 				[0, 1, 0, 0, 0, 0],
@@ -935,6 +939,10 @@ function continue_dnd(dataAll, filepath) {
 				[1, 1, 0, 0, 1, 0],
 				[1, 0, 1, 0, 0, 1],
 			];
+			*/
+			dag = data.dagMatrix;
+			console.log(dag);
+
 			let canvasHeight = generate_python_lines(myDoc, lines, parsons2D, distractors, dag);
 			add_metadata(myDoc, taskIdentifier, data.fileName, parsons2D, canvasHeight, title_no, title_ny, title_en);
 

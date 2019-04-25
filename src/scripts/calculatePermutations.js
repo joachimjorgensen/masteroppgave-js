@@ -2,21 +2,24 @@
 
 class CalculatePermutations {
 	constructor(currentEdges) {
+		this.permutationsCutoff = 2000;
+
 		this.allTransitiveClosures = [];
 		this.allTopologicalSorts = [];
-		if(currentEdges.length>0){
+		if (currentEdges.length > 0) {
 			this.noOfVertices = currentEdges.length;
 			this.runTransitiveClosure(currentEdges);
 			this.runTopologicalSort(currentEdges);
 		}
 	}
 
-	runTransitiveClosure(currentEdges){
+	runTransitiveClosure(currentEdges) {
 		let graphClosure = new GraphClosure(this.noOfVertices);
 		let transitiveClosureMatrix = graphClosure.transitiveClosure(currentEdges);
 		let countTransitiveClosurePossibilities = new CountTransitiveClosurePossibilities(transitiveClosureMatrix);
 
 		this.allTransitiveClosures = countTransitiveClosurePossibilities.getAllAnswers();
+		this.checkIfTooManyPermutations();
 		//console.log("All transitive closures")
 		//console.log(this.allTransitiveClosures)
 
@@ -26,10 +29,22 @@ class CalculatePermutations {
 		let graph = new TopologicalSort(this.noOfVertices);
 
 		this.allTopologicalSorts = graph.allTopologicalSorts(currentEdges);
+		this.checkIfTooManyPermutations();
 		//console.log("All topological sorts")
 		//console.log(this.allTopologicalSorts)
 
 	};
+	checkIfTooManyPermutations(){
+		if (Array.isArray(this.allTopologicalSorts) && Array.isArray(this.allTransitiveClosures)){
+			if (this.allTopologicalSorts.length >= this.permutationsCutoff || this.allTransitiveClosures.length >= this.permutationsCutoff) {
+				this.allTopologicalSorts = "More than " + this.permutationsCutoff + " permutations were made. Aborting due to high number of permutations.";
+				this.allTransitiveClosures = "More than " + this.permutationsCutoff + " permutations were made. Aborting due to high number of permutations.";
+				return true;
+			}
+		}
+		return false;
+
+	}
 
 	factorialize(num) {
 		if (num < 0)
@@ -41,18 +56,23 @@ class CalculatePermutations {
 		}
 	}
 
-	getAllTransitiveClosures(){
+	getAllTransitiveClosures() {
 		return this.allTransitiveClosures;
 	}
-	getAllTopologicalSorts(){
+	getAllTopologicalSorts() {
 		return this.allTopologicalSorts;
 	}
-	getAllFalsePositives(){
+	getAllFalsePositives() {
 		let falsePositives = [];
-		for(let i = 0; i<this.allTransitiveClosures.length;i++){
-			let transitiveClosure = this.allTransitiveClosures[i];
-			if(!this.isItemInArray(this.allTopologicalSorts, transitiveClosure)){
-				falsePositives.push(transitiveClosure)
+		if(this.checkIfTooManyPermutations()){
+			return "More than " + this.permutationsCutoff + " permutations were made. Aborting due to high number of permutations.";
+		}
+		if (Array.isArray(this.allTopologicalSorts) && Array.isArray(this.allTransitiveClosures) && this.allTopologicalSorts.length != this.allTransitiveClosures.length) {
+			for (let i = 0; i < this.allTransitiveClosures.length; i++) {
+				let transitiveClosure = this.allTransitiveClosures[i];
+				if (!this.isItemInArray(this.allTopologicalSorts, transitiveClosure)) {
+					falsePositives.push(transitiveClosure)
+				}
 			}
 		}
 		return falsePositives;
@@ -61,28 +81,21 @@ class CalculatePermutations {
 	isItemInArray(array, item) {
 		for (var i = 0; i < array.length; i++) {
 			// This if statement depends on the format of your array
-			if (array[i].toString() == item.toString()){
+			if (array[i].toString() == item.toString()) {
 				return true;   // Found it
 			}
 		}
 		return false;   // Not found
 	}
 
-	getAllTransitiveClosuresLength(){
-		return this.allTransitiveClosures.length;
-	}
-	getAllTopologicalSortsLength(){
-		return this.allTopologicalSorts.length;
-	}
-
 	getErrorRates() {
 		//Is not a directed asyclic graph
-		if(!this.allTopologicalSorts[0] || this.allTopologicalSorts[0].length !== this.noOfVertices || !this.allTransitiveClosures[0] || this.allTransitiveClosures[0].length !== this.noOfVertices){
+		if (!this.allTopologicalSorts[0] || this.allTopologicalSorts[0].length !== this.noOfVertices || !this.allTransitiveClosures[0] || this.allTransitiveClosures[0].length !== this.noOfVertices) {
 			return null;
 		}
-		let falsePositiveChance = (this.allTransitiveClosures.length / this.allTopologicalSorts.length) - 1;
+		//let falsePositiveChance = (this.allTransitiveClosures.length / this.allTopologicalSorts.length) - 1;
 		let randomlyCorrectChance = (this.allTransitiveClosures.length / this.factorialize(this.noOfVertices));
-		return { falsePositiveChance, randomlyCorrectChance };
+		return randomlyCorrectChance;
 	};
 }
 
@@ -91,16 +104,22 @@ class CountTransitiveClosurePossibilities {
 	constructor(transitiveClosureMatrix) {
 		this.noOfVertices = transitiveClosureMatrix.length;
 		this.allAnswers = [];
+		this.cutoff = 30000;
+		this.currentDepth = 0;
 		this.legalLinePlacements = this.createLegalPlacements(transitiveClosureMatrix);
 		let emptyArray = new Array(this.noOfVertices);
 		for (let i = 0; i < emptyArray.length; i++) {
 			emptyArray[i] = -1;
 		}
 		this.placeNextNumber(emptyArray, 0);
+		console.log(this.currentDepth)
 
 		//console.log(this.allAnswers);
 	}
 	getAllAnswers() {
+		if (this.currentDepth >= this.cutoff) {
+			return "More than " + this.cutoff + " in depth were reached. Aborted transitive closure."
+		}
 		return this.allAnswers;
 	}
 
@@ -156,6 +175,11 @@ class CountTransitiveClosurePossibilities {
 	 * @param {Number} lineNumber Line number we are checking in current recursive call. Starts with line 0.
 	 */
 	placeNextNumber(filledListOld, lineNumber) {
+		this.currentDepth += 1;
+		if (this.currentDepth >= this.cutoff) {
+			return;
+
+		}
 		//For each legal positions to this lineNumber
 		for (let i = 0; i < this.legalLinePlacements[lineNumber].length; i++) {
 			let filledList = [...filledListOld]; //Make copy to avoid working on same arrays
@@ -200,7 +224,7 @@ class TopologicalSort {
 
 	allTopologicalSortsUtil(visited, indegree, stack) {
 		//If we have gone too deep, stop everything. Factorial numbers are dangerous! Just 8!=40k
-		let cutoffErrorMessage = "More than "+this.cutoff+" solutions were made. Aborted topological sorting.";
+		let cutoffErrorMessage = "More than " + this.cutoff + " solutions were made. Aborted topological sorting.";
 		if (this.solutionsMade > this.cutoff) {
 			return cutoffErrorMessage;
 		}
@@ -250,7 +274,7 @@ class TopologicalSort {
 			this.allAnswers.push(newStack);
 		}
 	}
-	makeMatrixIntoEdges(currentEdges){
+	makeMatrixIntoEdges(currentEdges) {
 		for (let i = 0; i < this.noOfVertices; i++) {
 			for (let j = 0; j < this.noOfVertices; j++) {
 				if (currentEdges[i][j] === 1 && i !== j) {
@@ -282,7 +306,7 @@ class TopologicalSort {
 		}
 		let stack = [];
 		let errorMessage = this.allTopologicalSortsUtil(visited, indegree, stack);
-		if(errorMessage){
+		if (errorMessage) {
 			return errorMessage;
 		}
 		return this.allAnswers;

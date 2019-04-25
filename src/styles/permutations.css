@@ -27,6 +27,10 @@
     color: red;
     display: none;
 }
+#permutationsWarning{
+    color: red;
+    display: none;
+}
 
 .possiblePermutationsContainer {
     display: flex;
