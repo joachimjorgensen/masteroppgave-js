@@ -2,6 +2,14 @@
     width: 550px;
 }
 
+#dagDiv {
+    display: none;
+}
+
+#permPrevDiv {
+    display: none;
+}
+
 .permutationsCheckboxContainer {
     display: flex;
     flex-direction: column;
