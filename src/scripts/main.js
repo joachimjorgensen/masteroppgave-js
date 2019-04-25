@@ -132,6 +132,8 @@ let loadTask = function(loadMyId) {
 
     saveTask();
     loadDistractors();
+
+    updatePermutationsData(currentId);
 };
 
 
