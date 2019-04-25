@@ -304,6 +304,7 @@ let getPermutations2dArray = function (permutations) {
     }
 };
 
+
 /**
  * Creates (and updates) the element that displays the previews of the permutations.
  *
@@ -311,7 +312,6 @@ let getPermutations2dArray = function (permutations) {
  */
 let updatePermutationsData = function (id) {
     let dag = getTaskObject(id).dagMatrix;
-    console.log(dag)
     if (dag) {
         let calculatePermutations = new CalculatePermutations(dag);
 
@@ -327,7 +327,8 @@ let updatePermutationsData = function (id) {
 
         updatePermutationsPreview(id);
     }
-}
+};
+
 
 /**
  * Creates (and updates) the element that displays the previews of the permutations.
@@ -362,6 +363,16 @@ let updatePermutationsPreview = function (id) {
 
     // Add code lines to the preview
     let permPreviewElement = document.createElement('div');
+
+    if (isItemInArray(falsePositives, allPermutations[currentPreviewPermutation])) {
+        let warningElement = document.createElement('p');
+        warningElement.innerHTML = 'False Positive';
+        warningElement.style.color = 'red';
+        warningElement.style.textAlign = 'center';
+        warningElement.style.marginBottom = '5px';
+        permPreviewElement.appendChild(warningElement);
+    }
+
     let codeLines = getCodeLines(id);
     for (let index = 0; index < getNumCodeLines(id); index++) {
         let pElement = document.createElement('p');
@@ -372,6 +383,16 @@ let updatePermutationsPreview = function (id) {
 
     permutationsPreviewElement.appendChild(permPreviewElement);
 };
+
+let isItemInArray = function(array, item) {
+    for (let i = 0; i < array.length; i++) {
+        // This if statement depends on the format of your array
+        if (array[i].toString() == item.toString()){
+            return true;   // Found it
+        }
+    }
+    return false;   // Not found
+}
 
 
 /**
@@ -405,4 +426,18 @@ let goToNextPermutation = function (e, numPermutations) {
         currentPreviewPermutation += 1;
     }
     updatePermutationsPreview(currentId);
+};
+
+
+let updateDagToggle = function() {
+    let dagDiv = document.getElementById('dagDiv');
+    let permPrevDivs = document.getElementById('permPrevDiv');
+
+    if (getTaskObject(currentId).includePermutations) {
+        dagDiv.style.display = 'inline-block';
+        permPrevDivs.style.display = 'inline-block';
+    } else {
+        dagDiv.style.display = 'none';
+        permPrevDivs.style.display = 'none';
+    }
 };

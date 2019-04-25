@@ -11,6 +11,12 @@ h2 {
     margin-top: 40px;
 }
 
+h3 {
+    font-family: "Helvetica Neue", sans-serif;
+    font-weight: 300;
+    text-decoration: underline;
+}
+
 .headerHelp p{
     color: white;
     font-size: 1.3em;
