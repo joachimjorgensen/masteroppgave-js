@@ -415,7 +415,6 @@ let updatePermutationsPreview = function (id) {
 
         permutationsPreviewElement.appendChild(permPreviewElement);
     }
-    }
 };
 
 let isItemInArray = function(array, item) {
