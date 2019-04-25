@@ -873,8 +873,7 @@ function run_dnd(jsonObject, filepath) {
 
 	*/
 	//Deletes old zipThis file
-	//rimraf(__dirname + '/zipThis', function () { continue_dnd(jsonObject, filepath); });
-	run_all_dnd_generator_tests();
+	rimraf(__dirname + '/zipThis', function () { continue_dnd(jsonObject, filepath); });
 }
 
 /**

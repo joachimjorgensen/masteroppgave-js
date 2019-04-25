@@ -2,9 +2,13 @@
 
 class CalculatePermutations {
 	constructor(currentEdges) {
-		this.noOfVertices = currentEdges.length;
-		this.runTransitiveClosure(currentEdges);
-		this.runTopologicalSort(currentEdges);
+		this.allTransitiveClosures = [];
+		this.allTopologicalSorts = [];
+		if(currentEdges.length>0){
+			this.noOfVertices = currentEdges.length;
+			this.runTransitiveClosure(currentEdges);
+			this.runTopologicalSort(currentEdges);
+		}
 	}
 
 	runTransitiveClosure(currentEdges){
@@ -47,13 +51,23 @@ class CalculatePermutations {
 		let falsePositives = [];
 		for(let i = 0; i<this.allTransitiveClosures.length;i++){
 			let transitiveClosure = this.allTransitiveClosures[i];
-			if(!this.allTopologicalSorts.includes(transitiveClosure)){
+			if(!this.isItemInArray(this.allTopologicalSorts, transitiveClosure)){
 				falsePositives.push(transitiveClosure)
 			}
 		}
 		return falsePositives;
 
 	}
+	isItemInArray(array, item) {
+		for (var i = 0; i < array.length; i++) {
+			// This if statement depends on the format of your array
+			if (array[i].toString() == item.toString()){
+				return true;   // Found it
+			}
+		}
+		return false;   // Not found
+	}
+
 	getAllTransitiveClosuresLength(){
 		return this.allTransitiveClosures.length;
 	}

@@ -6,13 +6,15 @@
 // and rebuild upon task update
 let selectedDropDownOptionId = 0;
 let currentPreviewPermutation = 0;
+let allPermutations;
+let falsePositives;
 
 /**
  * Update the permutation section
  *
  * @param {Number} id The ID of the current task
  */
-let updatePermutationsSelect = function(id) {
+let updatePermutationsSelect = function (id) {
 
     updatePermutationsArray(id);
 
@@ -49,7 +51,7 @@ let updatePermutationsSelect = function(id) {
     }
 
     // Add select options
-    for (let index= 0; index < codeLines.length; index++) {
+    for (let index = 0; index < codeLines.length; index++) {
 
         let codeLine = codeLines[index];
 
@@ -73,7 +75,7 @@ let updatePermutationsSelect = function(id) {
  *
  * @param {Number} id The ID of the current task
  */
-let updatePermutationCheckboxes = function(id) {
+let updatePermutationCheckboxes = function (id) {
 
     let permutationsCheckboxContainer = document.getElementById('permutationsCheckboxContainer');
     let selectElement = document.getElementById('permutations-select');
@@ -88,7 +90,7 @@ let updatePermutationCheckboxes = function(id) {
         permutationsCheckboxContainer.removeChild(permutationsCheckboxContainer.firstChild);
     }
 
-    for (let index= 0; index < codeLines.length; index++) {
+    for (let index = 0; index < codeLines.length; index++) {
         let checkbox = document.createElement('input');
         let label = document.createElement('label');
         let codeLine = codeLines[index];
@@ -128,7 +130,7 @@ let updatePermutationCheckboxes = function(id) {
  * @param {String} checkboxId The ID of the checkbox being audited
  * @returns {boolean} whether the checkbox should be checked or not
  */
-let checkboxChecked = function(taskId, checkboxId) {
+let checkboxChecked = function (taskId, checkboxId) {
 
     let permutationsSelectElement = document.getElementById('permutations-select');
     let row = permutationsSelectElement.selectedIndex;
@@ -139,7 +141,7 @@ let checkboxChecked = function(taskId, checkboxId) {
 
         let task = allTasks[taskNum];
 
-        if(task.id == taskId){
+        if (task.id == taskId) {
 
             return task.permutations[row].indexOf(checkboxId) !== -1;
 
@@ -155,7 +157,7 @@ let checkboxChecked = function(taskId, checkboxId) {
  * @param {String} checkboxId The ID of the changed checkbox element
  * @param {Number} checkBoxLineNumber The line number of the checkbox (effectively the index of the checkbox)
  */
-let checkboxOnChange = function(taskId, checkboxId, checkBoxLineNumber) {
+let checkboxOnChange = function (taskId, checkboxId, checkBoxLineNumber) {
     let checkbox = document.getElementById(checkboxId);
 
     console.log(checkboxId, checkBoxLineNumber);
@@ -170,13 +172,13 @@ let checkboxOnChange = function(taskId, checkboxId, checkBoxLineNumber) {
 
         let task = allTasks[taskNum];
 
-        if(task.id == taskId){
+        if (task.id == taskId) {
 
-            if (checkbox.checked){
+            if (checkbox.checked) {
                 task.permutations[row].push(checkBoxLineNumber);
                 task.permutations[row].sort();
             } else {
-                let index = task.permutations.indexOf(checkBoxLineNumber);
+                let index = task.permutations[row].indexOf(checkBoxLineNumber);
                 task.permutations[row].splice(index, 1);
             }
 
@@ -195,7 +197,7 @@ let checkboxOnChange = function(taskId, checkboxId, checkBoxLineNumber) {
  *
  * @param {Number} id Id of the current task
  */
-let updatePermutationsArray = function(id) {
+let updatePermutationsArray = function (id) {
 
     let numCodeLines = getNumCodeLines(id);
 
@@ -205,7 +207,7 @@ let updatePermutationsArray = function(id) {
     for (let taskNum in allTasks) {
         let task = allTasks[taskNum];
 
-        if(task.id == id){
+        if (task.id == id) {
             // Get a reference to old code line values and new ones, for comparing purposes
             let oldCodeLines = task.oldCodeLines;
             let newCodeLines = getCodeLines(id);
@@ -269,47 +271,70 @@ let updatePermutationsArray = function(id) {
  * @param {Array} permutations Two dimensional array containing permutation dependencies between code lines
  * @returns {Array} Two dimensional array (n*n) for representing a DAG
  */
-let getPermutations2dArray = function(permutations) {
+let getPermutations2dArray = function (permutations) {
 
     let numCodeLines = permutations.length;
 
-        if (permutations) {
-            let array2D = [];
+    if (permutations) {
+        let array2D = [];
 
-            for (let rowIndex = 0; rowIndex < numCodeLines; rowIndex++) {
-                let row = [];
+        for (let rowIndex = 0; rowIndex < numCodeLines; rowIndex++) {
+            let row = [];
 
-                for (let columnIndex = 0; columnIndex < numCodeLines; columnIndex++) {
-                    if (rowIndex === columnIndex) {
-                        row.push(1);
+            for (let columnIndex = 0; columnIndex < numCodeLines; columnIndex++) {
+                if (rowIndex === columnIndex) {
+                    row.push(1);
 
-                    } else if (permutations[rowIndex].indexOf(columnIndex) !== -1) {
-                        row.push(1);
+                } else if (permutations[rowIndex].indexOf(columnIndex) !== -1) {
+                    row.push(1);
 
-                    } else {
-                        row.push(0);
-                    }
+                } else {
+                    row.push(0);
                 }
-
-                array2D.push(row);
             }
 
-            return array2D;
-
-        } else {
-
-            return [];
+            array2D.push(row);
         }
-};
 
+        return array2D;
+
+    } else {
+
+        return [];
+    }
+};
 
 /**
  * Creates (and updates) the element that displays the previews of the permutations.
  *
  * @param {Number} id Id of the current task
  */
-let updatePermutationsPreview = function(id) {
+let updatePermutationsData = function (id) {
+    let dag = getTaskObject(id).dagMatrix;
+    console.log(dag)
+    if (dag) {
+        let calculatePermutations = new CalculatePermutations(dag);
 
+        allPermutations = calculatePermutations.getAllTopologicalSorts();
+        falsePositives = calculatePermutations.getAllFalsePositives();
+
+        document.getElementById('numPermCount').innerHTML = allPermutations.length;
+        document.getElementById('numFalsePosCount').innerHTML = falsePositives.length;
+
+        allPermutations = allPermutations.concat(falsePositives);
+
+        currentPreviewPermutation = 0;
+
+        updatePermutationsPreview(id);
+    }
+}
+
+/**
+ * Creates (and updates) the element that displays the previews of the permutations.
+ *
+ * @param {Number} id Id of the current task
+ */
+let updatePermutationsPreview = function (id) {
     let permutationsPreviewElement = document.getElementById('possiblePermutationsContainer');
 
     // Remove preview elements (to get a clean slate)
@@ -317,31 +342,15 @@ let updatePermutationsPreview = function(id) {
         permutationsPreviewElement.removeChild(permutationsPreviewElement.firstChild);
     }
 
-    let codeLines = getCodeLines(id);
-    //let dag = getTaskObject(id).dagMatrix;
-    //let calculatePermutations = new CalculatePermutations(dag);
-
-    //let allPermutations = calculatePermutations.getAllTopologicalSorts();
-    let allPermutations = [];
-    for (let i = 0; i < getNumCodeLines(id); i++){
-        let perm = [];
-        for (let i = 0; i < getNumCodeLines(id); i++){
-            perm.push(i);
-        }
-        shuffleArray(perm);
-        allPermutations.push(perm);
-    }
-    //let falsePositives = calculatePermutations.getAllFalsePositives();
-
     // Create the navigation bar of the preview element
     let divElement = document.createElement('div');
     divElement.className = 'spaceBetweenContainer';
     let buttonPrev = document.createElement('button');
-    buttonPrev.onclick = () => goToPrevPermutation(event, allPermutations.length);
+    buttonPrev.onclick = function () { goToPrevPermutation(event, allPermutations.length) };
     buttonPrev.innerHTML = 'Prev';
     buttonPrev.className = 'permPreviewButton';
     let buttonNext = document.createElement('button');
-    buttonNext.onclick = () => goToNextPermutation(event, allPermutations.length);
+    buttonNext.onclick = function () { goToNextPermutation(event, allPermutations.length) };
     buttonNext.innerHTML = 'Next';
     buttonNext.className = 'permPreviewButton';
     let taskTracker = document.createElement('p');
@@ -353,6 +362,7 @@ let updatePermutationsPreview = function(id) {
 
     // Add code lines to the preview
     let permPreviewElement = document.createElement('div');
+    let codeLines = getCodeLines(id);
     for (let index = 0; index < getNumCodeLines(id); index++) {
         let pElement = document.createElement('p');
         let lineNumber = allPermutations[currentPreviewPermutation][index];
@@ -370,14 +380,14 @@ let updatePermutationsPreview = function(id) {
  * @param {Event} e
  * @param {Number} numPermutations Number of permutations for the code lines
  */
-let goToPrevPermutation = function(e, numPermutations) {
+let goToPrevPermutation = function (e, numPermutations) {
     e.preventDefault();
     if (currentPreviewPermutation === 0) {
         currentPreviewPermutation = numPermutations - 1;
     } else {
         currentPreviewPermutation -= 1;
     }
-    saveTask();
+    updatePermutationsPreview(currentId);
 };
 
 
@@ -387,12 +397,12 @@ let goToPrevPermutation = function(e, numPermutations) {
  * @param e
  * @param {Number} numPermutations Number of permutations for the code lines
  */
-let goToNextPermutation = function(e, numPermutations) {
+let goToNextPermutation = function (e, numPermutations) {
     e.preventDefault();
     if (currentPreviewPermutation === numPermutations - 1) {
         currentPreviewPermutation = 0;
     } else {
         currentPreviewPermutation += 1;
     }
-    saveTask();
+    updatePermutationsPreview(currentId);
 };

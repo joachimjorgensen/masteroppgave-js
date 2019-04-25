@@ -33,6 +33,9 @@ let loadMain = function(){
     // Load all tasks in the database to the task bar
     loadTaskList();
 
+    //Run all dnd_generator tests
+	run_all_dnd_generator_tests();
+
     // Hide paper until the user chooses a task
     let papers = document.getElementsByClassName('paper');
     for (let i = 0; i < papers.length; i++) {

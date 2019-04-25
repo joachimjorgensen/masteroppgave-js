@@ -5,7 +5,7 @@
 /**
  * Save/update current task to the database
  */
-let saveTask = function() {
+let saveTask = function () {
 
     let id = currentId;
 
@@ -24,7 +24,7 @@ let saveTask = function() {
     for (let taskNum in allTasks) {
         let task = allTasks[taskNum];
 
-        if(task.id == id){
+        if (task.id == id) {
             task = {
                 ...task,
                 title: /\S/.test(title) ? title : 'Task ' + (task.id + 1), // Checks if title is only whitespace
@@ -50,7 +50,6 @@ let saveTask = function() {
 
     updatePermutationsSelect(id);
 
-    updatePermutationsPreview(id);
 
     // Set max num distractors in task preview
     document.getElementById('settingsInputNumDistractors').max = getNumDistractors(id);
@@ -63,18 +62,23 @@ let saveTask = function() {
     // Update number of maximum number of tasks possible to create
     document.getElementById('maxNumTasksSpan').innerHTML = getMaxNumTasks().toString();
 
-    //let calculatePermutations = new CalculatePermutations(dag);
-    //let allPermutations = calculatePermutations.getAllTopologicalSorts();
-    //let falsePositives = calculatePermutations.getAllFalsePositives();
-    document.getElementById('numPermCount').innerHTML = '2';
-    document.getElementById('numFalsePosCount').innerHTML = '2';
-
     if (parsons2d) {
         document.getElementById('parsons2DWarning').style.display = "block";
     } else {
         document.getElementById('parsons2DWarning').style.display = "none";
     }
 };
+
+let updatePermutations = function () {
+    let task = getTaskObject(currentId);
+    if (task.permutations) {
+        let dag = getPermutations2dArray(task.permutations);
+        if (dag) {
+            addDagToTask(task);
+            updatePermutationsData(currentId);
+        }
+    }
+}
 
 
 /**
@@ -84,7 +88,7 @@ let saveTask = function() {
  * @param {Number} taskId The ID for the task to be deleted
  * @param {String} taskTitle Title of the task to be deleted
  */
-let deleteTask = function(event, taskId, taskTitle) {
+let deleteTask = function (event, taskId, taskTitle) {
 
     // Have to prevent onClick triggering on div(with onClick) behind
     event.stopPropagation();
@@ -124,7 +128,7 @@ let deleteTask = function(event, taskId, taskTitle) {
     if (currentId === taskId && firstId < 1000000) {
         // Deleting current task and there exists other tasks in the list - load first task
         loadTask(firstId);
-    } else if(currentId === taskId && newTaskList.length === 0) {
+    } else if (currentId === taskId && newTaskList.length === 0) {
         // Deleting current task and there is no other tasks in the list
         // Hide paper until the user creates a new task
         let papers = document.getElementsByClassName('paper');
@@ -179,7 +183,7 @@ let addTask = function () {
  *
  * @param {Number} id The ID of current task
  */
-let updateTitleInTaskList = function(id) {
+let updateTitleInTaskList = function (id) {
 
     let allTasks = database.tasks;
     let taskList = document.getElementById('taskList');
@@ -189,7 +193,7 @@ let updateTitleInTaskList = function(id) {
 
         let taskTab = document.getElementById('taskContainer' + task.id.toString());
 
-        if(task.id==id){
+        if (task.id == id) {
             if (task.title) {
                 // Update task title
                 taskTab.firstElementChild.innerHTML = task.title;
@@ -198,7 +202,7 @@ let updateTitleInTaskList = function(id) {
                 // delete confirmation message)
                 let taskDeleteButton = document.createElement('button');
                 taskDeleteButton.innerHTML = 'X';
-                taskDeleteButton.setAttribute('onclick', 'deleteTask(event, ' + task.id + ', "'+ task.title +'")');
+                taskDeleteButton.setAttribute('onclick', 'deleteTask(event, ' + task.id + ', "' + task.title + '")');
                 taskDeleteButton.className = 'taskDeleteButton';
 
                 taskTab.replaceChild(taskDeleteButton, taskTab.childNodes[1]);
