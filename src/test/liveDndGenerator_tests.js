@@ -355,9 +355,6 @@ function test_generate_start_options(){
 	let allTestsPass = true;
 	for (var key in startOptions) {
 		if (startOptions.hasOwnProperty(key)) {
-			if(!(lines.indexOf(key)>=0 || distractors.indexOf(key)>=0)){
-				allTestsPass = false;
-			}
 			if(startOptions[key].length!=2){
 				allTestsPass = false;
 			}
