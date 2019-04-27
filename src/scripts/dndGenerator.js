@@ -606,7 +606,7 @@ function generateStartOptions(lines, height, distractors) {
 	let spaceBetween = 20;
 	let startY = (height * 3) + (lines.length * height);
 
-	let startOptions = {};
+	let startOptions = [];
 
 	let all = lines.concat(distractors);
 	all = all.sort(() => 0.5 - Math.random());
@@ -614,20 +614,21 @@ function generateStartOptions(lines, height, distractors) {
 	let row = 1;
 	let startXPos = 20;
 	let currentPointInRow = startXPos;
+	let counter = 0; //Need a counter when using line as key to create a somewhat unique key
 	while (all.length != 0) {
 		let randomIndex = getRandomInt(all.length - 1);
 		let line = all.splice(randomIndex, 1);
 		let length = get_length_of_word(line);
 		if (currentPointInRow + length < (maxWidth - spaceBetween)) {
-			startOptions[line] = [currentPointInRow, startY + ((height + spaceBetween) * row)]
+			startOptions[line + "§" + counter] = [currentPointInRow, startY + ((height + spaceBetween) * row)]
 		} else {
 			row += 1;
 			currentPointInRow = startXPos;
-			startOptions[line] = [currentPointInRow, startY + ((height + spaceBetween) * row)]
+			startOptions[line + "§" + counter] = [currentPointInRow, startY + ((height + spaceBetween) * row)]
 		}
 		currentPointInRow += length + spaceBetween;
+		counter += 1;
 	}
-
 	return startOptions;
 }
 
@@ -661,9 +662,18 @@ function getCanvasHeight(startOptions) {
 }
 
 /**
- * This function calculates 
+ * Calculates all possible permutations based on the given directed acyclic graph (DAG), and adds
+ * these permutations to the task. Meaning that the permutations might show that line nr 2 can also be legally placed
+ * on line nr 3. This function automatically looks for these legal placements and adds them to the task.
+ * 
+ * @param {XmlDocument object} myDoc The xml document
+ * @param {[GapImage ids]} gapImages List of existing gap images (id of each word)
+ * @param {[AssociableHotspot ids]} associableHotspots List of associable hotspots (existing drop areas)
+ * @param {Transitive closure matrix} dag Directed acyclic graph
+ * @param {[[gapImage,associableHotspot]]} existingConnections A list of existing connections
+ * @returns all existing connections with the new ones added
  */
-function addAllPermutations(myDoc, gapImages, associableHotspots, dag) {
+function addAllPermutations(myDoc, gapImages, associableHotspots, dag, existingConnections) {
 	let calculatePermutations = new CalculatePermutations(dag);
 	console.log(calculatePermutations.getErrorRates());
 	let topologicalSorts = calculatePermutations.getAllTopologicalSorts();
@@ -672,12 +682,39 @@ function addAllPermutations(myDoc, gapImages, associableHotspots, dag) {
 			let topologicalSort = topologicalSorts[i];
 			for (let j = 0; j < topologicalSort.length; j++) {
 				connectDragAreaToDropArea(myDoc, gapImages[topologicalSort[j]], associableHotspots[j])
+				existingConnections.push([gapImages[topologicalSort[j]], associableHotspots[j]]);
 			}
 		}
+		console.log("done here")
+		return existingConnections;
 	} else {
-		alert(topologicalSorts);
+		alert("Permutations error! " + topologicalSorts);
 	}
+	return existingConnections;
 
+}
+
+/**
+ * Since the startOptions key is based on the line(word) and a number, this function simply 
+ * returns a fitting coordinate that can be the position of the given line(word).
+ * 
+ * @param {Object} startOptions Object with key: line§number and value [x,y] pos
+ * @param {String} line the given line/word to find a position for
+ * @returns [x,y] coordinate value pair
+ */
+function findFittingCoordinates(startOptions, line) {
+	//Find fitting start position coordinates for current line
+	let selectedKey;
+	for (let key in startOptions) {
+		let keyPair = key.split("§");
+		if (keyPair[0] === line) {
+			selectedKey = key;
+			break;
+		}
+	}
+	let startOptionPair = startOptions[selectedKey];
+	delete startOptions[selectedKey];
+	return startOptionPair;
 }
 
 /**
@@ -689,7 +726,7 @@ function addAllPermutations(myDoc, gapImages, associableHotspots, dag) {
  * @param {String or [Strings]} distractors The distractor code lines
  * @returns {Number} Returns the canvas height that is needed for this specific task
  */
-function generate_python_lines(myDoc, lines, parsons2D, distractors, dag) {
+function generate_python_lines(myDoc, lines, parsons2D, distractors, dag, includePermutations) {
 	let startY = 50;
 	let maxWidth = 600;
 	let dragHeight = 20;
@@ -720,7 +757,9 @@ function generate_python_lines(myDoc, lines, parsons2D, distractors, dag) {
 
 			let tabs = countTabs(line, tabSize);
 			let theString = stripMe(line);
-			let startOptionPair = startOptions[line];
+
+			let startOptionPair = findFittingCoordinates(startOptions, line);
+
 			let gridStartX = (maxWidth - ((maxTabs + 0.5) * (width + 1))) / 2;
 			for (let i = 0; i < maxTabs + 1; i++) {
 				let startX = gridStartX + (width * i) + i;
@@ -738,7 +777,8 @@ function generate_python_lines(myDoc, lines, parsons2D, distractors, dag) {
 		}
 		console.log(associableHotspots)
 		for (let i = 0; i < distractors.length; i++) {
-			let startOptionPair = startOptions[distractors[i]];
+			let distractor = distractors[i];
+			let startOptionPair = findFittingCoordinates(startOptions, distractor);
 			add_distractor(myDoc, distractors[i], startOptionPair[0], startOptionPair[1], 10, dragHeight);
 		}
 
@@ -756,28 +796,75 @@ function generate_python_lines(myDoc, lines, parsons2D, distractors, dag) {
 		let associableHotspots = []
 		//Array of gapImages where position is the same as in lines.
 		let gapImages = [];
+		let existingConnections = [];
 		for (let i = 0; i < lines.length; i++) {
 			let line = lines[i];
 			let theString = stripMe(line);
-			let startOptionPair = startOptions[line];
+			let startOptionPair = findFittingCoordinates(startOptions, line);
 			let startX = 50;
 			let gapAndHotspot = add_draggable_pair(myDoc, theString, startOptionPair[0], startOptionPair[1], width, dragHeight, startX, startY, width, dropHeight);
 
 			associableHotspots.push(gapAndHotspot[1]);
 			gapImages.push(gapAndHotspot[0]);
 
+			existingConnections.push(gapAndHotspot);
+
 			startY += dropHeight + 1;
 		}
 		for (let i = 0; i < distractors.length; i++) {
-			//let startOptionPair = startOptions.pop(getRandomInt(startOptions.length-1));
-			let startOptionPair = startOptions[distractors[i]];
+			let distractor = distractors[i];
+			let startOptionPair = findFittingCoordinates(startOptions, distractor);
 			add_distractor(myDoc, distractors[i], startOptionPair[0], startOptionPair[1], 10, dragHeight);
 		}
-		addAllPermutations(myDoc, gapImages, associableHotspots, dag);
+		if (includePermutations) {
+			existingConnections = addAllPermutations(myDoc, gapImages, associableHotspots, dag, existingConnections);
+		}
+		makeSameLinesGoToSameDropSpots(myDoc, lines, gapImages, existingConnections);
 	}
 	return canvasHeight;
 }
+function isConnectionInExistingConnections(array, gapAndHotspot) {
+	for (var i = 0; i < array.length; i++) {
+		// This if statement depends on the format of your array
+		if (array[i][0].toString() == gapAndHotspot[0].toString() && array[i][1].toString() == gapAndHotspot[1].toString()) {
+			return true;   // Found it
+		}
+	}
+	return false;   // Not found
+}
 
+function makeSameLinesGoToSameDropSpots(myDoc, lines, gapImages, existingConnections) {
+	let newConnectionsToCreate = [];
+	for (let i = 0; i < lines.length; i++) {
+		let similarLinesGapImages = [];
+		for (let j = 0; j < lines.length; j++) {
+			if (i != j && lines[i] === lines[j]) {
+				console.log(lines[i] + " is equal to " + lines[j]);
+				similarLinesGapImages.push(gapImages[j]);
+			}
+		}
+		//For each of the similar lines (in gaps)
+		for (let k = 0; k < similarLinesGapImages.length; k++) {
+			let currentSimilarLineGapImage = similarLinesGapImages[k];
+			//For each of the existing connections
+			for (let l = 0; l < existingConnections.length; l++) {
+				let currentExistingConnection = existingConnections[l];
+				//If current gap equals connections gap
+				if (currentSimilarLineGapImage === currentExistingConnection[0]) {
+					//Current line must also go to this destination
+					let newConnection = [gapImages[i], currentExistingConnection[1]];
+					//But only if it doesnt already exist
+					if (!isConnectionInExistingConnections(existingConnections, newConnection) && !isConnectionInExistingConnections(newConnectionsToCreate, newConnection)) {
+						newConnectionsToCreate.push(newConnection);
+					}
+				}
+			}
+		}
+	}
+	for (let m = 0; m < newConnectionsToCreate.length; m++) {
+		connectDragAreaToDropArea(myDoc, newConnectionsToCreate[m][0], newConnectionsToCreate[m][1])
+	}
+}
 
 /**
  * A helper function that adds a xml child element with a value to the parent element
@@ -846,7 +933,56 @@ function getRandomSubsetOfDistractors(arr, n) {
 	return result;
 }
 
+/**
+ * Shuffles array in place. 
+ * @param {Array} a An array containing the items.
+ */
+function shuffle(a) {
+	for (let i = a.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[a[i], a[j]] = [a[j], a[i]];
+	}
+	return a;
+}
 
+/**
+ * Finds all combinations of the array of the size k
+ * 
+ * @param {Array} array Any array
+ * @param {Number} k Size of each combination
+ */
+function getCombinations(array, k){
+	let allCombinations = [];
+    var combinations = [];
+    
+    function run(level, start){
+        for(var i=start; i < array.length - k + level + 1; i++){
+            combinations[level] = array[i];
+            
+            if(level < k - 1){
+                run(level + 1, i + 1);
+            } else {
+				addCombinations = [...combinations];
+				allCombinations.push(addCombinations)
+            }
+        }
+    }
+	run(0, 0);
+	return allCombinations;
+}
+
+/**
+ * Finds all combinations of the distractors and randomly returns as many tasks as one wishes to generate
+ * 
+ * @param {Number} numberOfTasksToGenerate Number of tasks one wishes to generate
+ * @param {Number} distractorSubsetSize Size of each distractor subset
+ * @param {Array} allDistractors Array of all distractors
+ */
+function getAllSubsetsOfDistractors(numberOfTasksToGenerate, distractorSubsetSize, allDistractors) {
+	let allDistractorsShuffled = shuffle(allDistractors);
+	let allSubsets = getCombinations(allDistractorsShuffled, distractorSubsetSize);
+	return shuffle(allSubsets.slice(0,numberOfTasksToGenerate));
+}
 
 
 
@@ -879,6 +1015,7 @@ function run_dnd(jsonObject, filepath) {
 	rimraf(__dirname + '/zipThis', function () { continue_dnd(jsonObject, filepath); });
 }
 
+
 /**
  * A continuation of the run_dnd function. This gets called after the old zipThis folder has been deleted.
  * This function now creates a new zipThis folder and places all tasks and the manifest inside the folder before zipping it.
@@ -889,6 +1026,7 @@ function run_dnd(jsonObject, filepath) {
 function continue_dnd(dataAll, filepath) {
 	//const logger = require('electron').remote.require('./logger');
 	//npm install mkdirp
+
 
 	console.log("Data objects to create")
 	console.log(dataAll);
@@ -910,19 +1048,23 @@ function continue_dnd(dataAll, filepath) {
 
 	for (let i = 0; i < dataAll.length; i++) {
 		data = dataAll[i];
-		let numberOfTasksToGenerate = 1;//data.generateNumber;
-		let distractorSubsetSize = 2;
-
+		let numberOfTasksToGenerate = parseInt(data.numTasks);
+		let distractorSubsetSize = parseInt(data.numDistractors);
+		let includePermutations = data.includePermutations;
 
 		let title_no = '<div>' + data.description.no + '</div>';//"<p><strong>Norsk</strong></p>"
 		let title_ny = '<div>' + data.description.nyno + '</div>';//"<p><strong>Nynorsk</strong></p>"
 		let title_en = '<div>' + data.description.eng + '</div>';//"<p><strong>English</strong></p>"
 
+		let listOfDistractors = getAllSubsetsOfDistractors(numberOfTasksToGenerate, distractorSubsetSize, data.distractors);
+		console.log(listOfDistractors)
+
 		for (let i = 0; i < numberOfTasksToGenerate; i++) {
-			distractors = getRandomSubsetOfDistractors(data.distractors, distractorSubsetSize)
+			distractors = listOfDistractors[i];
 			parsons2D = data.parsons2d;
 			lines = data.code;
 			lines = lines.split("\n");
+			lines = lines.filter(word => word.length > 0);
 
 			let taskIdentifier = generateID();
 			taskIdentifiers.push(taskIdentifier);
@@ -941,9 +1083,8 @@ function continue_dnd(dataAll, filepath) {
 			];
 			*/
 			dag = data.dagMatrix;
-			console.log(dag);
 
-			let canvasHeight = generate_python_lines(myDoc, lines, parsons2D, distractors, dag);
+			let canvasHeight = generate_python_lines(myDoc, lines, parsons2D, distractors, dag, includePermutations);
 			add_metadata(myDoc, taskIdentifier, data.fileName, parsons2D, canvasHeight, title_no, title_ny, title_en);
 
 			write_xml(myDoc, taskIdentifier);

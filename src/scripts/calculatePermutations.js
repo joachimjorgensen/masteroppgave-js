@@ -2,7 +2,7 @@
 
 class CalculatePermutations {
 	constructor(currentEdges) {
-		this.permutationsCutoff = 2000;
+		this.permutationsCutoff = 1000;
 
 		this.allTransitiveClosures = [];
 		this.allTopologicalSorts = [];
@@ -19,31 +19,36 @@ class CalculatePermutations {
 		let countTransitiveClosurePossibilities = new CountTransitiveClosurePossibilities(transitiveClosureMatrix);
 
 		this.allTransitiveClosures = countTransitiveClosurePossibilities.getAllAnswers();
+		if(!Array.isArray(this.allTransitiveClosures)){
+			this.setToErrorString();
+		}
 		this.checkIfTooManyPermutations();
-		//console.log("All transitive closures")
-		//console.log(this.allTransitiveClosures)
-
 	}
 
 	runTopologicalSort(currentEdges) {
 		let graph = new TopologicalSort(this.noOfVertices);
 
 		this.allTopologicalSorts = graph.allTopologicalSorts(currentEdges);
+		if(!Array.isArray(this.allTopologicalSorts)){
+			this.setToErrorString();
+		}
 		this.checkIfTooManyPermutations();
-		//console.log("All topological sorts")
-		//console.log(this.allTopologicalSorts)
-
 	};
 	checkIfTooManyPermutations(){
 		if (Array.isArray(this.allTopologicalSorts) && Array.isArray(this.allTransitiveClosures)){
 			if (this.allTopologicalSorts.length >= this.permutationsCutoff || this.allTransitiveClosures.length >= this.permutationsCutoff) {
-				this.allTopologicalSorts = "More than " + this.permutationsCutoff + " permutations were made. Aborting due to high number of permutations.";
-				this.allTransitiveClosures = "More than " + this.permutationsCutoff + " permutations were made. Aborting due to high number of permutations.";
+				this.setToErrorString();
 				return true;
 			}
+		}else if (!Array.isArray(this.allTopologicalSorts) || !Array.isArray(this.allTransitiveClosures)){
+			this.setToErrorString();
+			return true;
 		}
 		return false;
-
+	}
+	setToErrorString(){
+		this.allTopologicalSorts = "More than " + this.permutationsCutoff + " permutations were made. Aborting permutation implementation due to high number of permutations.";
+		this.allTransitiveClosures = "More than " + this.permutationsCutoff + " permutations were made. Aborting permutations implementation due to high number of permutations.";
 	}
 
 	factorialize(num) {
@@ -57,9 +62,11 @@ class CalculatePermutations {
 	}
 
 	getAllTransitiveClosures() {
+		this.checkIfTooManyPermutations();
 		return this.allTransitiveClosures;
 	}
 	getAllTopologicalSorts() {
+		this.checkIfTooManyPermutations();
 		return this.allTopologicalSorts;
 	}
 	getAllFalsePositives() {
@@ -89,6 +96,7 @@ class CalculatePermutations {
 	}
 
 	getErrorRates() {
+		this.checkIfTooManyPermutations();
 		//Is not a directed asyclic graph
 		if (!this.allTopologicalSorts[0] || this.allTopologicalSorts[0].length !== this.noOfVertices || !this.allTransitiveClosures[0] || this.allTransitiveClosures[0].length !== this.noOfVertices) {
 			return null;
