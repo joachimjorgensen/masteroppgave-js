@@ -104,8 +104,14 @@ let updatePermutationCheckboxes = function (id) {
 
         checkbox.checked = checkboxChecked(id, index);
 
+        // The identity matrix is a default
         if (selectElement.selectedIndex === index) {
             checkbox.checked = true;
+            checkbox.disabled = true;
+            label.className = 'checkedLabel';
+
+        // If a code line 1 depends on code line 2, then code line 2 can't come before code line 1
+        } else if (checkboxDependsOnCodeLine(id, index)) {
             checkbox.disabled = true;
             label.className = 'checkedLabel';
         }
@@ -120,6 +126,21 @@ let updatePermutationCheckboxes = function (id) {
 
         permutationsCheckboxContainer.appendChild(checkboxGrouping);
     }
+};
+
+
+/**
+ * Checks if a code line (the checkbox) has a dependency from the current selected code line in the drop down list
+ *
+ * @param {Number} id Current task id
+ * @param {Number} codeLineIndex The code line index of the checkbox
+ * @returns {boolean}
+ */
+let checkboxDependsOnCodeLine = function(id, codeLineIndex) {
+    let permutations = getTaskObject(id).permutations;
+    let currentPerm = permutations[codeLineIndex];
+
+    return currentPerm.includes(selectedDropDownOptionId);
 };
 
 
@@ -160,8 +181,6 @@ let checkboxChecked = function (taskId, checkboxId) {
 let checkboxOnChange = function (taskId, checkboxId, checkBoxLineNumber) {
     let checkbox = document.getElementById(checkboxId);
 
-    console.log(checkboxId, checkBoxLineNumber);
-
     let permutationsSelectElement = document.getElementById('permutations-select');
     let row = permutationsSelectElement.selectedIndex;
 
@@ -193,7 +212,7 @@ let checkboxOnChange = function (taskId, checkboxId, checkBoxLineNumber) {
  * Updates the array of permutations if a code line is added or deleted
  * Needed because the permutations array consists of lists for each line number, where the
  * contents of each line is a pointer to a dependency to another line. And thus, if a line is deleted
- * or added, all reference points had to be updated accordingly
+ * or added, all reference points must be updated accordingly
  *
  * @param {Number} id Id of the current task
  */
