@@ -376,7 +376,7 @@ let setPermutationsToZero = function (id) {
     currentPreviewPermutation = 0;
 
     updatePermutationsPreview(id);
-}
+};
 
 
 /**
@@ -436,6 +436,15 @@ let updatePermutationsPreview = function (id) {
     }
 };
 
+
+/**
+ * Checks if an item is included in an array.
+ * Created this method to check if an array is included in another array
+ *
+ * @param {Array} array Array to be checked against
+ * @param {*} item Item to check for in Array
+ * @returns {boolean}
+ */
 let isItemInArray = function(array, item) {
     for (let i = 0; i < array.length; i++) {
         // This if statement depends on the format of your array
@@ -444,7 +453,7 @@ let isItemInArray = function(array, item) {
         }
     }
     return false;   // Not found
-}
+};
 
 
 /**
@@ -481,6 +490,10 @@ let goToNextPermutation = function (e, numPermutations) {
 };
 
 
+/**
+ * Hide/reveal the permutations section
+ *
+ */
 let updateDagToggle = function() {
     let dagDiv = document.getElementById('dagDiv');
     let permPrevDivs = document.getElementById('permPrevDiv');

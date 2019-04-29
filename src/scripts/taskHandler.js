@@ -73,6 +73,10 @@ let saveTask = function () {
     }
 };
 
+
+/**
+ * Updates permutations and dag for the current task
+ */
 let updatePermutations = function () {
     let task = getTaskObject(currentId);
     if (task.permutations) {
@@ -82,7 +86,7 @@ let updatePermutations = function () {
             updatePermutationsData(currentId);
         }
     }
-}
+};
 
 
 /**
