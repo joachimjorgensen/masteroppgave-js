@@ -45,6 +45,17 @@ function read_manifest() {
 }
 
 /**
+ * Returns pathing substring based on OS to correctly find files
+ */
+function getOSPathSubstring(){
+	if(process.platform === 'darwin'){
+		return __dirname;
+	}else{
+		return '.';
+	}
+}
+
+/**
  * Exports the given xml document to an actual file and places the file in the folder to be zipped.
  * All files are placed in a folder called zipThis
  * @param {XMLDocument object} xmlDoc The xml document object to be written to file
@@ -55,14 +66,14 @@ function write_xml(xmlDoc, taskIdentifier) {
 	let xmlString = serializer.serializeToString(xmlDoc);
 	let fs = require('fs');
 
-	if (fs.existsSync(__dirname + "/zipThis")) {
-		fs.writeFile(__dirname + '/zipThis/content_question_qti2_graphicgapmatch_' + taskIdentifier + '.xml', xmlString, function (err) {
+	if (fs.existsSync(getOSPathSubstring() + "/zipThis")) {
+		fs.writeFile(getOSPathSubstring() + '/zipThis/content_question_qti2_graphicgapmatch_' + taskIdentifier + '.xml', xmlString, function (err) {
 			if (err) {
 				return console.log("Creating file in write_xml error: " + err);
 			}
 		});
 	} else {
-		alert("ZipThis path NOT found in write_xml. Im looking for: " + __dirname + "/zipThis");
+		alert("ZipThis path NOT found in write_xml. Im looking for: " + getOSPathSubstring() + "/zipThis");
 	}
 }
 
@@ -75,7 +86,7 @@ function write_manifest(xmlDoc) {
 	let serializer = new XMLSerializer();
 	let xmlString = serializer.serializeToString(xmlDoc);
 	let fs = require('fs');
-	fs.writeFile(__dirname + '/zipThis/imsmanifest.xml', xmlString, function (err) {
+	fs.writeFile(getOSPathSubstring() + '/zipThis/imsmanifest.xml', xmlString, function (err) {
 		if (err) {
 			return console.log("Writing manifest error: " + err);
 		}
@@ -1012,7 +1023,7 @@ function run_dnd(jsonObject, filepath) {
 
 	*/
 	//Deletes old zipThis file
-	rimraf(__dirname + '/zipThis', function () { continue_dnd(jsonObject, filepath); });
+	rimraf(getOSPathSubstring() + '/zipThis', function () { continue_dnd(jsonObject, filepath); });
 }
 
 
@@ -1031,7 +1042,7 @@ function continue_dnd(dataAll, filepath) {
 	console.log("Data objects to create")
 	console.log(dataAll);
 	let mkdirp = require('mkdirp');
-	mkdirp(__dirname + '/zipThis', function (err) {
+	mkdirp(getOSPathSubstring() + '/zipThis', function (err) {
 		if (err) {
 			alert("Create file errors:" + err);
 		}
@@ -1108,7 +1119,7 @@ function zipAndDelete(filepath) {
 	let zipFolder = require('zip-folder');
 
 	//filepath is path the user chose
-	zipFolder(__dirname + '/zipThis', filepath + '.zip', function (err) {
+	zipFolder(getOSPathSubstring() + '/zipThis', filepath + '.zip', function (err) {
 		if (err) {
 			console.log('Error zip folder: ', err);
 		}
