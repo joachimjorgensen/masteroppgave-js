@@ -47,10 +47,10 @@ function read_manifest() {
 /**
  * Returns pathing substring based on OS to correctly find files
  */
-function getOSPathSubstring(){
-	if(process.platform === 'darwin'){
+function getOSPathSubstring() {
+	if (process.platform === 'darwin') {
 		return __dirname;
-	}else{
+	} else {
 		return '.';
 	}
 }
@@ -761,6 +761,7 @@ function generate_python_lines(myDoc, lines, parsons2D, distractors, dag, includ
 		let associableHotspots = []
 		//Array of gapImages where position is the same as in lines.
 		let gapImages = [];
+		let existingConnections = [];
 
 		for (let i = 0; i < lines.length; i++) {
 			associableHotspots.push([])
@@ -776,9 +777,11 @@ function generate_python_lines(myDoc, lines, parsons2D, distractors, dag, includ
 				let startX = gridStartX + (width * i) + i;
 				if (i == tabs) {
 					//Returns [newGapImgName, newAssociableHotspotName]
+					console.log(theString + "-"+startOptionPair[0]+ "-"+startOptionPair[1])
 					let gapAndHotspot = add_draggable_pair(myDoc, theString, startOptionPair[0], startOptionPair[1], width, dragHeight, startX, startY, width, dropHeight);
 					associableHotspots[associableHotspots.length - 1].push(gapAndHotspot[1]);
 					gapImages.push(gapAndHotspot[0]);
+					existingConnections.push(gapAndHotspot);
 				} else {
 					let hotspot = add_empty_hotspot(myDoc, startX, startY, width, dropHeight);
 					associableHotspots[associableHotspots.length - 1].push(hotspot)
@@ -787,11 +790,14 @@ function generate_python_lines(myDoc, lines, parsons2D, distractors, dag, includ
 			startY += dropHeight + 1;
 		}
 		console.log(associableHotspots)
-		for (let i = 0; i < distractors.length; i++) {
-			let distractor = distractors[i];
-			let startOptionPair = findFittingCoordinates(startOptions, distractor);
-			add_distractor(myDoc, distractors[i], startOptionPair[0], startOptionPair[1], 10, dragHeight);
+		if (distractors.length > 0) {
+			for (let i = 0; i < distractors.length; i++) {
+				let distractor = distractors[i];
+				let startOptionPair = findFittingCoordinates(startOptions, distractor);
+				add_distractor(myDoc, distractors[i], startOptionPair[0], startOptionPair[1], 10, dragHeight);
+			}
 		}
+		makeSameLinesGoToSameDropSpots(myDoc, lines, gapImages, existingConnections);
 
 
 	} else {
@@ -812,6 +818,7 @@ function generate_python_lines(myDoc, lines, parsons2D, distractors, dag, includ
 			let line = lines[i];
 			let theString = stripMe(line);
 			let startOptionPair = findFittingCoordinates(startOptions, line);
+			console.log(startOptionPair)
 			let startX = 50;
 			let gapAndHotspot = add_draggable_pair(myDoc, theString, startOptionPair[0], startOptionPair[1], width, dragHeight, startX, startY, width, dropHeight);
 
@@ -822,10 +829,12 @@ function generate_python_lines(myDoc, lines, parsons2D, distractors, dag, includ
 
 			startY += dropHeight + 1;
 		}
-		for (let i = 0; i < distractors.length; i++) {
-			let distractor = distractors[i];
-			let startOptionPair = findFittingCoordinates(startOptions, distractor);
-			add_distractor(myDoc, distractors[i], startOptionPair[0], startOptionPair[1], 10, dragHeight);
+		if (distractors.length > 0) {
+			for (let i = 0; i < distractors.length; i++) {
+				let distractor = distractors[i];
+				let startOptionPair = findFittingCoordinates(startOptions, distractor);
+				add_distractor(myDoc, distractors[i], startOptionPair[0], startOptionPair[1], 10, dragHeight);
+			}
 		}
 		if (includePermutations) {
 			existingConnections = addAllPermutations(myDoc, gapImages, associableHotspots, dag, existingConnections);
@@ -849,7 +858,7 @@ function makeSameLinesGoToSameDropSpots(myDoc, lines, gapImages, existingConnect
 	for (let i = 0; i < lines.length; i++) {
 		let similarLinesGapImages = [];
 		for (let j = 0; j < lines.length; j++) {
-			if (i != j && lines[i] === lines[j]) {
+			if (i != j && stripMe(lines[i]) === stripMe(lines[j])) {
 				console.log(lines[i] + " is equal to " + lines[j]);
 				similarLinesGapImages.push(gapImages[j]);
 			}
@@ -962,22 +971,22 @@ function shuffle(a) {
  * @param {Array} array Any array
  * @param {Number} k Size of each combination
  */
-function getCombinations(array, k){
+function getCombinations(array, k) {
 	let allCombinations = [];
-    var combinations = [];
-    
-    function run(level, start){
-        for(var i=start; i < array.length - k + level + 1; i++){
-            combinations[level] = array[i];
-            
-            if(level < k - 1){
-                run(level + 1, i + 1);
-            } else {
+	var combinations = [];
+
+	function run(level, start) {
+		for (var i = start; i < array.length - k + level + 1; i++) {
+			combinations[level] = array[i];
+
+			if (level < k - 1) {
+				run(level + 1, i + 1);
+			} else {
 				addCombinations = [...combinations];
 				allCombinations.push(addCombinations)
-            }
-        }
-    }
+			}
+		}
+	}
 	run(0, 0);
 	return allCombinations;
 }
@@ -990,9 +999,13 @@ function getCombinations(array, k){
  * @param {Array} allDistractors Array of all distractors
  */
 function getAllSubsetsOfDistractors(numberOfTasksToGenerate, distractorSubsetSize, allDistractors) {
-	let allDistractorsShuffled = shuffle(allDistractors);
-	let allSubsets = getCombinations(allDistractorsShuffled, distractorSubsetSize);
-	return shuffle(allSubsets.slice(0,numberOfTasksToGenerate));
+	if (allDistractors.length > 0 && distractorSubsetSize !== allDistractors.length) {
+		let allDistractorsShuffled = shuffle(allDistractors);
+		let allSubsets = getCombinations(allDistractorsShuffled, distractorSubsetSize);
+		return shuffle(allSubsets.slice(0, numberOfTasksToGenerate));
+	} else {
+		return [allDistractors];
+	}
 }
 
 
@@ -1072,6 +1085,7 @@ function continue_dnd(dataAll, filepath) {
 
 		for (let i = 0; i < numberOfTasksToGenerate; i++) {
 			distractors = listOfDistractors[i];
+			console.log(distractors)
 			parsons2D = data.parsons2d;
 			lines = data.code;
 			lines = lines.split("\n");
