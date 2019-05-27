@@ -120,7 +120,7 @@ class CountTransitiveClosurePossibilities {
 			emptyArray[i] = -1;
 		}
 		this.placeNextNumber(emptyArray, 0);
-		console.log(this.currentDepth)
+		//console.log(this.currentDepth)
 
 		//console.log(this.allAnswers);
 	}

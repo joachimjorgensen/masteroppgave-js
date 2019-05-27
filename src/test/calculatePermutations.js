@@ -60,8 +60,7 @@ function test_CalculatePermutationsClass_medium() {
 		assert.equal(allTopologicalSorts.length, 13);
 		assert.equal(allTransitiveClosures.length, 18);
 
-		assert.equal(errorRatesObject.randomlyCorrectChance, 0.025);
-		assert.equal(errorRatesObject.falsePositiveChance, 0.3846153846153846);
+		assert.equal(errorRatesObject, 0.025);
 
 	})
 }
@@ -70,8 +69,7 @@ function test_CalculatePermutationsClass_small() {
 	it('Test CalculatePermutations class on small matrix', () => {
 		let calculatePermutations = new app._test.CalculatePermutations(smallMatrix);
 		const errorRatesObject = calculatePermutations.getErrorRates();
-		assert.equal(errorRatesObject.randomlyCorrectChance, 0.5);
-		assert.equal(errorRatesObject.falsePositiveChance, 0);
+		assert.equal(errorRatesObject, 0.5);
 	});
 }
 function test_CalculatePermutationsClass_error1() {
