@@ -685,7 +685,7 @@ function getCanvasHeight(startOptions) {
  */
 function addAllPermutations(myDoc, gapImages, associableHotspots, dag, existingConnections) {
 	let calculatePermutations = new CalculatePermutations(dag);
-	console.log(calculatePermutations.getErrorRates());
+	//console.log(calculatePermutations.getErrorRates());
 	let topologicalSorts = calculatePermutations.getAllTopologicalSorts();
 	if (Array.isArray(topologicalSorts)) {
 		for (let i = 0; i < topologicalSorts.length; i++) {
@@ -695,7 +695,7 @@ function addAllPermutations(myDoc, gapImages, associableHotspots, dag, existingC
 				existingConnections.push([gapImages[topologicalSort[j]], associableHotspots[j]]);
 			}
 		}
-		console.log("done here")
+		//console.log("done here")
 		return existingConnections;
 	} else {
 		alert("Permutations error! " + topologicalSorts);
@@ -776,7 +776,7 @@ function generate_python_lines(myDoc, lines, parsons2D, distractors, dag, includ
 				let startX = gridStartX + (width * i) + i;
 				if (i == tabs) {
 					//Returns [newGapImgName, newAssociableHotspotName]
-					console.log(theString + "-"+startOptionPair[0]+ "-"+startOptionPair[1])
+					//console.log(theString + "-"+startOptionPair[0]+ "-"+startOptionPair[1])
 					let gapAndHotspot = add_draggable_pair(myDoc, theString, startOptionPair[0], startOptionPair[1], width, dragHeight, startX, startY, width, dropHeight);
 					associableHotspots[associableHotspots.length - 1].push(gapAndHotspot[1]);
 					gapImages.push(gapAndHotspot[0]);
@@ -788,7 +788,7 @@ function generate_python_lines(myDoc, lines, parsons2D, distractors, dag, includ
 			}
 			startY += dropHeight + 1;
 		}
-		console.log(associableHotspots)
+		//console.log(associableHotspots)
 		if (distractors.length > 0) {
 			for (let i = 0; i < distractors.length; i++) {
 				let distractor = distractors[i];
@@ -817,7 +817,7 @@ function generate_python_lines(myDoc, lines, parsons2D, distractors, dag, includ
 			let line = lines[i];
 			let theString = stripMe(line);
 			let startOptionPair = findFittingCoordinates(startOptions, line);
-			console.log(startOptionPair)
+			//console.log(startOptionPair)
 			let startX = 50;
 			let gapAndHotspot = add_draggable_pair(myDoc, theString, startOptionPair[0], startOptionPair[1], width, dragHeight, startX, startY, width, dropHeight);
 
@@ -858,7 +858,7 @@ function makeSameLinesGoToSameDropSpots(myDoc, lines, gapImages, existingConnect
 		let similarLinesGapImages = [];
 		for (let j = 0; j < lines.length; j++) {
 			if (i != j && stripMe(lines[i]) === stripMe(lines[j])) {
-				console.log(lines[i] + " is equal to " + lines[j]);
+				//console.log(lines[i] + " is equal to " + lines[j]);
 				similarLinesGapImages.push(gapImages[j]);
 			}
 		}
@@ -1080,11 +1080,11 @@ function continue_dnd(dataAll, filepath) {
 		let title_en = '<div>' + data.description.eng + '</div>';//"<p><strong>English</strong></p>"
 
 		let listOfDistractors = getAllSubsetsOfDistractors(numberOfTasksToGenerate, distractorSubsetSize, data.distractors);
-		console.log(listOfDistractors)
+		//console.log(listOfDistractors)
 
 		for (let i = 0; i < numberOfTasksToGenerate; i++) {
 			distractors = listOfDistractors[i];
-			console.log(distractors)
+			//console.log(distractors)
 			parsons2D = data.parsons2d;
 			lines = data.code;
 			lines = lines.split("\n");
