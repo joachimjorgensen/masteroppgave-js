@@ -1,4 +1,5 @@
 # masteroppgave-js
+This project concludes our five year journey at the Norwegian University of Science and Technology (NTNU), at the Department of Computer Science (IDI). The project was conducted during the fall of 2018 and spring of 2019, and was the final submission for our degree of Masters of Informatics.
 
 ## To build the app using electron-packager (OSX)
 Go to src/ and run:
