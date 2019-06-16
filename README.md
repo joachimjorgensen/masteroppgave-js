@@ -2,7 +2,15 @@
 This project concludes our five year journey at the Norwegian University of Science and Technology (NTNU), at the Department of Computer Science (IDI). The project was conducted during the fall of 2018 and spring of 2019, and was the final submission for our degree of Masters of Informatics.
 
 ## How to run the program
-In the directory src/release/ there are two executable files, one for windows and one for Mac OS. 
+```
+git clone https://github.com/joachimjorgensen/masteroppgave-js.git
+```
+```
+cd masteroppgave-js/src
+```
+```
+npm start
+```
 
 ## To build the app using electron-packager (OSX)
 Go to src/ and run:
