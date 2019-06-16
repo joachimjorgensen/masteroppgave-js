@@ -1,12 +1,14 @@
 # masteroppgave-js
 This project concludes our five year journey at the Norwegian University of Science and Technology (NTNU), at the Department of Computer Science (IDI). The project was conducted during the fall of 2018 and spring of 2019, and was the final submission for our degree of Masters of Informatics.
 
+## How to run the program
+In the directory src/release/ there are two executable files, one for windows and one for Mac OS. 
+
 ## To build the app using electron-packager (OSX)
 Go to src/ and run:
 ```
-electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds
+electron-packager . --overwrite --platform=darwin --arch=x64 --prune=true --out=release-builds
 ```
-NB! Remove '--icon=asse...' while there are no icons
 
 ## To build the app using electron-packager (Windows)
 Go to src/ and run:
